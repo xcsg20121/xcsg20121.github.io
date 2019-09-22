@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>json 脚本入库的几种方法 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>json 脚本入库的几种方法</h1>
+  <time datetime=2015-12-18T19:14:22Z class="post-date">Fri, Dec 18, 2015</time>
+  
+
+<p>json 脚本入库的几种方法，见代码：</p>
+
+<p>#第一种mongodb入库</p>
+
+<pre><code># from pymongo import *
+# import json
+# conn = MongoClient('127.0.0.1',27017)
+# db = conn.p2p
+# content = open('static/data/text.json','r',encoding='utf-8',errors='ignore')
+# data = json.load(content)
+# db.order.insert(data)
+# print(db.order.count())
+</code></pre>
+
+<h1 id="第二种sqlalchemy入库mysql">第二种SQLALCHEMY入库mysql</h1>
+
+<pre><code># import json
+# from flask import Flask
+# from flask_sqlalchemy import SQLAlchemy
+# app = Flask(__name__)
+# app.config.from_pyfile(&quot;config.ini&quot;)
+# db = SQLAlchemy(app)
+# class Product(db.Model):
+# __tablename__= 'product'
+# id = db.Column(db.Integer,primary_key=True)
+# name = db.Column(db.String(200))
+# price = db.Column(db.Integer)
+# @app.route(&quot;/&quot;)
+# def index():
+# content = open('static/data/test.json','r',encoding='utf-8',errors='ignore')
+# data = json.load(content)
+
+# for i in data:
+# ret = Product(name=i['name'],price = i['price'])
+# db.session.add(ret)
+# return &quot;入库成功&quot;
+# if __name__ == &quot;__main__&quot;:
+# app.run()
+</code></pre>
+
+<p>#第三种 原生sql 入库mysql</p>
+
+<pre><code># import json
+# from pymysql import *
+# conn = connect(host=&quot;127.0.0.1&quot;,port=3306,user='root',password='mysql',database=&quot;myflask&quot;,charset=&quot;utf8&quot;)
+# cur = conn.cursor()
+# content = open('static/data/text.json','r',encoding='utf-8',errors='ignore')
+# data = json.load(content)
+# for i in data:
+# cur.execute(&quot;insert into order values(0,'&quot;+i['name']+&quot;','&quot;+i['price']+&quot;')&quot;)
+# conn.commit
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

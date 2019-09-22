@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>pyhton 爬虫爬去吾爱精品软件的信息并写入excel &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>pyhton 爬虫爬去吾爱精品软件的信息并写入excel</h1>
+  <time datetime=2015-12-03T17:02:25Z class="post-date">Thu, Dec 3, 2015</time>
+  <p>之前的爬虫信息下载后只写入txt文档,想到了以后工作加入有特殊需求,趁放假有时间将这写数据写入excel表格</p>
+
+<p>以吾爱精品软件去为例,代码如下:</p>
+
+<pre><code># -*- coding: utf-8 -*-
+import json,xlwt
+import os
+import requests
+from lxml import etree
+class Wuai(object):
+def __init__(self):
+self.url= &quot;https://www.52pojie.cn/forum-16-{}.html&quot;
+self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.90 Safari/537.36 2345Explorer/9.5.0.17997'}
+self.files = open(&quot;wuai.txt&quot;,&quot;wb&quot;)
+self.start=0
+def get_data(self,url):
+response = requests.get(url)
+
+return response.text
+def xml_data(self,data):
+html = etree.HTML(data)
+mes = html.xpath(&quot;//table[@summary='forum_16']&quot;)
+name=['类型','标题','时间']
+f=xlwt.Workbook()
+sheet1 = f.add_sheet(&quot;无爱&quot;,cell_overwrite_ok=True)
+for x in range(0,len(name)):
+sheet1.write(0,x,name[x])
+ 
+for i in mes:
+type = i.xpath(&quot;.//tr/th/em/a/text()&quot;)
+if type == [] or type==None:
+continue
+title= i.xpath(&quot;.//tr/th/a[@class='s xst']/text()&quot;) if len(i.xpath(&quot;.//tr/th/a[@class='s xst']/text()&quot;))&gt;0 else None
+time = i.xpath(&quot;.//tr/td[@class='by']/em/span/text()&quot;) if len(i.xpath(&quot;.//tr/td[@class='by']/em/span/text()&quot;))&gt;0 else None
+for y in range(0,len(type)):
+sheet1.write(y+1,0,type[y])
+for n in range(0,len(title)):
+sheet1.write(n+1,1,title[n])
+for n in range(0,len(time)):
+sheet1.write(n+1,2,time[n])
+f.save(&quot;1.xls&quot;)
+ 
+# info = json.dumps(dict,ensure_ascii=False) +&quot;\n&quot;
+# info1 = info.encode()
+
+# self.files.write(info1)
+# if not len(i.xpath(&quot;//a[@class='nxt']&quot;)):
+# break
+# else:
+# next_url = &quot;https://www.52pojie.cn/&quot;+i.xpath(&quot;//a[@class='nxt]/@href&quot;)[0]
+# self.get_data(next_url)
+def run(self):
+while True:
+url = self.url.format(self.start)
+data = self.get_data(url)
+if data == []:
+break
+else:
+self.xml_data(data)
+if self.start ==5:
+break
+else:
+self.start+=1
+
+
+if __name__ == '__main__':
+wuai = Wuai()
+wuai.run()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

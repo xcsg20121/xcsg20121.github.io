@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>HTML轮播图实现（前后端分离） &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>HTML轮播图实现（前后端分离）</h1>
+  <time datetime=2018-12-11T13:40:12Z class="post-date">Tue, Dec 11, 2018</time>
+  <p>1，首先前后端分离用到了3个插件
+<img src="/images/html.jpg" alt="" /></p>
+
+<p>2，异步请求后端获取数据库图片地址（图片名字）</p>
+
+<pre><code>//图片轮播
+        axios({
+            url:'http://127.0.0.1:8000/userctrl/image',
+            method:'get',
+            responseType:&quot;json&quot;,
+        })
+    
+        .then(function(obj){
+            let list = obj.data
+            for(var i=0;i&lt;list.length;i++){
+                $(&quot;#tuu&quot;+[i]).attr('src','http://127.0.0.1:8000/upload/'+list[i]['fields']['img'])
+            }
+        })       
+</code></pre>
+
+<p>**后端过程略过</p>
+
+<p>3，模板渲染部分</p>
+
+<pre><code>&lt;ul class=&quot;slide&quot; &gt;
+        &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu0&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu1&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu2&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu3&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+      
+        &lt;/ul&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

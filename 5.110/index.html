@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Docker来搭建分布式文件系统FastDfs &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Docker来搭建分布式文件系统FastDfs</h1>
+  <time datetime=2019-07-11T11:14:29Z class="post-date">Thu, Jul 11, 2019</time>
+  <p>对于文件存储来说，一般情况下简单的处理就是在Django配置文件中配置存储目录，按照规则对文件进行上传或者下载。</p>
+
+<p>实际上，当文件较少的时候，Django是可以应付的过来的。但当文件以海量形式出现的时候，Django就并不是那么好用了，于是Fast DFS应运而出。</p>
+
+<p>　FastDFS是一个开源的分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。可以说它就是为互联网而生，为大数据而生的。</p>
+
+<pre><code>FastDFS服务端有两个角色：跟踪器（tracker）和存储节点（storage）。跟踪器主要做调度工作，在访问上起负载均衡的作用。 存储节点存储文件，完成文件管理的所有功能：存储、同步和提供存取接口，FastDFS同时对文件的meta data进行管理。跟踪器和存储节点都可以由多台服务器构成。跟踪器和存储节点中的服务器均可以随时增加或下线而不会影响线上服务。其中跟踪器中的所有服务器都是对等的，可以根据服务器的压力情况随时增加或减少。
+</code></pre>
+
+<p>为什么要用FastDfs:</p>
+
+<pre><code>1 解决海量存储，同时存储容量扩展方便。
+2 解决文件内容重复,如果用户上传的文件重复(文件指纹一样)，那么系统只有存储一份数据，值得一提的是，这项技术目前被广泛应用在网盘中。
+3 结合Nginx提高网站读取图片的效率。
+</code></pre>
+
+<p><img src="/images/z3.png" alt="" />
+1，首先下载fastdfs镜像</p>
+
+<p>docker pull delron/fastdfs
+2，使用docker镜像构建tracker容器（跟踪服务器，起到调度的作用），这里tracker服务将会自动映射到宿主机上</p>
+
+<p>注意：docker 的 -v 参数，可以自动挂载宿主机的文件件到容器中去，这样宿主和容器就可以进行无障碍的文件共享，我们通过-v参数，把宿主机的root目录自动挂载到docker容器中的/var/root目录中去</p>
+
+<p>docker run -d &ndash;network=host &ndash;name tracker -v /root:/var/root delron/fastdfs tracker
+3，docker镜像构建storage容器（存储服务器，提供容量和备份服务），这里storage容器需要依赖tracker服务，传入你的tracker服务的ip地址，端口默认是22122，ip地址也就是你宿主机的ip</p>
+
+<p>docker run -d &ndash;network=host &ndash;name storage -e TRACKER_SERVER=192.168.99.100:22122 -v /root:/var/root -e GROUP_NAME=group1 delron/fastdfs storage
+注意：上面ip为docker的ip</p>
+
+<p>此时，命令行输入 docker ps 就可以看到两套服务都已经启动
+<img src="/images/z4.png" alt="" />
+注意： docker ps -a 可以查看所有进程   docker rm 进程号 删除对应进程</p>
+
+<p>然后分别进入宿主的命令行以及进入容器storage的命令行，发现文件夹已经共享
+<img src="/images/z4.png" alt="" />
+进入正在后台运行的storage容器</p>
+
+<p>docker exec -it storage /bin/bash
+下面来个例子（上传视频）</p>
+
+<p>我们可以利用docker的exec命令不进入容器，直接在宿主机的环境下调用容器内的命令，因为文件夹已经共享，所以我们输入的文件目录虽然是容器中的/var/root目录，但是实际上该上传的文件就在宿主的/root目录中</p>
+
+<p>docker exec -i storage /usr/bin/fdfs_upload_file /etc/fdfs/client.conf /var/root/test.mp4
+ 上传成功后，fastdfs将会返回视频的网络地
+<img src="/images/z6.png" alt="" />
+ 浏览器访问一下，没有问题
+<img src="/images/z7.png" alt="" />
+至此，在宿主机中上传文件已经搞定，而python同样也可以在命令行中执行命令，我们可以从命令中得到URL的做法来实现django与fastdfs的交流，这里利用的是python中的os.popen方法，可以非常简单的在命令行中获取返回的fastdfs网络地址，从而避开了必须要安装fastdfs的python客户端，因为该客户端对python3并不十分友好。代码如下：</p>
+
+<pre><code>import os
+import re
+
+std = os.popen(&quot;docker exec -i storage /usr/bin/fdfs_upload_file /etc/fdfs/client.conf /var/root/test.mp4&quot;).read()
+print('*********** fastdfs excute start ***********')
+print(std.strip())
+print('*********** fastdfs excute end ***********')
+</code></pre>
+
+<p>这样，在django中上传文件时，就可以通过命令的方式上传到fastdfs中，获取返回地址后入库就可以了，本次操作将docker的特性运用到了极致，由此可见docker的泛用性之广，实实在在的提高了开发效率。</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>阿里云Centos7.6中部署nginx1.16&#43;uwsgi2.0.18&#43;Django2.0.4 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>阿里云Centos7.6中部署nginx1.16&#43;uwsgi2.0.18&#43;Django2.0.4</h1>
+  <time datetime=2019-05-06T07:11:59Z class="post-date">Mon, May 6, 2019</time>
+  <p>当你购买了阿里云的ecs，涉及ecs的有两个密码，一定要搞清楚，一个密码是远程链接密码，也就是通过浏览器连接服务器的密码，另外一个是实例密码，这个密码就是ecs的root密码，一般情况下，我们经常用到的是实例密码。
+<img src="/images/n1.png" alt="" />
+ 与此同时，需要设置一下安全组策略，将一些必要的端口暴露出来，否则会被拦截
+<img src="/images/n2.png" alt="" />
+<img src="/images/n3.png" alt="" />
+前置操作完成，就可以进行软件的安装了，可以通过一些三方的ssh软件进行连接，win下面流行的putty,xshell,moba等，这里推荐使用moba，可以语法高亮并且自动记住密码</p>
+
+<pre><code>安装python3 和 django 以及一些django扩展
+</code></pre>
+
+<pre><code>yum install epel-release
+
+yum install python36
+
+wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
+
+python3 get-pip.py
+
+安装django
+pip3 install pymysql
+
+pip3 install pillow
+
+pip3 install pycryptodome
+
+pip3 install cryptography
+
+pip3 install Django==2.0.4
+
+pip3 install djangorestframework
+
+pip3 install django-cors-headers
+
+pip3 install celery
+
+pip3 install celery-with-redis
+
+pip3 install django-celery
+pip3 install dwebsocket
+</code></pre>
+
+<p>安装opencv-python</p>
+
+<pre><code>yum  install  numpy  opencv*
+pip3 install opencv-python
+yum whatprovides libstdc++.so.6
+yum install libstdc++-4.4.7-3.el6.i686
+yum install libSM-1.2.2-2.el7.x86_64 --setopt=protected_multilib=false
+</code></pre>
+
+<p>新建工程，并且测试</p>
+
+<pre><code>django-admin startproject mypro
+cd mypro
+python3 manage.py runserver 0.0.0.0:8000
+</code></pre>
+
+<p><img src="/images/n4.png" alt="" /></p>
+
+<p>安装mysql</p>
+
+<pre><code>wget 'https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm'
+
+rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
+
+yum install -y mysql-community-server
+#启动服务
+systemctl start mysqld
+#查看服务状态
+systemctl status mysqld
+
+查看数据库密码
+grep 'temporary password' /var/log/mysqld.log
+
+然后利用这个密码进入mysql命令行 mysql -uroot -p查到的密码
+
+SET PASSWORD = PASSWORD('Admin123!');
+
+设置远程登录
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Admin123!' WITH GRANT OPTION;
+flush privileges;
+
+vim /etc/my.cnf
+在[mysqld]下面添加，不需要分号
+字符集:注意是utf8而不是utf-8!
+character-set-server=utf8
+这时候使用show variables like 'char%';就可以查看到字符集都是utf8了
+sql支持group by语句
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+设置时区为东八区
+default-time_zone = '+8:00'
+</code></pre>
+
+<p>重启服务
+systemctl restart mysqld</p>
+
+<p>设置开机启动
+systemctl enable mysqld
+systemctl daemon-reload</p>
+
+<p>如果需要更改为简单的密码</p>
+
+<p>1.停止mysql服务</p>
+
+<p>systemctl stop mysqld.service</p>
+
+<p>2.修改配置文件无密码登录</p>
+
+<p>vim  /etc/my.cnf</p>
+
+<p>在最后加上</p>
+
+<p>skip-grant-tables</p>
+
+<p>保存</p>
+
+<p>3.启动mysql</p>
+
+<p>systemctl  start  mysqld.service</p>
+
+<p>4.登录mysql</p>
+
+<p>mysql -u root</p>
+
+<p>注意这里不要加-p</p>
+
+<p>5.修改密码，mysql5.7用此语法</p>
+
+<p>use mysql;</p>
+
+<p>update mysql.user set authentication_string=password(&lsquo;123456&rsquo;) where user=&lsquo;root&rsquo; ;</p>
+
+<p>6.回到第二部把刚加的那句删掉</p>
+
+<p>保存，重启mysql就可以了
+复制代码</p>
+
+<p>安装redis
+复制代码
+yum install redis</p>
+
+<p>启动服务
+systemctl start redis</p>
+
+<p>查看版本号
+redis-cli &ndash;version</p>
+
+<p>设置开机启动
+systemctl enable redis.service
+复制代码
+安装mongodb</p>
+
+<p>复制代码
+vim /etc/yum.repos.d/mongodb-org-3.4.repo</p>
+
+<p>#添加以下内容：</p>
+
+<pre><code>[mongodb-org-3.4]  
+name=MongoDB Repository  
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/  
+gpgcheck=0
+enabled=1  
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+
+清空缓存
+yum makecache
+
+安装
+yum -y install mongodb-org
+
+启动服务
+systemctl start mongod.service
+
+停止服务
+systemctl stop mongod.service
+
+查看服务状态
+systemctl status mongod.service
+
+重启服务
+systemctl restart mongod.service
+</code></pre>
+
+<p>安装nginx</p>
+
+<pre><code>#设置源
+sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+#安装
+yum install -y nginx
+
+#启动服务
+systemctl start nginx.service
+
+#关闭服务
+systemctl stop nginx.service
+
+#开机自启
+systemctl enable nginx.service
+
+#修改配置文件
+
+vim /etc/nginx/conf.d/default.conf
+
+改成下面的配置
+
+server {
+    listen       80;
+    server_name  localhost;
+
+    access_log      /root/myweb_access.log;
+    error_log       /root/myweb_error.log;
+
+
+    client_max_body_size 75M;
+
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:8000;
+        uwsgi_param UWSGI_SCRIPT mypro.wsgi;
+        uwsgi_param UWSGI_CHDIR  /root/mypro;
+
+    }
+
+    location /static {
+        alias /root/mypro/static;
+    }
+}
+
+设置项目权限
+chmod -R 755 /root/mypro
+#修改配置
+vim /etc/nginx/nginx.conf
+将第一行改为 user root;
+然后重启nginx
+</code></pre>
+
+<p>测试nginx服务,这里注意下，在不修改nginx配置文件的时候才会出现下面的欢迎页面，如果修改了以后是不能访问默认欢迎页面的</p>
+
+<p><img src="/images/n5.png" alt="" /></p>
+
+<p>安装uwsgi</p>
+
+<pre><code>uWSGI本身也是web服务器，但因为性能不高，通过nginx中转能够发挥更好的效果
+
+安装依赖
+yum install python36-devel
+
+安装
+pip3 install uwsgi
+
+软连接
+ln -s /usr/local/python3/bin/uwsgi /usr/bin/uwsgi
+
+进入项目目录启动服务
+uwsgi --http :8000 --module mypro.wsgi
+
+效果和 python3 manage.py runserver 0.0.0.0:8000一致
+
+热启动
+uwsgi --http :8000 --module mypro.wsgi --py-autoreload=1
+
+进入项目，编写uwsgi.ini配置文件 vim mypro_uwsgi.ini
+
+[uwsgi]
+
+chdir           = /root/mypro
+module          = mypro.wsgi
+master          = true
+processes       = 3
+socket            = 0.0.0.0:8000
+# chmod-socket    = 664
+vacuum          = true
+pythonpath      = /usr/bin/python3
+daemonize  = /root/mypro/uwsgi.log
+</code></pre>
+
+<p>启动项目，这里需要注意下，如果你想用uwsgi独立访问网站，就需要把上面配置文件中的socket改成http，如果想用nginx代理，就写成socket</p>
+
+<p>uwsgi &ndash;ini mypro_uwsgi.ini</p>
+
+<p>后台启动</p>
+
+<p>uwsgi -d &ndash;ini mypro_uwsgi.ini</p>
+
+<p>杀死和关闭 uwsgi服务
+killall -s INT /usr/local/bin/uwsgi   （kill -9 进程号）</p>
+
+<p>查看服务</p>
+
+<p>ps aux|grep uwsgi</p>
+
+<p>最后，nginx通过监听80端口反向代理uwsgi启动的django服务，访问网站进行测试
+<img src="/images/n6.png" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

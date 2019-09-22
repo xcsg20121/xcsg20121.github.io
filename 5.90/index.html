@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>解决秒杀活动高并发出现负库存（Redis） &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>解决秒杀活动高并发出现负库存（Redis）</h1>
+  <time datetime=2019-03-24T13:10:21Z class="post-date">Sun, Mar 24, 2019</time>
+  <p>商城在秒杀活动开始时，同时有好多人来请求这个接口，即便做了判断库存逻辑，也难免防止库存出现超卖，造成损失</p>
+
+<p>Django中的ORM本身就对数据库做了防范，但再过亿级访问也扛不住</p>
+
+<p>下面利用Redis的过载防止负库存</p>
+
+<pre><code>#使用REDIS 阻止秒杀时并发状态造成的负库存
+import redis
+#定义过载
+def limit_handler():
+    r = redis.Redis(host='localhost', port=6379)
+    &quot;&quot;&quot;
+    return True: 允许; False: 拒绝
+    &quot;&quot;&quot;
+    amount_limit = 10  # 限制数量
+    keyname = 'limit123'  # redis key name
+    incr_amount = 1  # 每次增加数量
+
+    # 判断key是否存在
+    if not r.exists(keyname):
+        # 为了方便测试，这里设置默认初始值为95
+        # setnx可以防止并发时多次设置key
+        r.setnx(keyname, 0)
+
+    # 数据插入后再判断是否大于限制数
+    if r.incrby(keyname, incr_amount) &lt;= amount_limit:
+        return True
+    return False
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

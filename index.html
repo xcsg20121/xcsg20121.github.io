@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Xcsg博客" />
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="posts">
+<article class="post">
+  <h1 class="post-title">
+    <a href="/5.115/">Redisearch实现的全文检索功能服务</a>
+  </h1>
+  <time datetime="2019-09-11T14:25:01Z" class="post-date">2019-09-11 14:25:01</time>
+  “检索”是很多产品中无法绕开的一个功能模块，当数据量小的时候可以使用模糊查询等操作凑合一下，但是当面临海量数据和高并发的时候，业界常用 elasticsearch 和 lucene 等方案，但是elasticsearch对运行时内存有着最低限额，其运行时大小推荐 2G 以上的内存空间，并且需要额外的磁盘空间做持久化存储。
+其实mongoDB 内置的正则匹配搜索文本以及自带的 text 索引和 search 关键字也是一套靠谱的解决方案，但是这一次我们带来一种更加高效经济的文本检索方案：Redisearch  Redis Modules 是 redis 4.0 引入的一种扩展机制，用户可以通过实现 redis module 提供的 C api 接口为 redis 服务添加定制化功能。 redisLab 也希望籍此来规范 redis 社区的 ecosystem 实现。
+redis module 本身的版本独立于redis，并且以编译成动态加载库 .so 文件的方式 release， 不同版本的 redis 可以 load 同一版本 module.so 文件。 redis 提供了两种加载方式。可以通过 在 conf 文件中 加入 loadmodule /path/to/mymodule.so ，也可以在 redis-cli中使用命令 MODULE LOAD /path/to/panda.so 动态加载，MODULE UNLOAD 卸载。 特性 基于文档的全文索引。 高性能增量索引。 支持文档评分，文档字段(field) 权重机制。 支持布尔复杂查询。 支持自动补全。 基于 snowball 的词干分析，多语言支持。使用 friso 支持中文分词。 utf-8 字符集支持。 redis 数据持久化支持。 自定义评分机制。 其原理是在 redis 的 hashmap 基础上就可以很容易实现倒排索引的结构。redisearch 倒排索引除了实现了基础功能外，还引入了内存管理等优化功能。如果有兴趣可以阅读源码中的 src/inverted_index.
+  
+  <div class="read-more-link">
+    <a href="/5.115/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.114/">Docker 快速部署 Django项目到云服务器</a>
+  </h1>
+  <time datetime="2019-08-30T18:03:36Z" class="post-date">2019-08-30 18:03:36</time>
+  项目结构：
+1，dockerfile
+FROM python:3.7 RUN mkdir -p /usr/src/app WORKDIR /usr/src/app COPY pip.conf /root/.pip/pip.conf COPY requirements.txt /usr/src/app/ RUN pip install -r /usr/src/app/requirements.txt RUN rm -rf /usr/src/app COPY . /usr/src/app CMD [ &quot;python&quot;, &quot;./manage.py&quot;, &quot;runserver&quot;, &quot;0.0.0.0:8000&quot;]  2,pip.conf
+[global] index-url = http://mirrors.aliyun.com/pypi/simple/ [install] trusted-host=mirrors.aliyun.com  3,requirements.txt
+这里可以用命令自动生成
+pip freeze &gt; requirements.txt  4，上传整个项目到服务器
+注意：虚拟环境不必加进去 因为 docker 会自动去下载依赖 而且虚拟环境占用 100M+- 的空间，上传的时间够等 5+ 分钟 5，生成docker镜像
+CD项目和 dockerfile 同一级的目录，也就是项目的目录 （注意后面的 . 不要省略）
+docker build -t hello_python .
+  
+  <div class="read-more-link">
+    <a href="/5.114/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.113/">python一键搭建ftp服务</a>
+  </h1>
+  <time datetime="2019-08-18T17:23:15Z" class="post-date">2019-08-18 17:23:15</time>
+  from pyftpdlib.authorizers import DummyAuthorizer from pyftpdlib.handlers import FTPHandler from pyftpdlib.servers import FTPServer authorizer=DummyAuthorizer() authorizer.add_user('xcsg','1234','.',perm='elradfmw') handler=FTPHandler handler.authorizer=authorizer server=FTPServer(('192.168.2.222',21),handler) server.serve_forever()  代码很简单，用的pyftpdlib这个模块，导入模块，实例化，第五行是需要自己定义的东西，按顺序依次为，账号，密码，目录位置，权限，反正自己用，就给最高权限就行了，关于字母代表的权限含义可以自行搜索，第八行也是需要定义的就是自己电脑ip地址，还有端口完成后运行即可，在浏览器输入ftp://ip就可以了
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.112/">yum提示错误: error: rpmdb: BDB0113 Thread/process 9866/140290246137664 failed:</a>
+  </h1>
+  <time datetime="2019-08-07T18:03:36Z" class="post-date">2019-08-07 18:03:36</time>
+  错误如下：
+解决办法：重新构建rpm数据库
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.111/">VSCode---REST Client接口测试辅助工具</a>
+  </h1>
+  <time datetime="2019-07-15T15:24:16Z" class="post-date">2019-07-15 15:24:16</time>
+  我们一般都会用 PostMan 来完成接口测试的工作，因为用起来十分简单快捷，但是一直以来我也在寻找更好的方案，一个不用切换窗口多开一个 app 的方案 —— 终于在使用 VSCode 一段时版本间，我找到了 REST Client 插件，初看 REST Client 插件的时候，会觉得他十分的简陋，但是在使用一段时间后会发现在 REST Client 插件中已经有完成接口测试所需的所有东西
+优势
+基于 HTTP 语言，HTTP 语言是一门非常简单的语言，使用 HTTP 语言可以轻松的描述请求 纯文本记录，不同于 PostMan 保存在云端，或是 Paw 那样保存二进制文件，并且纯文本可以使用 git 追踪内容的变化 无需切换窗口，测试，调试，代码编辑都在一个 VSCode 中完成 劣势 操作和使用不像 PostMan 之类的图形化工具那么直观 不支持请求前后对数据进行操作的脚本，不过这个已经在作者的开发计划中 很多时候我们只是需要写完代码后手边有一个小工具可以轻松愉快的看一眼接口是否正常，那么 REST Client 就是我们的首选了
+##使用介绍 1,安装 2，编写脚本 注意事项： send request结果 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.110/">Docker来搭建分布式文件系统FastDfs</a>
+  </h1>
+  <time datetime="2019-07-11T11:14:29Z" class="post-date">2019-07-11 11:14:29</time>
+  对于文件存储来说，一般情况下简单的处理就是在Django配置文件中配置存储目录，按照规则对文件进行上传或者下载。
+实际上，当文件较少的时候，Django是可以应付的过来的。但当文件以海量形式出现的时候，Django就并不是那么好用了，于是Fast DFS应运而出。
+　FastDFS是一个开源的分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。可以说它就是为互联网而生，为大数据而生的。
+FastDFS服务端有两个角色：跟踪器（tracker）和存储节点（storage）。跟踪器主要做调度工作，在访问上起负载均衡的作用。 存储节点存储文件，完成文件管理的所有功能：存储、同步和提供存取接口，FastDFS同时对文件的meta data进行管理。跟踪器和存储节点都可以由多台服务器构成。跟踪器和存储节点中的服务器均可以随时增加或下线而不会影响线上服务。其中跟踪器中的所有服务器都是对等的，可以根据服务器的压力情况随时增加或减少。  为什么要用FastDfs:
+1 解决海量存储，同时存储容量扩展方便。 2 解决文件内容重复,如果用户上传的文件重复(文件指纹一样)，那么系统只有存储一份数据，值得一提的是，这项技术目前被广泛应用在网盘中。 3 结合Nginx提高网站读取图片的效率。  1，首先下载fastdfs镜像
+docker pull delron/fastdfs 2，使用docker镜像构建tracker容器（跟踪服务器，起到调度的作用），这里tracker服务将会自动映射到宿主机上
+注意：docker 的 -v 参数，可以自动挂载宿主机的文件件到容器中去，这样宿主和容器就可以进行无障碍的文件共享，我们通过-v参数，把宿主机的root目录自动挂载到docker容器中的/var/root目录中去
+docker run -d &ndash;network=host &ndash;name tracker -v /root:/var/root delron/fastdfs tracker 3，docker镜像构建storage容器（存储服务器，提供容量和备份服务），这里storage容器需要依赖tracker服务，传入你的tracker服务的ip地址，端口默认是22122，ip地址也就是你宿主机的ip
+docker run -d &ndash;network=host &ndash;name storage -e TRACKER_SERVER=192.168.99.100:22122 -v /root:/var/root -e GROUP_NAME=group1 delron/fastdfs storage 注意：上面ip为docker的ip
+此时，命令行输入 docker ps 就可以看到两套服务都已经启动 注意： docker ps -a 可以查看所有进程 docker rm 进程号 删除对应进程
+然后分别进入宿主的命令行以及进入容器storage的命令行，发现文件夹已经共享 进入正在后台运行的storage容器
+docker exec -it storage /bin/bash 下面来个例子（上传视频）
+  
+  <div class="read-more-link">
+    <a href="/5.110/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.109/">Centos7.6上部署Supervisor来监控和操作各类服务</a>
+  </h1>
+  <time datetime="2019-06-23T14:10:29Z" class="post-date">2019-06-23 14:10:29</time>
+  supervisor 是用Python开发的一个client/server服务，是Linux/Unix系统下的一个进程管理工具，不支持Windows系统。它可以很方便的监听、启动、停止、重启一个或多个进程。用Supervisor管理的进程，当一个进程意外被杀死，supervisort监听到进程死后，会自动将它重新拉起，很方便的做到进程自动恢复的功能，不再需要自己写shell脚本来控制。
+说白了，它真正有用的功能是俩个将非daemon(守护进程)程序变成deamon方式运行对程序进行监控，当程序退出时，可以自动拉起程序。 但是它无法控制本身就是daemon的服务。  1,安装Supervisor
+yum install epel-release yum install -y supervisor 2,生成配置文件
+supervisord -c /etc/supervisord.conf 然后修改配置文件 vim /etc/supervisord.conf
+将web服务打开，需要注意ip地址要写*，否则外网访问不了，而username和password就是登录服务页面的用户名和密码，可以改的复杂一点，另外阿里云也需要向外网暴露一下9001端口
+[inet_http_server] ; inet (TCP) server disabled by default port=*:9001 ; (ip_address:port specifier, *:port for all iface) username=user ; (default is no username (open server)) password=123 ; (default is no password (open server)) 然后添加uwsgi服务的配置  [program:mypro] command =uwsgi /usr/local/bin/uwsgi --ini /root/js_back/js_back_uwsgi.ini ; 启动命令,可以看出与手动在命令行启动的命令是一样的 autostart = false ; 在 supervisord 启动的时候也自动启动 stopsignal=QUIT user=root startsecs = 5 ; 启动 5 秒后没有异常退出，就当作已经正常启动了 startretries = 3 ; 启动失败自动重试次数，默认是 3 autorestart = true ; 程序异常退出后自动重启 redirect_stderr = true ; 把 stderr 重定向到 stdout，默认 false stdout_logfile_maxbytes = 20MB ; stdout 日志文件大小，默认 50MB stdout_logfile = /root/js_back_uwsgi.
+  
+  <div class="read-more-link">
+    <a href="/5.109/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.108/">Centos上配置nginx&#43;uwsgi&#43;负载均衡配置</a>
+  </h1>
+  <time datetime="2019-06-08T14:15:39Z" class="post-date">2019-06-08 14:15:39</time>
+  负载均衡在服务端开发中算是一个比较重要的特性。因为Nginx除了作为常规的Web服务器外，还会被大规模的用于反向代理后端，Nginx的异步框架可以处理很大的并发请求，把这些并发请求hold住之后就可以分发给后台服务端(backend servers, 后面简称backend)来做复杂的计算、处理和响应，并且在业务量增加的时候可以方便地扩容后台服务器。
+说白了就是，随着业务和用户规模的增长，仅仅一台服务器无法肩负起高并发的响应，所以需要两台以上的服务器共同分担压力，而分担压力的媒介就是万能的Nginx。  首先，利用wsgi在不同的端口上起两个Django服务，比如8000和8001（不用启动nginx服务）
+然后修改nginx网站配置，将原uwsgi_pass注释，改成变量绑定
+server { listen 8000; server_name localhost; access_log /root/myweb_access.log; error_log /root/myweb_error.log; client_max_body_size 75M; location / { include uwsgi_params; uwsgi_pass mytest; #uwsgi_pass 127.0.0.1:8001; uwsgi_param UWSGI_SCRIPT video_back.wsgi; uwsgi_param UWSGI_CHDIR /root/video_back; } location /static { alias /root/video_back/static; } location /upload { alias /root/video_back/upload; } error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } } server { listen 80; server_name localhost; access_log /root/video_vue_access.log; error_log /root/video_vue_error.
+  
+  <div class="read-more-link">
+    <a href="/5.108/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.107/">Nginx-rtmp&#43; FFmpeg &#43;Docker &#43; vue.js 直播系统搭建</a>
+  </h1>
+  <time datetime="2019-05-17T14:15:39Z" class="post-date">2019-05-17 14:15:39</time>
+  思路（如图）： 1，开启推流服务器（这里我的Nginx-rtmp服务器搭建成功）
+进入docker 开启推流服务器 docker run -it -p 1935:1935 -p 8000:80 &ndash;rm alfg/nginx-rtmp 2，推流（两种方法）
+命令推流：
+查看本机摄像头及麦克风设备 ffmpeg -list_devices true -f dshow -i dummy
+音视频推流： ffmpeg -f dshow -i video=&ldquo;VMware Virtual USB Video Device&rdquo;:audio=&ldquo;Microphone (High Definition Audio Device)&rdquo; -tune:v zerolatency -f flv &ldquo;rtmp://192.168.99.100:1935/stream/test&rdquo;
+#推流视频文件 ffmpeg -re -stream_loop -1 -i test.mp4 -f flv rtmp://192.168.99.100:1935/stream/test 播放地址http://192.168.99.100:8000/live/test.m3u8 #将摄像头推流到hls ffmpeg -f vfwcap -i &quot;0&quot; -c:v libx264 -preset ultrafast -acodec libmp3lame -ar 44100 -ac 1 -f flv rtmp://localhost:1935/hls/home 播放地址http://localhost:8080/hls/home.
+  
+  <div class="read-more-link">
+    <a href="/5.107/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.106/">FFmpeg 初级使用</a>
+  </h1>
+  <time datetime="2019-05-15T18:18:49Z" class="post-date">2019-05-15 18:18:49</time>
+  ffmpeg来处理多种媒体文件，对帧进行操作的时候非常的复杂，下面介绍下使用FFmpeg对视频文件的操作。
+1，安装
+windows安装ffmpeg：
+下载ffmpeg文件解压文件到c盘 配置环境变量C:\ffmpeg\bin 修改python文件subprocess.py shell=False 改为true pip install ffmpeg-python
+centos安装ffmpeg
+sudo rpm &ndash;import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm sudo yum install ffmpeg ffmpeg-devel -y pip3 install ffmpeg-python
+2，应用
+查看本机摄像头及麦克风设备 ffmpeg -list_devices true -f dshow -i dummy
+音视频推流： ffmpeg -f dshow -i video=&ldquo;VMware Virtual USB Video Device&rdquo;:audio=&ldquo;Microphone (High Definition Audio Device)&rdquo; -tune:v zerolatency -f flv &ldquo;rtmp://192.168.99.100:1935/stream/test&rdquo;
+ #读取视频信息 info = ffmpeg.probe(&quot;./test.mp4&quot;) #截图操作 times = [1,10] for time in times: input_file = '.
+  
+  <div class="read-more-link">
+    <a href="/5.106/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.105/">Websocket---认识篇</a>
+  </h1>
+  <time datetime="2019-05-13T17:15:59Z" class="post-date">2019-05-13 17:15:59</time>
+  为什么需要 WebSocket ？
+了解计算机网络协议的人，应该都知道：HTTP 协议是一种无状态的、无连接的、单向的应用层协议。它采用了请求/响应模型。通信请求只能由客户端发起，服务端对请求做出应答处理。 这种通信模型有一个弊端：HTTP 协议无法实现服务器主动向客户端发起消息。这种单向请求的特点，注定了如果服务器有连续的状态变化，客户端要获知就非常麻烦。 大多数 Web 应用程序将通过频繁的异步JavaScript和AJAX请求实现长轮询。轮询的效率低，非常浪费资源 WebSocket 连接允许客户端和服务器之间进行全双工通信， 以便任一方都可以通过建立的连接将数据推送到另一端。WebSocket 只需要建立一次连接，就可以一直保持连接状态。这相比于轮询方式的不停建立连接显然效率要大大提高。
+WebSocket 是什么？
+webSocket是一种在单个TCP连接上进行全双工通信的协议。
+我们已经有了 HTTP 协议，为什么还需要另一个协议？它能带来什么好处？
+因为 HTTP 协议有一个缺陷：通信只能由客户端发起 我们都知道轮询的效率低，非常浪费资源（因为必须不停连接，或者 HTTP 连接始终打开）, 因此websocket应运而生。
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.104/">centos7.6上部署vue.js2.6前端应用</a>
+  </h1>
+  <time datetime="2019-05-08T09:10:19Z" class="post-date">2019-05-08 09:10:19</time>
+  1，VUE逻辑编写完成后在当前项目下打包
+npm run build 需要注意的是，当打包完毕后，需要将入口的index.html的项目dist路径改成相对路径 另外需要注意的一点是，一旦打包vue.js项目，需要确保项目内必须使用vue.js语法来写功能，比如a标签要替换成, 传统的window.location.href跳转页面也要换成this.$router.push({ path: &lsquo;/home/first&rsquo; })这种形式。
+2，建立要部署上线的前端文件夹，放入dist ，src(static),,index 三个文件 3，登录centos系统，运行 chmod 755 /root/video_vue 对项目文件授权
+修改nginx 配置文件 vim /etc/nginx/conf.d/default.conf 增加下面的配置，这里前端服务默认监听80端口
+//后端管理系统入口 server { listen 8000; server_name localhost; access_log /root/myweb_access.log; error_log /root/myweb_error.log; client_max_body_size 75M; location / { include uwsgi_params; uwsgi_pass 127.0.0.1:8001; uwsgi_param UWSGI_SCRIPT video_back.wsgi; uwsgi_param UWSGI_CHDIR /root/video_back; } location /static { alias /root/video_back/static; } location /upload { alias /root/video_back/upload; } error_page 500 502 503 504 /50x.html; location = /50x.
+  
+  <div class="read-more-link">
+    <a href="/5.104/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.103/">阿里云Centos7.6中部署nginx1.16&#43;uwsgi2.0.18&#43;Django2.0.4</a>
+  </h1>
+  <time datetime="2019-05-06T07:11:59Z" class="post-date">2019-05-06 07:11:59</time>
+  当你购买了阿里云的ecs，涉及ecs的有两个密码，一定要搞清楚，一个密码是远程链接密码，也就是通过浏览器连接服务器的密码，另外一个是实例密码，这个密码就是ecs的root密码，一般情况下，我们经常用到的是实例密码。 与此同时，需要设置一下安全组策略，将一些必要的端口暴露出来，否则会被拦截 前置操作完成，就可以进行软件的安装了，可以通过一些三方的ssh软件进行连接，win下面流行的putty,xshell,moba等，这里推荐使用moba，可以语法高亮并且自动记住密码
+安装python3 和 django 以及一些django扩展  yum install epel-release yum install python36 wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py python3 get-pip.py 安装django pip3 install pymysql pip3 install pillow pip3 install pycryptodome pip3 install cryptography pip3 install Django==2.0.4 pip3 install djangorestframework pip3 install django-cors-headers pip3 install celery pip3 install celery-with-redis pip3 install django-celery pip3 install dwebsocket  安装opencv-python
+yum install numpy opencv* pip3 install opencv-python yum whatprovides libstdc++.so.6 yum install libstdc++-4.4.7-3.el6.i686 yum install libSM-1.
+  
+  <div class="read-more-link">
+    <a href="/5.103/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.102/">响应式网站设计---Bootstrap</a>
+  </h1>
+  <time datetime="2019-05-05T09:10:23Z" class="post-date">2019-05-05 09:10:23</time>
+  响应式布局可以帮助我们实现网站布局随屏幕大小自动调整的需求，实现不同屏幕分辨率的终端上浏览网页的不同展示方式，使得网页在PC端和手机端均可以完美的展现其内容，具有自适应性。
+使用基于Bootstrap的栅格系统
+ Bootstrap响应式布局是利用其栅格系统，对于不同的屏幕采用不同的类属性。在开发中可以只写一套代码在手机平板，PC端都能使用，而不用考虑使用媒体查询（针对不同的设备分别写不同的代码）。Bootstrap的官方解释：Bootstrap提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为做多12列。栅格系统用于通过一系列的行（row）与列（column）的组合来创建页面布局。   栅格系统的工作原理  （1）行（row）必须包含在.container(固定宽度)或.container-fluid(100%宽度)中，以便为其赋予合适的排列内补（padding）。 （2）通过行（row）在水平方向创建一组列（column）。 （3）自己内容应当放置于列（column）内，并且，只有列可以作为行（row）的直接子元素。 （4）类似.row和.col-xs-4这种预定义的类，可以用来快速创建栅格布局。 （5）通过为列设置padding属性，从而创建列与列之间的间隔（gutter）。通过为.row元素设置负值margin从而抵消为.container元素设置的padding，也就间接为行（row）所包含的列（column）抵消掉了padding。 （6）栅格系统的列是通过指定1到12的值来表示其跨越范围。例如三个等宽的列可以使用三个.col-xs-4来创建。 （7）如果一行（row）中包含了的列（column）大于12，多余的列所在的元素将作为一个整体另起一行排列。 （8）栅格类适用于与屏幕宽度大于或等于分界点大小的设备，并且针对小屏幕覆盖栅格类。
+ &lt;div class=&quot;container&quot;&gt; &lt;h1&gt;Hello, world!&lt;/h1&gt; &lt;div class=&quot;row&quot;&gt; &lt;div class=&quot;col-md-3&quot; style=&quot;background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt; &lt;h4&gt;第一列&lt;/h4&gt; &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit.&lt;/p&gt; &lt;/div&gt; &lt;div class=&quot;col-md-9&quot; style=&quot;background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt; &lt;h4&gt;第二列 - 分为四个盒子&lt;/h4&gt; &lt;div class=&quot;row&quot;&gt; &lt;div class=&quot;col-md-6&quot; style=&quot;background-color: #B18904; box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt; &lt;p&gt;Consectetur art party Tonx culpa semiotics.
+  
+  <div class="read-more-link">
+    <a href="/5.102/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.101/">GitBook简单的使用</a>
+  </h1>
+  <time datetime="2019-04-29T18:20:53Z" class="post-date">2019-04-29 18:20:53</time>
+  GitBook 是一个基于 Node.js 的命令行工具，支持 Markdown 和 AsciiDoc 两种语法格式，可以输出 HTML、PDF、eBook 等格式的电子书。
+使用 GitBook 管理文档，预览、制作电子书；同时通过 Git 管理书籍内容的变更，并将其托管到云端（比如 GitHub、GitLab、码云，或者是自己搭建的 Git 服务器），实现多人协作。
+1，安装
+GitBook 是基于 Node.js，所以首先需要安装 Node.js(鉴于之前安装过，这里不再介绍了)
+npm install -g gitbook-cli
+查看是否安装成功 2，建立项目
+进入需要建立项目的文件夹目录下初始化
+git book init
+会生成以下文件 README.md —— 书籍的介绍写在这个文件里 SUMMARY.md —— 书籍的目录结构在这里配置 编辑内容这里不再演示了
+3，查看编辑好的效果
+gitbook serve
+效果如下
+打包 ： gitbook build
+由于时间问题，今天就先介绍到这里
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.100/">VUE 参数共享问题</a>
+  </h1>
+  <time datetime="2019-04-27T14:25:03Z" class="post-date">2019-04-27 14:25:03</time>
+  export default { data () { return { msg: &quot;这是一个变量&quot;, xx:&quot;&quot;, } }, mounted : function(){ var username = $.cookie(&quot;username&quot;) $(&quot;#user&quot;).html(username) //获取url中的参数 function getUrlParam(name) { var reg = new RegExp(&quot;(^|&amp;)&quot; + name + &quot;=([^&amp;]*)(&amp;|$)&quot;); //构造一个含有目标参数的正则表达式对象 var r = window.location.search.substr(1).match(reg); //匹配目标参数 if (r != null) return unescape(r[2]); return null; //返回参数值 } var xx = getUrlParam('id'); let params = new URLSearchParams(); params.append('id',xx) //每个商品的信息 this.axios({ url:'http://127.0.0.1:8000/userctrl/good_info', method:'post', data:params, responseType:&quot;json&quot;, }) .then(function(obj){ }） methods:{ shuochang: function(){ if($(&quot;#haha&quot;).
+  
+  <div class="read-more-link">
+    <a href="/5.100/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.99/">Django之JWT理解及简单应用</a>
+  </h1>
+  <time datetime="2019-04-25T09:07:53Z" class="post-date">2019-04-25 09:07:53</time>
+  Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（(RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。简单来说就是 JWT(Json Web Token)是实现token技术的一种解决方案
+JWT的使用场景主要包括：
+　1) 认证，这是比较常见的使用场景，只要用户登录过一次系统，之后的请求都会包含签名出来的token，通过token也可以用来实现单点登录。
+　2)交换信息，通过使用密钥对来安全的传送信息，可以知道发送者是谁、放置消息被篡改。
+token验证和session认证的区别
+传统的session认证
+http协议本身是一种无状态的协议，而这就意味着如果用户向我们的应用提供了用户名和密码来进行用户认证，那么下一次请求时，用户还要再一次进行用户认证才行，因为根据http协议，我们并不能知道是哪个用户发出的请求，所以为了让我们的应用能识别是哪个用户发出的请求，我们只能在服务器存储一份用户登录的信息，这份登录信息会在响应时传递给浏览器，告诉其保存为cookie,以便下次请求时发送给我们的应用，这样我们的应用就能识别请求来自哪个用户了,这就是传统的基于session认证。
+session缺点
+基于session的认证使应用本身很难得到扩展，随着不同客户端用户的增加，独立的服务器已无法承载更多的用户
+Session方式存储用户id的最大弊病在于要占用大量服务器内存，对于较大型应用而言可能还要保存许多的状态。
+基于session认证暴露的问题
+Session需要在服务器保存，暂用资源 扩展性 session认证保存在内存中 ，无法扩展到其他机器中 CSRF 基于cookie来进行用户识别的, cookie如果被截获，用户就会很容易受到跨站请求伪造的攻击。
+JWT包含了使用.分隔的三部分： Header 头部 Payload 负载 Signature 签名
+优点
+因为json的通用性，所以JWT是可以进行跨语言支持的。 因为有了payload部分，所以JWT可以在自身存储一些其他业务逻辑所必要的非敏感信息。 便于传输，jwt的构成非常简单，字节占用很小，所以它是非常便于传输的。 它不需要在服务端保存会话信息, 所以它易于应用的扩展 python 中的Demo:
+import jwt encoded_jwt = jwt.encode({'username':'adimn'},'secret_key',algorithm='HS256') de_code = jwt.decode(encoded_jwt,'secret_key',algorithms=['HS256']) print(encoded_jwt) print(de_code) #运行结果： b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkaW1uIn0.MeQOdDiiI39mBpgbFNnBVNdJMDhUpRTxziPeFJKB2fA' {'username': 'adimn'}  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.98/">Docker入门级简单的操作命令</a>
+  </h1>
+  <time datetime="2019-04-23T08:27:33Z" class="post-date">2019-04-23 08:27:33</time>
+  在理解 Docker 之前，首先得先区分清楚两个概念，容器和虚拟机。
+虚拟机都需要有自己的操作系统，虚拟机一旦被开启，预分配给它的资源将全部被占用。
+容器技术是和我们的宿主机共享硬件资源及操作系统，可以实现资源的动态分配。
+Docker 的接口相当简单，用户可以方便地创建和使用容器，把自己的应用放入容器。容器还可以进行版本管理、复制、分享、修改，就像管理普通的代码一样。
+Docker 相比于传统虚拟化方式具有更多的优势：
+1，Docker 启动快速属于秒级别。虚拟机通常需要几分钟去启动。
+2，Docker 需要的资源更少。Docker 在操作系统级别进行虚拟化，Docker 容器和内核交互，几乎没有性能损耗，性能优于通过 Hypervisor 层与内核层的虚拟化。
+3，Docker 更轻量。Docker 的架构可以共用一个内核与共享应用程序库，所占内存极小。同样的硬件环境，Docker 运行的镜像数远多于虚拟机数量，对系统的利用率非常高。
+Docker 中包括三个基本的概念：
+Image(镜像) Container(容器) Repository(仓库) 镜像是 Docker 运行容器的前提，仓库是存放镜像的场所，可见镜像更是 Docker 的核心。
+为什么用docker：
+更快速的交付和部署 Docker在整个开发周期都可以完美的辅助你实现快速交付。Docker允许开发者在装有应用和服务本地容器做开发。可以直接集成到可持续开发流程中。
+例如：开发者可以使用一个标准的镜像来构建一套开发容器，开发完成之后，运维人员可以直接使用这个容器来部署代码。 Docker 可以快速创建容器，快速迭代应用程序，并让整个过程全程可见，使团队中的其他成员更容易理解应用程序是如何创建和工作的。 Docker 容器很轻很快！容器的启动时间是秒级的，大量地节约开发、测试、部署的时间。
+高效的部署和扩容 Docker 容器几乎可以在任意的平台上运行，包括物理机、虚拟机、公有云、私有云、个人电脑、服务器等。 这种兼容性可以让用户把一个应用程序从一个平台直接迁移到另外一个。
+Docker的兼容性和轻量特性可以很轻松的实现负载的动态管理。你可以快速扩容或方便的下线的你的应用和服务，这种速度趋近实时。
+更高的资源利用率 Docker 对系统资源的利用率很高，一台主机上可以同时运行数千个 Docker 容器。容器除了运行其中应用外，基本不消耗额外的系统资源，使得应用的性能很高，同时系统的开销尽量小。传统虚拟机方式运行 10 个不同的应用就要起 10 个虚拟机，而Docker 只需要启动 10 个隔离的应用即可。
+更简单的管理 使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分发和更新，从而实现自动化并且高效的管理。
+用命令
+安装时注意修改 git安装路径
+显示版本号
+docker –versions
+下载镜像
+docker pull centos:版本号
+显示镜像
+  
+  <div class="read-more-link">
+    <a href="/5.98/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.97/">python webbrowser模块（浏览器操作）</a>
+  </h1>
+  <time datetime="2019-04-21T10:27:31Z" class="post-date">2019-04-21 10:27:31</time>
+  webbrowser模块提供了一个高级接口来显现基于Web的文档，大部分情况下只需要简单的调用open()办法。
+webbrowser定义了如下的反常：
+exception webbrowser.Error, 当浏览器控件发作过错是会抛出这个反常
+webbrowser有以下办法：
+webbrowser.open(url[, new=0[, autoraise=1]])
+这个办法是在默许的浏览器中显现url, 假如new = 0, 那么url会在同一个浏览器窗口下打开，假如new = 1, 会打开一个新的窗口，假如new = 2, 会打开一个新的tab, 假如autoraise ＝ true, 窗口会主动增加。
+webbrowser.open_new(url)
+在默许浏览器中打开一个新的窗口来显现url, 否则，在仅有的浏览器窗口中打开url
+webbrowser.open_new_tab(url)
+import webbrowser as web #new:0：同一浏览器窗口打开 1：打开浏览器新的窗口，2：打开浏览器窗口新的tab #autoraise=True:窗口自动增长 web.get('chrome').open('http://www.baidu.com',new=0,autoraise=True) web.open_new('http://www.baidu.com') web.open_new_tab('http://www.baidu.com')  在默许浏览器中当开一个新的tab来显现url, 否则跟open_new()相同
+webbrowser.get([name]) 依据name返回一个浏览器目标，假如name为空，则返回默许的浏览器
+webbrowser.register(name, construtor[, instance])
+注册一个名字为name的浏览器，假如这个浏览器类型被注册就能够用get()办法来获取。
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.96/">VUE 安装&amp;创建一个项目</a>
+  </h1>
+  <time datetime="2019-04-19T10:25:51Z" class="post-date">2019-04-19 10:25:51</time>
+  1，安装node.js
+vue依赖nodejs，所以首先要安装node.js
+然后打开cmd，输入命令， node -v。正常出现版本号，说明你已经安装成功了
+下载地址：http://nodejs.cn/download/
+2，npm（cnpm）
+npm是node的包管理工具
+使用node之后你会接触各种各样成千上万的Package（包），就需要一个管理工具能很好的解决它的安装，更新，依赖包安装等等的维护。默认安装完node之后，npm会自动安装上的。还是cmd，输入命令 npm -V 。正常出现版本号，就可以了
+由于有些npm有些资源被屏蔽或者是国外资源的原因，经常会导致用npm安装依赖包的时候失败,使用国内镜像cnpm,可以解决这个问题
+npm install -g cnpm &ndash;registry=https://registry.npm.taobao.org
+3，安装 vue.js
+vue-cli是一种全局脚手架用于帮助搭建所需的模板框架
+cnpm install -g vue-cli
+npm强制清除缓存
+cnpm cache clean —force
+4，打开要创建的项目路径目录，创建项目
+// 生成一个基于 webpack 模板的新项目 vue init webpack 项目名 或者 vue init webpack-simple 项目名
+注意：vue init webpack-simple的项目默认打包后之后一个html和一个js文件，而vue init webpack项目默认打包完之后，会有很标准的目录
+然后CD到项目名
+//安装路由
+cnpm install vue-router &ndash;save
+//安装jquery
+cnpm install jquery &ndash;save
+// 启动开发服务器 ctrl+c 停止服务
+cnpm run dev
+这样，vue的项目就搭建成功了
+有时起服务的时候会报错，可以补全包 cnpm install
+  
+  <div class="read-more-link">
+    <a href="/5.96/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.95/">Python 中文分词(结巴分词)</a>
+  </h1>
+  <time datetime="2019-04-15T09:15:15Z" class="post-date">2019-04-15 09:15:15</time>
+  特点:
+支持三种分词模式：
+精确模式，试图将句子最精确地切开，适合文本分析； 全模式，把句子中所有的可以成词的词语都扫描出来, 速度非常快，但是不能解决歧义； 搜索引擎模式，在精确模式的基础上，对长词再次切分，提高召回率，适合用于搜索引擎分词。 支持繁体分词
+支持自定义词典
+MIT 授权协议
+常用的分词：
+import jieba seg_list = jieba.cut(&quot;我来到北京清华大学&quot;, cut_all=True) print(&quot;Full Mode: &quot; + &quot;/ &quot;.join(seg_list)) # 全模式 seg_list = jieba.cut(&quot;我来到北京清华大学&quot;, cut_all=False) print(&quot;Default Mode: &quot; + &quot;/ &quot;.join(seg_list)) # 精确模式 seg_list = jieba.cut(&quot;他来到了网易杭研大厦&quot;) # 默认是精确模式 print(&quot;, &quot;.join(seg_list)) seg_list = jieba.cut_for_search(&quot;小明硕士毕业于中国科学院计算所，后在日本京都大学深造&quot;) # 搜索引擎模式 print(&quot;, &quot;.join(seg_list))  输出: 【全模式】: 我/ 来到/ 北京/ 清华/ 清华大学/ 华大/ 大学 【精确模式】: 我/ 来到/ 北京/ 清华大学 【新词识别】：他, 来到, 了, 网易, 杭研, 大厦 (此处，“杭研”并没有在词典中，但是也被Viterbi算法识别出来了) 【搜索引擎模式】： 小明, 硕士, 毕业, 于, 中国, 科学, 学院, 科学院, 中国科学院, 计算, 计算所, 后, 在, 日本, 京都, 大学, 日本京都大学, 深造  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.94/">Django2.0.4 &#43; websocket 实现实时通信，主动推送，聊天室及客服系统</a>
+  </h1>
+  <time datetime="2019-04-08T20:10:05Z" class="post-date">2019-04-08 20:10:05</time>
+  webSocket是一种在单个TCP连接上进行全双工通信的协议。
+webSocket使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输
+现在，很多网站为了实现推送技术，所用的技术都是轮询。轮询是在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。
+基于dwebsocket库来将socket嵌入到django服务中，使其服务兼具http协议和socket协议，能够达到实时前后端通信，后端主动推送等功能。
+1，按装依赖库dwebsocket库
+pip install dwebsocket
+2,定义视图逻辑
+from dwebsocket.decorators import accept_websocket ## 定时和立即推送任务 @accept_websocket def test_websocket(request): global message_tui_conunt global message_tui_id if request.is_websocket(): while 1: print(&quot;————————&quot;) if message_tui_conunt: time.sleep(1) dit = {'contnet':message_tui_conunt} request.websocket.send(json.dumps(dit)) message_tui_conunt = '' if message_tui_id: time.sleep(1) res = Messages.objects.get(id=int(message_tui_id)) time_tui = str(res.times) print(time_tui) if time.strftime('%Y-%m-%d %H:%M:%S') == time_tui: dit = {'contnet':res.content} request.websocket.send(json.dumps(dit)) message_tui_id = ''  3，配置路由
+path('test_socket',test_socket), path('test_websocket',test_websocket)  4，前端发送消息页面
+&lt;body&gt; &lt;input id=&quot;chat-message-input&quot; type=&quot;text&quot; size=&quot;100&quot;/&gt;&lt;br/&gt; &lt;input id=&quot;chat-message-submit&quot; type=&quot;button&quot; value=&quot;Send&quot; onclick='sendmessage()'/&gt; &lt;/body&gt; &lt;script&gt; //生成socket对象 //前端发送消息 //var socket = new WebSocket(&quot;ws:127.
+  
+  <div class="read-more-link">
+    <a href="/5.94/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.93/">Django ORM中datetiem数据类型字段无法对比处理办法</a>
+  </h1>
+  <time datetime="2019-04-06T19:30:15Z" class="post-date">2019-04-06 19:30:15</time>
+  在做商城项目中浏览足迹时，我利用浏览商品的ID和浏览的时间保存到browse表中，然后在我的足迹页面根据最近日期进行展示
+条件：每天/个商品只能如一次表
+后台代码如下：
+#存储浏览足迹到browse表 def good_browse(request): id= request.POST.get('id') now_time = time.strftime('%Y-%m-%d') ret = Browse.objects.all().values('browse_time') rr = [str(i['browse_time']).split(' ')[0] for i in list(ret)] res = Browse.objects.filter(good_id=int(id)) #进行每天/个商品只能如一次表判断 if now_time in rr and res: return HttpResponse(&quot;fail&quot;) else: r = Browse(good_id=int(id)) r.save() return HttpResponse(&quot;ok&quot;) #展示浏览足迹 class Browse_show(APIView): def post(self,request): res = Browse.objects.all().values('browse_time','good_id').order_by('-browse_time') rr = [str(i['browse_time']).split(' ')[0] for i in list(res)] rr = set(rr) rr = sorted(list(rr),reverse=True) res=list(res) ret = [] browse_time=[] for i in res: ret.
+  
+  <div class="read-more-link">
+    <a href="/5.93/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.92/">Django ORM存储datetime 时间误差8小时问题</a>
+  </h1>
+  <time datetime="2019-04-03T09:20:12Z" class="post-date">2019-04-03 09:20:12</time>
+  今天使用django ORM 将获取到的时间入库，并未出现问题，但是后来发现时间晚了8小时，经查询Django官方文档发现获取本地时间和UTC时间有差别。
+首先科普下： UTC是协调世界时 UTC相当于本初子午线(即经度0度)上的平均太阳时，过去曾用格林威治平均时(GMT)来表示.北京时间比UTC时间早8小时，以1999年1月1日0000UTC为例，UTC时间是零点，北京时间为1999年1月1日早上8点整
+错误如图： 解决如下：
+第一种：修改settings中的配置项
+找到settings中的USE_TZ= True，把True改成False即可
+第二种：在函数直接传递时间参数时，确保时间已经转换成UTC时间
+import datetime from django.utils.timezone import utc now = datetime.datetime.utcnow().replace(tzinfo=utc)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.91/">Django &#43; Axios &amp; Ajax post和get 传参</a>
+  </h1>
+  <time datetime="2019-03-28T08:40:21Z" class="post-date">2019-03-28 08:40:21</time>
+  话说千遍淡如水，不如代码来一通。
+Axios post:
+复制代码 let params = new URLSearchParams(); params.append('id',xx) axios({ url:'http://127.0.0.1:8000/userctrl/shoucang', method:'post', data:params, responseType:&quot;text&quot;, }) .then(function(obj){ }) //后端取值： id = request.POST.get('id')  Axios get:
+axios({ url:'http://127.0.0.1:8000/userctrl/shoucang', method:'get', params:{'id':xx}, responseType:&quot;text&quot;, }) .then(function(obj){ }) //后端取值： id= request.GET.get('id')  Ajax post:
+ $.ajax({ url:&quot;http://127.0.0.1:8000/userctrl/shoucang&quot;, data:{'id':xx}, type:&quot;post&quot;, async:false, dataType:&quot;text&quot;, success:function(obj){ console.log(obj) } }) //后端取值： id = request.POST.get('id')  Ajax get:
+$.ajax({ url:&quot;http://127.0.0.1:8000/userctrl/shoucang&quot;, data:{'id':xx}, type:&quot;get&quot;, async:false, dataType:&quot;text&quot;, success:function(obj){ console.log(obj) }) //后端取值： id= request.GET.get('id')  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.90/">解决秒杀活动高并发出现负库存（Redis）</a>
+  </h1>
+  <time datetime="2019-03-24T13:10:21Z" class="post-date">2019-03-24 13:10:21</time>
+  商城在秒杀活动开始时，同时有好多人来请求这个接口，即便做了判断库存逻辑，也难免防止库存出现超卖，造成损失
+Django中的ORM本身就对数据库做了防范，但再过亿级访问也扛不住
+下面利用Redis的过载防止负库存
+#使用REDIS 阻止秒杀时并发状态造成的负库存 import redis #定义过载 def limit_handler(): r = redis.Redis(host='localhost', port=6379) &quot;&quot;&quot; return True: 允许; False: 拒绝 &quot;&quot;&quot; amount_limit = 10 # 限制数量 keyname = 'limit123' # redis key name incr_amount = 1 # 每次增加数量 # 判断key是否存在 if not r.exists(keyname): # 为了方便测试，这里设置默认初始值为95 # setnx可以防止并发时多次设置key r.setnx(keyname, 0) # 数据插入后再判断是否大于限制数 if r.incrby(keyname, incr_amount) &lt;= amount_limit: return True return False  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.89/">jquery网页倒计时效果，秒杀</a>
+  </h1>
+  <time datetime="2019-03-15T14:11:51Z" class="post-date">2019-03-15 14:11:51</time>
+  function FreshTime(){ var endtime=new Date('2019-4-12 18:00:00');//结束时间 var nowtime = new Date();//当前时间 var lefttime=parseInt((endtime.getTime()-nowtime.getTime())/1000); d=parseInt(lefttime/3600/24); h=parseInt((lefttime/3600)%24); m=parseInt((lefttime/60)%60); s=parseInt(lefttime%60); document.getElementById(&quot;Time&quot;).innerHTML=&quot;还剩&quot; + d+&quot;天&quot;+h+&quot;小时&quot;+m+&quot;分&quot;+s+&quot;秒&quot;; if(lefttime&lt;=0){ document.getElementById(&quot;Time&quot;).innerHTML=&quot;秒杀已结束&quot;; clearInterval(hh); $(&quot;.operate_btn&quot;).show() } } FreshTime(); var hh; hh=setInterval(FreshTime,1000);  效果如下： 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.88/">Apache ab并发负载压力测试（python&#43;django&#43;mysql&#43;apache）</a>
+  </h1>
+  <time datetime="2019-03-02T14:10:01Z" class="post-date">2019-03-02 14:10:01</time>
+  如标题，大家都知道秒杀中存在高并发使库存骤然为0，但在我们个人PC或小区域内是模拟不出这样的情景
+现在利用 Apache ab并发负载压力测试
+1，数据库建入库存字段并映射模型
+2，view编写脚本
+#秒杀压力测试 def miaosha(request): res_one = Newss.objects.get(pk=1) if res_one.pd &gt; 0: time.sleep(5) # res_one.pd = res_one.pd - 1 # res_one.save() with connection.cursor() as c: c.execute(' update newss set pd = pd - 1 where id = 1 ') return HttpResponse('ok') else: return HttpResponse('没有了')  3，配置路由
+#秒杀压力测试 path(&quot;maiosha&quot;,miaosha),  4，使用命令行窗口，定位到apache安装目录的bin目录下
+D:\xampp\apache\bin&gt;ab -n 5000 -c 4000 http://127.0.0.1:8000/md_admin/maiosha
+（-n发出5000个请求，-c模拟4000并发，相当4000人同时访问，后面是测试url）
+ab -t 60 -c 100 http://127.0.0.1:8000/md_admin/maiosha 在60秒内发请求，一次100个请求
+这样的话我库存10键商品的话瞬间就为负数了
+今天就些下模拟测试秒杀高并发，解决办法后续奉上。。。。。。
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.87/">Python&#43;Django 后台view异步接不到参数问题</a>
+  </h1>
+  <time datetime="2019-02-28T01:20:11Z" class="post-date">2019-02-28 01:20:11</time>
+  因为后台需获取前台的多个ID参数（checkbox）
+//获取checkbox的每个ID并放到数组内 var _items = []; var items = document.getElementsByName('product_id'); for(var i=0;i&lt;items.length;i++) { if (items[i].checked){ _items.push(items[i].value); } };  通过ajax传到后台，问题解决为将数组转为字符串，后台才能接到参数（标黄）
+ $.ajax({ url:&quot;http://127.0.0.1:8000/userctrl/orders&quot;, data:{'o_id':_items.toString(),'user':$.cookie(&quot;username&quot;),'sum_price':$('#sum_price').val()}, type:&quot;post&quot;, async:false, dataType:&quot;text&quot; }) success:(function(obj){ }) }  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.86/">ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接</a>
+  </h1>
+  <time datetime="2019-02-22T07:24:01Z" class="post-date">2019-02-22 07:24:01</time>
+  Traceback (most recent call last): File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 138, in run self.finish_response() File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 180, in finish_response self.write(data) File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 274, in write self.send_headers() File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 332, in send_headers self.send_preamble() File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 255, in send_preamble (&lsquo;Date: %s\r\n&rsquo; % format_date_time(time.time())).encode(&lsquo;iso-8859-1&rsquo;) File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 453, in _write result = self.stdout.write(data) File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 796, in write self._sock.sendall(b) ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+[09/Apr/2019 18:30:05] &ldquo;POST /userctrl/orders HTTP/1.1&rdquo; 500 59 Exception happened during processing of request from (&lsquo;127.
+  
+  <div class="read-more-link">
+    <a href="/5.86/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.85/">SyntaxError:unexpected EOF while parsing(&lt;string,line 0&gt;)</a>
+  </h1>
+  <time datetime="2019-01-25T13:23:11Z" class="post-date">2019-01-25 13:23:11</time>
+  在python+Django中出现报错：（上图）
+经断点发现：python内置函数eval在处理空字符串时会返回EOF错误，判断后解决
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.84/">Django之get请求url的参数</a>
+  </h1>
+  <time datetime="2019-01-12T14:22:12Z" class="post-date">2019-01-12 14:22:12</time>
+  当get网址是127.0.0.1:8000/mysite10这种类型的网址时
+有两种方法：
+1，在urls的路由的urlpatterns里面这样定义路由
+re_path('^mysite(\d+)$',mysite),  　views里面的mysite函数取值是这样的：
+def mysite(request,id):  2, 在urls的路由的urlpatterns里面这样定义路由
+re_path(mysite(?P&lt;a&gt;\d+)$',mysite),  　views里面的mysite函数取值是这样的：
+def mysite(request,id):  当get网址是127.0.0.1:8000/mysite?id=20这种类型的网址时　**注意：Django中regex不会去匹配GET或POST参数或域名，例如对于https://www.example.com/myapp/，regex只尝试匹配myapp/。对于https://www.example.com/myapp/?page=3,regex也只尝试匹配myapp/
+在urls的路由的urlpatterns里面里面这样定义路由
+path('mysite',mysite),  views里面的mysite函数取值是通过request.GET获取请求携带的参数:
+def mysite(request): id = request.GET.get('id','0')  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.83/">Django-- KindEditor 富文本编辑器使用</a>
+  </h1>
+  <time datetime="2018-12-28T15:41:02Z" class="post-date">2018-12-28 15:41:02</time>
+  KindEditor是一款还不错的开源的HTML可视化编辑器，主要用于让用户在网站上获得所见即所得编辑效果，兼容IE、Firefox、Chrome、Safari、Opera等主流浏览器。之所以推荐这一款编辑器，是因为它非常的轻量化，也不需要安装，从而耦合度非常低，无论是使用表单提交内容还是异步提交，都非常方便，这里简单介绍一下如何在Django2.0.4中使用这款富文本编辑器。
+　首先 在官网下载文件 http://kindeditor.net/down.php
+　解压后，删除掉一些没有用的文件，只留下lang(语言包) themes(风格包) plugins(插件) 和 kindeditor-all-min.js
+　将kindeditor文件夹放到项目目录的static/js文件中去
+　最后在页面中就可以使用了
+首先导入
+&lt;script src=&quot;{% static 'js/jquery-1.12.1.min.js' %}&quot;&gt;&lt;/script&gt; &lt;script src=&quot;{% static 'js/axios.js' %}&quot;&gt;&lt;/script&gt; &lt;script src=&quot;{% static 'js/kindeditor/kindeditor-all-min.js' %}&quot;&gt;&lt;/script&gt;  body中使用
+内容:&lt;textarea id='content' value=&quot;&quot;&gt;{{i.content}}&lt;/textarea&gt; &lt;script&gt; initKindEditor(); function initKindEditor() { var kind = KindEditor.create('#content', { width: '100%', // 文本框宽度(可以百分比或像素) height: '300px', // 文本框高度(只能像素) minWidth: 200, // 最小宽度（数字） minHeight: 400 // 最小高度（数字） }); } &lt;/script&gt;  异步将富文本内容提交给后台，就需要动态获取富文本的内容
+&lt;script&gt; function add(){ var content = $(document.
+  
+  <div class="read-more-link">
+    <a href="/5.83/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.82/">HTML轮播图实现（前后端分离）</a>
+  </h1>
+  <time datetime="2018-12-11T13:40:12Z" class="post-date">2018-12-11 13:40:12</time>
+  1，首先前后端分离用到了3个插件 2，异步请求后端获取数据库图片地址（图片名字）
+//图片轮播 axios({ url:'http://127.0.0.1:8000/userctrl/image', method:'get', responseType:&quot;json&quot;, }) .then(function(obj){ let list = obj.data for(var i=0;i&lt;list.length;i++){ $(&quot;#tuu&quot;+[i]).attr('src','http://127.0.0.1:8000/upload/'+list[i]['fields']['img']) } })  **后端过程略过
+3，模板渲染部分
+&lt;ul class=&quot;slide&quot; &gt; &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu0&quot;&gt;&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu1&quot;&gt;&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu2&quot;&gt;&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a&gt;&lt;img src=&quot;&quot; id=&quot;tuu3&quot;&gt;&lt;/a&gt;&lt;/li&gt; &lt;/ul&gt;  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.81/">select下拉菜单实现通过数据库查询来设置默认值</a>
+  </h1>
+  <time datetime="2018-11-21T12:10:22Z" class="post-date">2018-11-21 12:10:22</time>
+  查询网上各种资料要不比较难理解，要么有问题，现有一种简单通俗的理解方法
+思路：读取数据库数据1，数据2需用到select选择菜单，但是又想每次查看是都显示读数据库的默认信息
+demo:
+{% for i in res%} &lt;tr id=&quot;tr_{{i.id}}&quot;&gt; &lt;td&gt;{{i.id}}&lt;/td&gt; &lt;td&gt;{{i.author}}&lt;/td&gt; &lt;td&gt;{{i.title}}&lt;/td&gt; &lt;td&gt; &lt;select id='select_{{i.id}}'&gt; {% for n in ret%} {% if i.cate_id == n.id %} &lt;option value=&quot;{{n.id}}&quot; selected=&quot;selected&quot;&gt;{{n.name}}&lt;/option&gt; {%else%} &lt;option value=&quot;{{n.id}}&quot;&gt;{{n.name}}&lt;/option&gt; {%endif%} {%endfor%} &lt;/select&gt; &lt;button onclick=&quot;qu('{{i.id}}')&quot;&gt;确认&lt;/button&gt; &lt;/td&gt; &lt;td&gt;&lt;a href=&quot;{% url 'md:news_edit' i.id %}&quot;&gt;修改&lt;/a&gt; &lt;button onclick=&quot;del('{{i.id}}')&quot;&gt;删除&lt;/button&gt;&lt;/td&gt; &lt;/tr&gt; {%endfor%}  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.80/">python作用域问题</a>
+  </h1>
+  <time datetime="2018-11-14T09:11:50Z" class="post-date">2018-11-14 09:11:50</time>
+  今天出了个低级的错误，最后确定是作用域问题，特回顾知识点如下：
+在Python程序中创建、改变、查找变量名时，都是在一个保存变量名的空间中进行，我们称之为命名空间，也被称之为作用域。
+Python的作用域是静态的，在源代码中变量名被赋值的位置决定了该变量能被访问的范围。即Python变量的作用域由变量所在源代码中的位置决定。
+作用域的产生：
+1，只有当变量在Module(模块)、Class(类)、def(函数)中定义的时候，才会有作用域的概念。
+2，在作用域中定义的变量，一般只在作用域中有效。
+3，在if-elif-else、for-else、while、try-except/try-finally等关键字的语句块中并不会产生作用域
+作用域的类型：
+L(local)局部作用域 函数内的命名空间
+E(enclosing)嵌套作用域 外部嵌套函数的命名空间
+G(global)全局作用域 所在模块（文件）的命名空间
+B(built-in)内置作用域 Python内置模块的命名空间
+globalVar = 100 #全局作用域 def test_scope(): enclosingVar = 200 #嵌套作用域 def func(): localVar = enclosingVar + 1 #局部作用域 print(localVar) print(__name__) #内置作用域  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.79/">Matplotlib 简单的使用</a>
+  </h1>
+  <time datetime="2018-10-24T19:12:00Z" class="post-date">2018-10-24 19:12:00</time>
+  Matplotlib是一个Python 2D绘图库， 只需几行代码即可生成绘图，直方图，功率谱，条形图，错误图，散点图等。 有关示例，请参阅示例图和缩略图库。
+import matplotlib.pyplot as plt import numpy as np class TestPlot(object): def __init__(self,plt): self.plt = plt #定义内部属性 # 解决中文乱码问题（第二种） plt.rcParams['font.sans-serif'] = ['SimHei'] #指定编码 plt.rcParams['axes.unicode_minus'] = False #定义面积图方法(*********************************************) def my_area(self): #定义日期区间 data = ['2019-03-01','2019-03-02','2019-03-03','2019-03-04','2019-03-05'] #定义数据 #收入 earn = [166,155,355,422,622] #支出 pay = [[16,30,25,46,20],[10,15,20,144,122]] #将数据传入方法 self.plt.stackplot(data,earn,pay,colors=['green','yellow','orange']) #生成图例 self.plt.plot([],[],color='green',label=&quot;收入&quot;) self.plt.plot([],[],color='yellow',label=&quot;午餐&quot;) self.plt.plot([],[],color='orange',label=&quot;晚餐&quot;) #设置标题 self.plt.title(&quot;面积图样例&quot;) self.plt.legend() self.plt.show() #定义柱状图(*********************************************) def my_bar(self): my_plt = self.plt GDP = [12404.1,13396.222,5335.22,5223.22] my_plt.bar([&quot;北京&quot;,'上海','深圳','重庆'],GDP,align='center',color=&quot;lime&quot;,alpha=0.8) my_plt.ylabel(&quot;生产总值&quot;) #添加标题 my_plt.title(&quot;直辖市GDP&quot;) #刻度范围 my_plt.ylim([5000,15000]) my_plt.
+  
+  <div class="read-more-link">
+    <a href="/5.79/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.78/">Http-server 的使用</a>
+  </h1>
+  <time datetime="2018-06-01T18:10:20Z" class="post-date">2018-06-01 18:10:20</time>
+  Http-server 是一款基于node.js的web前端开发服务，可以很好的承担前后端解耦后，前端服务的搭建。
+1，首先安装node
+node下载地址：https://nodejs.org/zh-cn/
+2，在命名行执行
+npm install http-server –g
+3在前端项目目录启动服务（hs） 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.77/">Celery 出现Process &#39;Worker-5&#39; pid:5608 exited with &#39;exitcode 1&#39; 问题</a>
+  </h1>
+  <time datetime="2018-05-31T19:11:20Z" class="post-date">2018-05-31 19:11:20</time>
+  起初我以为是进程PID文件问题，从新删除问题并未解决。
+现已解决办法公布如下：
+pip install &ndash;upgrade billiard
+原因：依赖的billiard库版本有点低，更新即可
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.76/">第三方python 加密库 --- cryptography</a>
+  </h1>
+  <time datetime="2018-05-25T18:10:25Z" class="post-date">2018-05-25 18:10:25</time>
+  第三方python 加密库 &mdash; cryptography 1,安装依赖
+pip install cryptography
+2，生成秘钥
+from cryptography.fernet import Fernet #秘钥#随机生成秘钥 cipher_key = Fernet.generate_key() cipher_key ='pXVAHabI4HADuM-fyVogxwV5rHRN1pZe-QQ3yM9ZvPg='  3,加密（‘123‘为要加密的对象）
+a = Fernet(cipher_key).encrypt(“123”.encode()).decode() print(a)  运行结果：
+gAAAAABcmrvXiWdU9ICuUGDQoYgEQuqv0lL8BpQWRot3gJJJIGAwJlgDOKrmx8JH6mpbTfG9AdUTfUZ0eHNrXXDohCSXb87RqA=  4，解密：
+b = Fernet(cipher_key).decrypt(a.encode()).decode() print(b)  运行结果： 123
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.75/">关于VMware(虚拟机) 出现错误时处理办法</a>
+  </h1>
+  <time datetime="2018-05-14T08:10:20Z" class="post-date">2018-05-14 08:10:20</time>
+  我们在开发中难免会用到虚拟机。前段时间老有同学问我虚拟机报错解决办法，趁今天有空特随笔。
+错误如下图 首先科普下VT是个啥？
+Intel VirtualTechnology（VT)既“虚拟化技术”
+VT技术可以让一个CPU工作起来就像多个CPU并行运行，从而使得在一部电脑内同时运行多个操作系统成为可能.市面上已经有一些软件可以达到虚拟多系统的目的，比如VMware workstation、Virtual PC等，使用这种技术就可以单CPU模拟多CPU并行，可以实现单机同时运行多操作系统.
+解决办法:
+下面以联想机型为例: 1,在电脑开机的时候，按下F2(fn+F2)键进入BIOS设置页面，按下方向键切换至Configuration菜单项。 2,打开Configuration菜单选项之后，在该页面中，选择Intel Virtual Technology设置选项。 3,按照下图红框中步骤选择后并按F10保存并退出即可。 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.74/">两种常见判断变量的方法</a>
+  </h1>
+  <time datetime="2018-04-15T12:11:27Z" class="post-date">2018-04-15 12:11:27</time>
+  两种常见判断变量的方法（同样适用于其他的数据类型）
+demo: # 判断变量是否为整形
+a = 5 if isinstance(a,int): print(&quot;%d是整形&quot;%a) else: print(&quot;%s不是整形&quot;%a) a = &quot;5&quot; if type(a) == int: print(&quot;%d是整形&quot;%a) else: print(&quot;%s不是整形&quot;%a) #运行结果 5是整形 5不是整形  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.73/">Django &#43; Redis实现页面缓存</a>
+  </h1>
+  <time datetime="2018-03-25T14:18:07Z" class="post-date">2018-03-25 14:18:07</time>
+  目的：把从数据库读出的数据存入的redis 中既提高了效率，又减少了对数据库的读写，提高用户体验。
+例如：
+1，同一页面局部缓存，局部动态
+from django.views import View from myapp.models import Student #导入缓存库 from django.core.cache import cache #导入页面缓存 from django.views.decorators.cache import cache_page from django.utils.decorators import method_decorator class Stulist(View): def get(self,request,id): #判断缓存内是否有数据 result = cache.get(&quot;res&quot;,'0') if result == '0': res = Student.objects.filter(id=id) cache.set(&quot;res&quot;,res,100) result =cache.get(&quot;res&quot;) # ret = Student.objects.all() # ret = [i.name for i in list(ret)] # random_name = random.sample(ret,3) #随机取一条 select * from student where id in(2,3) order by rand limit 1 #取非当前数据外三条数据随机展示 random_name = Student.
+  
+  <div class="read-more-link">
+    <a href="/5.73/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.72/">Celery的Web监控管理--Flower</a>
+  </h1>
+  <time datetime="2018-02-05T10:15:27Z" class="post-date">2018-02-05 10:15:27</time>
+  Flower是Celery的一个实时监控和管理Web界面工具，目前仍在活跃的开发之中，但已经是一个很重要的可用工具了。这是推荐使用的Celery监控工具。
+1，安装依赖
+pip install flower
+2，在项目目录下运行 flower命令启动web-server
+python manage.py celery flower
+3，通过浏览器访问flower服务器
+http://localhost:5555 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.71/">Django&#43;Celery 执行异步任务和定时任务</a>
+  </h1>
+  <time datetime="2018-01-22T19:35:25Z" class="post-date">2018-01-22 19:35:25</time>
+  celery是一个基于python开发的简单、灵活且可靠的分布式任务队列框架，支持使用任务队列的方式在分布式的机器/进程/线程上执行任务调度。采用典型的生产者-消费者模型，主要由三部分组成:
+ 消息队列broker：broker实际上就是一个MQ队列服务，可以使用redis、rabbitmq等作为broker 处理任务的消费者workers：broker通知worker队列中有任务，worker去队列中取出任务执行，每一个worker就是一个进程 存储结果的backend：执行结果存储在backend，默认也会存储在broker使用的MQ队列服务中，也可以单独配置用何种服务做backend  flask,django是同步框架，所有的请求以队列形式完成。这样的话效率极差，用户体验不好，为了解决这个问题引入celery异步方式在后台执行这些任务（这里使用到了redis,3.0以下兼容性更好）
+1，安装依赖
+pip install celery
+pip install celery-with-redis
+pip install django-celery
+2，settings.py设置
+#配置celery import djcelery djcelery.setup_loader() BROKER_URL = 'redis://127.0.0.1:6379' CELERY_IMPORTS = ('mymac.tasks') #需执行异步的子应用 #将djcelery安装到应用中 INSTALLED_APPS = [ 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'mysg', 'lianxi', &quot;rest_framework&quot;, 'corsheaders', #异步 'djcelery', ]  3,将异步的应用中注册celery.py
+import os import django from celery import Celery from django.conf import settings os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mymac.settings') django.setup() app = Celery('mymac') app.config_from_object('django.conf:settings') app.autodiscover_tasks(lambda: settings.INSTALLED_APPS) @app.task(bind=True) def debug_task(self): print('Request: {0!
+  
+  <div class="read-more-link">
+    <a href="/5.71/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.70/">Django 发送电子邮件</a>
+  </h1>
+  <time datetime="2018-01-10T09:55:25Z" class="post-date">2018-01-10 09:55:25</time>
+  官方片段：
+虽然Python使得通过smtplib 模块发送电子邮件相对容易，但Django提供了一些轻量级包装。提供这些包装器是为了使发送电子邮件更加快速，以便在开发过程中轻松测试电子邮件发送，并为不能使用SMTP的平台提供支持。
+代码存在于django.core.mail模块中。
+demo:
+1.settings.py配置
+#邮件服务配置文件 EMAIL_USE_SSL = True #邮箱服务 EMAIL_HOST = 'smtp.qq.com' # 端口号 EMAIL_PORT = 465 #账号 EMAIL_HOST_USER = '396961930@qq.com' #授权秘钥 EMAIL_HOST_PASSWORD = 'yntbdvueeugpbgce' #发件人 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  2.发送邮件
+from django.core.mail import send_mail #参数 1，标题 2，内容 3，发件人 4，收件人 send_mail(title,body,from_email,email_to)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.69/">Django 之Redis配置</a>
+  </h1>
+  <time datetime="2017-12-26T08:10:35Z" class="post-date">2017-12-26 08:10:35</time>
+  目的：访问服务器频繁的读取数据库 ，会耗损服务器性能及降低用户体验，为此引入Redis
+1,安装 redis(2.10.6兼容性更好)
+pip install redis
+2,settings.py配置
+#配置缓存系统 CACHES = { &quot;default&quot;: { &quot;BACKEND&quot;: &quot;django_redis.cache.RedisCache&quot;, &quot;LOCATION&quot;: &quot;redis://127.0.0.1:6379&quot;, &quot;OPTIONS&quot;: { &quot;CLIENT_CLASS&quot;: &quot;django_redis.client.DefaultClient&quot;, } } }  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.58/">python之类中如何判断是函数还是方法</a>
+  </h1>
+  <time datetime="2017-11-25T10:11:30Z" class="post-date">2017-11-25 10:11:30</time>
+  通常我们认为在类中的函数为方法，类外面声明def为函数，这种说法有点片面
+方法1：
+class Work(object): def show(self): print(&quot;执行show方法&quot;) work = Work() print(Work.show) print(work.show) 结果： &lt;function Work.show at 0x000001CC55BC5268&gt; &lt;bound method Work.show of &lt;__main__.Work object at 0x000001CC55C2F240&gt;&gt;  可以看出通过类方法调用为函数，通过实例化对象调用为方法
+方法2：
+from types import MethodType,FunctionType print(isinstance(Work.show,FunctionType)) print(isinstance(Work.show,MethodType)) print(isinstance(work.show,FunctionType)) print(isinstance(work.show,MethodType)) 结果： True False False True  可以用内置的isinstance 来判断
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.57/">Anaconda 虚拟环境安装及应用</a>
+  </h1>
+  <time datetime="2017-11-09T11:12:30Z" class="post-date">2017-11-09 11:12:30</time>
+  ``` 首先要安装Anaconda
+下载网址：https://www.anaconda.com/distribution/#download-section
+Miniconda下载网址：https://conda.io/en/latest/miniconda.html 1，安装完成配置环境变量 3，安装新的虚拟环境
+conda create -n 环境名称 要装的语言（指定版本）
+等待安装完毕 完毕后会提示怎么开启和关闭虚拟环境
+如上图安装成功
+4，虚拟环境的常用命令
+查看版本号 激活虚拟环境并进入对应的环境
+显示所有虚拟环境
+删除虚拟环境
+退出环境 :
+** Miniconda和Anaconda 的安装方法及使用上基本雷同
+区别：
+Anaconda：用于科学计算的python发行版，里面预装好了conda，某个版本的python，众多packages,科学计算工具等。Anaconda利用工具/命令conda来进行package和environment的管理，并且已经包含了python和相关配套工具。
+Conda：可以理解为一个工具，也是一个可执行命令，其核心功能是包管理与环境管理。包管理与pip的使用类似，环境管理则允许用户方便地安装不同版本的python并可以快速切换。
+Miniconda：只含有最基本的内容&ndash;python,conda，以及相关的必须依赖项，对于空间要求严格的用户，Miniconda是一种选择。
+常用命令总结：
+激活某个环境：activate env_name
+查看版本号：conda -V
+离开某虚拟环境：deactivate
+显示所有虚拟环境：conda env list
+删除虚拟环境: conda env remove -n env_name
+更新anaconda: conda update anaconda
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.56/">Django实现邮件发送功能</a>
+  </h1>
+  <time datetime="2017-10-21T10:10:31Z" class="post-date">2017-10-21 10:10:31</time>
+  首先申请邮箱并在设置中申请到授权码，授权码的目的仅仅是让你有权限发邮件,但是不能登录到邮箱进行修改,发送邮件时,可以代替密码
+1，配置文件settings.py
+#邮件服务配置文件 EMAIL_USE_SSL = True #邮箱服务 EMAIL_HOST = 'smtp.qq.com' # 端口号 EMAIL_PORT = 465 #账号 EMAIL_HOST_USER = '95129313@qq.com' #授权秘钥 EMAIL_HOST_PASSWORD = 'wbdkksqstrqzbheb' #发件人 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  2，views.py中制作一个简单的邮件并发送
+from mymac.settings import DEFAULT_FROM_EMAIL from django.core.mail import send_mail # send_mail的参数分别是 邮件标题，邮件内容，发件箱(settings.py中设置过的那个)，收件箱列表(可以发送给多个人),失败静默(若发送失败，报错提示我们) send_mail('邮箱验证', 'hello python', '95129313@qq.com',DEFAULT_FROM_EMAIL, fail_silently=False)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.55/">Django2.0跨域请求配置</a>
+  </h1>
+  <time datetime="2017-09-22T13:10:31Z" class="post-date">2017-09-22 13:10:31</time>
+  跨域：通过js或python在不同的域之间进行数据传输或通信，比如用ajax向一个不同的域请求数据，或者通过js获取页面中不同域的框架中(Django)的数据。只要协议、域名、端口有任何一个不同，都被当作是不同的域。
+1，安装依赖包
+pip install django-cors-headers
+2，修改setting.py中配置
+添加应用 INSTALLED_APPS = [ 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'myapp', 'mymac', 'corsheaders', ]  中间层设置
+MIDDLEWARE = [ 'django.middleware.security.SecurityMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware', #定义跨域中间件 'corsheaders.middleware.CorsMiddleware', 'django.middleware.common.CommonMiddleware', # 'django.middleware.csrf.CsrfViewMiddleware', 'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware', 'django.middleware.clickjacking.XFrameOptionsMiddleware', ]  添加白名单
+#配置可跨域范围 CORS_ALLOW_CREDENTIALS = True CORS_ORIGIN_ALLOW_ALL = True  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.54/">Django 正向解析与反向解析</a>
+  </h1>
+  <time datetime="2017-09-05T14:11:30Z" class="post-date">2017-09-05 14:11:30</time>
+  正向解析就是按照顺序查找访问（urls.py&mdash;view&ndash;templates）
+反向解析就是根据命名空间命名来调到指定的页面
+用反向解析的原因：
+随着功能的增加会出现更多的视图，可能之前配置的正则表达式不够准确，于是就要修改正则表达式，但是正则表达式一旦修改了，之前所有对应的超链接都要修改，真是一件麻烦的事情，而且可能还会漏掉一些超链接忘记修改，有办法让链接根据正则表达式动态生成吗？ 就是用反向解析的办法。
+应用范围：模板中的超链接 、视图中的重定向
+使用方法：
+定义url时，需要为include定义namespace属性，为url定义name属性
+使用时，在模板中使用url标签，在视图中使用reverse函数，根据正则表达式动态生成地址，减轻后期维护成本。 1，创建urls
+from django.urls import path,include,re_path from myapp.d2_views import Index from myapp.d3_views import Avgage from django.views.generic import TemplateView from myapp.d11_view import Test,Testrev,TestrevDict #声明命名空间 app_name = 'myapp' urlpatterns = [ path('',TemplateView.as_view(template_name='index.html')), path(&quot;avgage&quot;,Avgage.as_view()), path(&quot;test&quot;,Test.as_view()), #反向解析 第二个参数，制定命名 re_path(&quot;^test_rev_(.+?)$&quot;,Testrev.as_view(),name=&quot;test_name&quot;), #kwargs re_path(&quot;^test_dict_(?P&lt;username&gt;.+?)$&quot;,TestrevDict.as_view(),name=&quot;test_name_dict&quot;) ]  2,创建templates(index.html)
+&lt;a href=&quot;test&quot;&gt;正向解析&lt;/a&gt; {# 第一个参数命名空间 第二个自定义命名 456表示需要传递的参数#} &lt;a href=&quot;{% url 'myapp:test_name' 456 %}&quot;&gt;反向解析&lt;/a&gt; &lt;a href=&quot;{% url 'myapp:test_name_dict' username=55 %}&quot;&gt;反向解析(kwargs)&lt;/a&gt;  3,创建视图（views.py）
+from django.
+  
+  <div class="read-more-link">
+    <a href="/5.54/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.53/">python 反爬虫策略</a>
+  </h1>
+  <time datetime="2017-08-25T07:10:35Z" class="post-date">2017-08-25 07:10:35</time>
+  1.限制IP地址单位时间的访问次数 ： 分析：没有哪个常人一秒钟内能访问相同网站5次，除非是程序访问，而有这种喜好的，就剩下搜索引擎爬虫和讨厌的采集器了。 弊端：一刀切，这同样会阻止搜索引擎对网站的收录 适用网站：不太依靠搜索引擎的网站 采集器会怎么做：减少单位时间的访问次数，减低采集效率 2.屏蔽ip 分析：通过后台计数器，记录来访者ip和访问频率，人为分析来访记录，屏蔽可疑Ip。 弊端：似乎没什么弊端，就是站长忙了点 适用网站：所有网站，且站长能够知道哪些是google或者百度的机器人 采集器会怎么做：打游击战呗！利用ip代理采集一次换一次，不过会降低采集器的效率和网速(用代理嘛)。 3。利用js加密网页内容 Note:这个方法我没接触过，只是从别处看来 分析：不用分析了，搜索引擎爬虫和采集器通杀 适用网站：极度讨厌搜索引擎和采集器的网站 采集器会这么做：你那么牛，都豁出去了，他就不来采你了 4.网页里隐藏网站版权或者一些随机垃圾文字，这些文字风格写在css文件中 分析：虽然不能防止采集，但是会让采集后的内容充满了你网站的版权说明或者一些垃圾文字，因为一般采集器不会同时采集你的css文件，那些文字没了风格，就显示出来了。 适用网站：所有网站 采集器会怎么做：对于版权文字，好办，替换掉。对于随机的垃圾文字，没办法，勤快点了。 5.用户登录才能访问网站内容 * 分析：搜索引擎爬虫不会对每个这样类型的网站设计登录程序。听说采集器可以针对某个网站设计模拟用户登录提交表单行为。 适用网站：极度讨厌搜索引擎，且想阻止大部分采集器的网站 采集器会怎么做：制作拟用户登录提交表单行为的模块 6、利用脚本语言做分页(隐藏分页) 分析：还是那句，搜索引擎爬虫不会针对各种网站的隐藏分页进行分析，这影响搜索引擎对其收录。但是，采集者在编写采集规则时，要分析目标网页代码，懂点脚本知识的人，就会知道分页的真实链接地址。 适用网站：对搜索引擎依赖度不高的网站，还有，采集你的人不懂脚本知识 采集器会怎么做：应该说采集者会怎么做，他反正都要分析你的网页代码，顺便分析你的分页脚本，花不了多少额外时间。 7.防盗链措施 (只允许通过本站页面连接查看，如：Request.ServerVariables(“HTTP_REFERER“) ) 分析：asp和php可以通过读取请求的HTTP_REFERER属性，来判断该请求是否来自本网站，从而来限制采集器，同样也限制了搜索引擎爬虫，严重影响搜索引擎对网站部分防盗链内容的收录。 适用网站：不太考虑搜索引擎收录的网站 采集器会怎么做：伪装HTTP_REFERER嘛，不难。 8、全flash、图片或者pdf来呈现网站内容 分析：对搜索引擎爬虫和采集器支持性不好，这个很多懂点seo的人都知道 适用网站：媒体设计类并且不在意搜索引擎收录的网站 采集器会怎么做：不采了，走人 9、网站随机采用不同模版 分析：因为采集器是根据网页结构来定位所需要的内容，一旦先后两次模版更换，采集规则就失效，不错。而且这样对搜索引擎爬虫没影响。 适用网站：动态网站，并且不考虑用户体验。 采集器会怎么做：一个网站模版不可能多于10个吧，每个模版弄一个规则就行了，不同模版采用不同采集规则。如果多于10个模版了，既然目标网站都那么费劲的更换模版，成全他，撤。 0、采用动态不规则的html标签 分析：这个比较变态。考虑到html标签内含空格和不含空格效果是一样的，所以&lt; div &gt;和&lt; div &gt;对于页面显示效果一样，但是作为采集器的标记就是两个不同标记了。如果每次页面的html标签内空格数随机，那么 采集规则就失效了。但是，这对搜索引擎爬虫没多大影响。 适合网站：所有动态且不想遵守网页设计规范的网站。 采集器会怎么做：还是有对策的，现在html cleaner还是很多的，先清理了html标签，然后再写采集规则；应该用采集规则前先清理html标签，还是能够拿到所需数据  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.52/">base64简单使用</a>
+  </h1>
+  <time datetime="2017-08-19T10:10:25Z" class="post-date">2017-08-19 10:10:25</time>
+  加密：
+import base64 import random str =&quot;aqwertyuiopasdfghjklzxcvbnm963.0852741,.;'&quot; a = '人生苦短,我用Python' b = base64.b64encode((a+str).encode('utf-8')) print(b) 结果： b'5Lq655Sf6Ium55+tLOaIkeeUqFB5dGhvbmFxd2VydHl1aW9wYXNkZmdoamtsenhjdmJubTk2My4wODUyNzQxLC47Jw=='  解密：
+c = base64.b64decode(b).decode(&quot;utf-8&quot;) print(c) 结果： 人生苦短,我用Pythonaqwertyuiopasdfghjklzxcvbnm963.0852741,.;'  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.51/">Selenium功能自动化测试工具</a>
+  </h1>
+  <time datetime="2017-06-21T00:11:25Z" class="post-date">2017-06-21 00:11:25</time>
+  Selenium也是一个用于Web应用程序测试的工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样。支持的浏览器包括IE、Mozilla
+Firefox、Mozilla Suite等。这个工具的主要功能包括：测试与浏览器的兼容性——测试你的应用程序看是否能够很好得工作在不同浏览器和操作系统
+之上。测试系统功能——创建衰退测试检验软件功能和用户需求。支持自动录制动作和自动生成。Net、Java、Perl等不同语言的测试脚本。Selenium
+是ThoughtWorks专门为Web应用程序编写的一个验收测试工具。
+首先需安装对应浏览器驱动
+from selenium import webdriver import time #建立浏览器对象 browser = webdriver.Firefox() #使用浏览器访问网站 browser.get('http://www.baidu.com') #解码赋值 html = browser.page_source.encode(&quot;utf-8&quot;).decode() #向文本框填充文本 browser.find_element_by_id('kw').send_keys('https://www.cnblogs.com/') time.sleep(1) # 模拟点击 browser.find_element_by_id('su').click() time.sleep(5) #匹配多个节点 # elist = browser.find_elements(&quot;css selector&quot;,'h3') elist = browser.find_elements_by_class_name(&quot;t&quot;) #点击链接 browser.find_element_by_link_text(elist[0].text).click() # #关闭浏览器 # browser.quit()  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.50/">pillow与numpy实现图片素描化</a>
+  </h1>
+  <time datetime="2017-05-20T14:12:55Z" class="post-date">2017-05-20 14:12:55</time>
+  from PIL import Image import numpy as np #封装一个图像处理类 class TestNumpy(object): def photo2paint(self,img_url): # 读取图片 my_photo = np.asarray(Image.open(img_url).convert(&quot;L&quot;)).astype(&quot;float&quot;) # print(my_photo.shape) #设置灰度阈值(范围0~100) depth = 40 # 将灰度系数映射到numpy grad = np.gradient(my_photo) #获取坐标 grad_x,grad_y = grad #分别处理 grad_x = grad_x * depth/100 grad_y = grad_y * depth/100 #设置阿尔法值 设置坐标范围 A = np.sqrt(grad_x**2 + grad_y**2 + 1) #重新赋值 uni_x = grad_x/A uni_y = grad_y/A uni_z = 1/A #灰度光源设置 角度 vec_el = np.pi/2.2 vec_az = np.
+  
+  <div class="read-more-link">
+    <a href="/5.50/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.49/">用Pyinstaller 实现py.转化为exe可执行文件----二维码实例</a>
+  </h1>
+  <time datetime="2017-04-24T14:12:55Z" class="post-date">2017-04-24 14:12:55</time>
+  1，安装 Pyinstaller
+命令提示符窗口：pip install pyinstaller
+2，制作二维码脚本 d5_code.py
+from MyQR import myqr #生成二维码 words = input(&quot;请输入您要生成二维码的网址:&quot;) #save_name 生成的图片, picture 二维码背景图, colorized 是否开启颜色 # myqr.run(words=words,save_name='mysite.jpg',picture='test_numpy.jpg',colorized=True) myqr.run(words=words,save_name='QR_code.jpg')  3,打包 Python脚本
+　在运行 pyinstaller命令需在py同一个目录下
+　pyinstaller -F d5_code.py
+　**常用的一些附加：
+　-D，&ndash;onedir 这会创建一个包含可执行文件的单文件夹包（默认）
+　-F，&ndash;onefile 这个只会创建一个可执行文件
+　&ndash;specpath DIR 用于存储生成的spec文件的文件夹（默认值：当前目录）
+　-n NAME， &ndash;name NAME 应用程序的名称（默认值：第一个脚本的名称）
+　-i FILE.ico , &ndash;icon FILE.ico 为你的程序添加一个图标
+　报错误总结
+　1. AttributeError: ‘str’ object has no attribute ‘items’
+  
+  <div class="read-more-link">
+    <a href="/5.49/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.48/">使用脚本与orm模型交互对数据库操作</a>
+  </h1>
+  <time datetime="2017-04-07T16:12:11Z" class="post-date">2017-04-07 16:12:11</time>
+  场景：如不想启动服务在框架中查看数据库数据，同时使用ORM框架对数据库操作带来的好处
+import os import sys #将脚本所在的工程添加到环境变量 sys.path.append('../mymac') #将项目路径添加到系统搜寻路径 os.environ['DJANGO_SETTINGS_MODULE'] = 'mymac.settings' import django #加载项目配置 django.setup() #加载数据类 from myapp.models import Student res = Student.objects.all() for i in res: print(i.name)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.47/">python中dict的fromkeys用法</a>
+  </h1>
+  <time datetime="2017-03-28T17:22:28Z" class="post-date">2017-03-28 17:22:28</time>
+  fromkeys是创造一个新的字典。就是事先造好一个空字典和一个列表，fromkeys会接收两个参数，第一个参数为从外部传入的可迭代对象，会将循环取
+出元素作为字典的key值，另外一个参数是字典的value值，不写所有的key值所对应的value值均为None，写了则为默认的值
+v = dict.fromkeys(range(10)) print(v) 结果： {0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None}  传入第二个参数：
+v = dict.fromkeys(range(10),'hello') print(v) 结果： {0: 'hello', 1: 'hello', 2: 'hello', 3: 'hello', 4: 'hello', 5: 'hello', 6: 'hello', 7: 'hello', 8: 'hello', 9: 'hello'}  fromkeys的append和赋值修改
+v = dict.fromkeys(['k1','k2'],[]) v['k2'].append(666) print(v) v['k1'] = 777 print(v) 结果： {'k1': [666], 'k2': [666]} {'k1': 777, 'k2': [666]}  结论：fromkeys方法并不适用来创建多个对象，因为我如果改变了某一个对象中的某个属性，那么其余对象都会被改变。
+  
+  <div class="read-more-link">
+    <a href="/5.47/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.46/">pandas之DataFrame</a>
+  </h1>
+  <time datetime="2017-03-08T10:02:18Z" class="post-date">2017-03-08 10:02:18</time>
+  DataFrame 类型类似于数据库表结构的数据结构，其含有行索引和列索引，可以将DataFrame 想成是由相同索引的Series组成的Dict类型。在其底层
+是通过二维以及一维的数据块实现.
+1,DataFrame 对象的构建
+import pandas as pd #声明数据框架对象 list = {'男生':['王超','德芙','家福'],'女生':['阿尼','阿玉','阿东']} gendered = pd.DataFrame(list) print(gendered) #自动生成索引 结果： 男生 女生 0 王超 阿尼 1 德芙 阿玉 2 家福 阿东  2指定列的顺序
+gendered1 = pd.DataFrame(list,columns=['女生','男生']) print(gendered1) 结果： 女生 男生 0 阿尼 王超 1 阿玉 德芙 2 阿东 家福  3指定索引
+gendered2 = pd.DataFrame(list,[7,8,9]) print(gendered2) 结果： 男生 女生 7 王超 阿尼 8 德芙 阿玉 9 家福 阿东  一些常用属性
+list = {'男生':['王超','德芙','家福'],'女生':['阿尼','阿玉','阿东']} df = pd.
+  
+  <div class="read-more-link">
+    <a href="/5.46/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.45/">python浅拷贝和深拷贝</a>
+  </h1>
+  <time datetime="2017-02-25T11:11:23Z" class="post-date">2017-02-25 11:11:23</time>
+  python中的数据类型分为可变类型（list,dict）和不可变类型（string,tuple,int）
+不可变类型不存在深浅拷贝
+可变类型的
+浅拷贝：不管是多么复杂的数据结构，浅拷贝只会拷贝第一层（拷贝的时引用）
+import copy list_1 = [1,2,['a','b','c'],3] list_2 = copy.copy(list_1) list_1[2][1] = 'kk' print(list_1,list_2,id(list_1[2]),id(list_2[2])) 结果： [1, 2, ['a', 'kk', 'c'], 3] [1, 2, ['a', 'kk', 'c'], 3] 1798791797576 1798791797576  深拷贝： 深拷贝会完全复制原变量的所有数据，在内存中生成一套完全一样的内容，我们对这两个变量中的一个进行任意修改都不会影响另一个变量（递归形式的拷贝）
+import copy list_1 = [1,2,['a','b','c'],3] list_2 = copy.deepcopy(list_1) list_1[2][1] = 'kk' print(list_1,list_2,id(list_1[2]),id(list_2[2])) 结果： [1, 2, ['a', 'kk', 'c'], 3] [1, 2, ['a', 'b', 'c'], 3] 1582641879944 1582641878152  总结：copy和deepcopy和赋值是等价的
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.44/">Numpy 机器学习三剑客之Numpy</a>
+  </h1>
+  <time datetime="2017-02-20T13:01:33Z" class="post-date">2017-02-20 13:01:33</time>
+  NumPy是Python语言的一个扩充程序库。支持高级大量的维度数组与矩阵运算，此外也针对数组运算提供大量的数学函数库。Numpy内部解除了Python
+的PIL(全局解释器锁),运算效率极好,是大量机器学习框架的基础库!
+Numpy简单创建数组
+nlist = np.array([1,2,3]) print(nlist) #[1 2 3]  Numpy查看数组属性
+#ndim方法用来查看数组维度 print(nlist.ndim) #2 #二维数组 nlist_2 = np.array([[1,2,3],[4,5,6]]) print(nlist_2) print(nlist_2.ndim) #[[1 2 3] # [4 5 6]] # 2 #使用shape属性来大印多维数组的形状 print(nlist.shape,nlist_2.shape) #(3,) (2, 3) #使用size方法来打印多维数组的元素个数 print(np.size(nlist)) print(np.size(nlist_2)) # 3 # 6 #打印numpy多维数组的数据类型 print(type(nlist)) #&lt;class 'numpy.ndarray'&gt; #使用dtype属性打印多维数组内部元素的数据类型 print(nlist.dtype) #itemsizes属性，多维数组中的数据类型大小，字节 print(nlist.itemsize) #data属性 打印数据缓冲区 buffer print(nlist.data) # int32 # 4 # &lt;memory at 0x0000023047DB5C48&gt;  快速创建N维数组的api函数
+#使用ones方法，自动生成元素为1的多维数组 nlist_ones = np.ones((4,4)) print(nlist_ones) print(nlist_ones.dtype) #[[1.
+  
+  <div class="read-more-link">
+    <a href="/5.44/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.43/">django--验证码功能实现</a>
+  </h1>
+  <time datetime="2017-01-24T13:01:33Z" class="post-date">2017-01-24 13:01:33</time>
+  首先建立验证码的视图函数 1需要安装pillow库
+#导入绘图库 from PIL import ImageDraw #导入绘图字体库 from PIL import ImageFont #导入图片库 from PIL import Image #导入io库 import io #导入随机库 import random 复制代码  1,定义验证码图片
+#定义随机颜色方法 def get_random_color(): R = random.randrange(255) G = random.randrange(255) B = random.randrange(255) return (R,G,B) #定义随机验证码 def test_captcha(request): #定义背景颜色 bg_color = get_random_color() #定义画布大小 宽，高 img_size = (150,80) #定义画笔 颜色种类,画布，背景颜色 image = Image.new(&quot;RGB&quot;,img_size,bg_color) #定义画笔对象 图片对象,颜色类型 draw = ImageDraw.Draw(image,'RGB') #定义随机字符 source = '0123456789asdfghjkl' #定义四个字符 #定义好容器，用来接收随机字符串 code_str = '' for i in range(4): #获取随机颜色 字体颜色 text_color = get_random_color() #获取随机字符串 tmp_num = random.
+  
+  <div class="read-more-link">
+    <a href="/5.43/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.42/">python基础题</a>
+  </h1>
+  <time datetime="2017-01-09T09:09:53Z" class="post-date">2017-01-09 09:09:53</time>
+  大家尽可能别把答案删掉自己做一遍 一定让初学者怀疑人生 一、选择题（32分） 1、python不支持的数据类型有：（A） A、char　B、int　C、float　D、list 2、x = “foo” y = 2 print(x+y) （E） A.foo B.foofoo　C.foo2 D.2　E.An exception is thrown 解释：不同数据类型不可以相加，但是字符串可以与数字相乘，以上例题若改为print（x*y），结果为B答案 3、关于字符串下列说法错误的是：（B） A、字符应该视为长度为1的字符串　B、字符串以\0标志字符串的结束　C、既可以用单引号，也可以用双引号创建字符串　D、在三引号字符串中可以包含换行回车等特殊字符 4、以下不能创建一个字典的语句是：（C） A、dic1 = {}　B、dic2 = {123:345}　C、dic3 = {[1,2,3]:'uestc'}　D、dic3 = {(1,2,3):'uestc'} 解释：字典的key值必须为不可变数据类型 5．答案为：（D） Kvps = {‘1’:1,’2’:2} theCopy = kvps kvps[‘1’] = 5 sum = kvps[‘1’] + theCopy[‘1’] Print sum A.1 B.2 C.7 D.10 解释：kvps与thecopy是赋值关系，指向的为同一个内存地址，一个发生变化，则均会发生变化 6、以下何者是不合法的布尔表达式：（B） A．x in range(6) B.
+  
+  <div class="read-more-link">
+    <a href="/5.42/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.41/">python武器库</a>
+  </h1>
+  <time datetime="2016-12-26T14:01:03Z" class="post-date">2016-12-26 14:01:03</time>
+  1，开发库 You-Get YouTube/Youku/Niconico视频下载器 Zipline 一个Pythonic的交易算法库 docopt 为Python程序创造一个优雅的命令行界面 PDFMiner Python的PDF解析器 D3py 基于D3的Python绘图库 Pydown 用Python做一个HTML5的演示 2，开发工具 Jedi 一个超级棒的Python自动补全库 Autopep8 按PEP8风格自动排版Python代码 python-mode Python的Vim插件 YAPF Google开源的Python代码格式化工具 SublimeREPL 在Sublime Text 2中运行解释器 PyMongo MongoDB数据库的Python接口程序 3，开发框架 Zerorpc 基于ZeroMQ的高性能分布式RPC框架 Falcon 构建云API和网络应用后端的高性能Python框架 Cubes 轻量级Python OLAP框架 Diesel 基于Greenlet的事件I/O框架 Pulsar Python的事件驱动并发框架 Web2py 全栈式Web框架 4，学习指南 pycrumbs Python资源大全 Projects Python项目大集合 Minecraft 用python写的Minecraft游戏 The Hitchhiker’s Guide to Python 旅行者的Python学习指南 python-patterns 使用python实现设计模式 Python Koans Python的交互式学习工具 5，科学计算与分析 PyMC 马尔科夫链蒙特卡洛采样工具 statsmodels 统计建模和计量经济学 Orange 通过可视化编程或 Python 脚本进行数据挖掘、数据可视化、分析和机器学习 Blaze NumPy和Pandas的大数据接口 SciPy库 Python的科学计算工具集 Open Mining 使用 Python 挖掘商业情报（Pandas Web 接口） 6，文本处理 Python-docx 读写word文档的Python库 SnowNLP 处理中文文本的Python库 Fuzzywuzzy 字符串模糊匹配工具 TextBlob 简单、Pythonic的文本分析工具 Chardet 通用编码检测器 simplejson Python的JSON编码/解码器 7，Web框架 Flask 一个使用Python编写的轻量级Web应用框架 Django Python Web应用开发框架 Bottle 微型Python web框架 webpy 轻量级的Python Web框架 Tornado 异步非阻塞IO的Python Web框架 8，数据分析 Pydata 基于Python的数据分析库 Bayesian-Methods-for-Hackers 概率编程与贝叶斯方法 Hebel 支持GPU加速的深度学习Python库 9，身份验证 python-oauth2 Python的OAuth登录接口 Python-social-auth 社交服务认证的利器 rauth Python的OAuth库 10，机器学习 Pylearn2 一个基于Theano的机器学习库 python-recsys 一款实现推荐系统的python库 PyBrain 基于Python的机器学习库 11，音频 Dejavu 音频指纹和识别的Python库 django-elastic-transcoder Django + Amazon Elastic Transcoder 12，内容提取 Newspaper 使用Python开发的新闻和文章提取程序 Python-goose 用于文章提取的Python库 13，GUI PyH HTML生成工具，使你能够在Python中，像编写GUI一样，编写可读性极佳的HTML代码 Kivy 用于创建NUI应用的开源软件库 , 14，测试工具 Buildbot 基于Python的持续集成测试框架 Locust 可扩展用户负载测试工具 15，交互式解析器 bpython 界面丰富的Python解析器 16，自然语言处理 NLTK 一个先进的用来处理自然语言数据的Python程序。 17，生产力工具 Sphinx Python项目文档生成工具 18，图像处理 Pillow Python图像处理库 19，命令行工具 Pythonpy 在命令行中直接执行任何Python指令 20，ORM peewee 一款轻量级python ORM 21，CMS框架 Wagtail 一个 Django 驱动的内容管理系统 22，网络爬虫 Scrapy Python的爬虫框架 23，RESTful API django-rest-framework 一个强大灵活的工具，用来构建Web API 24，数据校验 Schema 优雅的模式验证（Schema Validation） 25，模板引擎 Jinja2 一个纯Python实现的模板引擎 26，Queue MRQ 一个 Python 的分布式 worker 任务队列，使用 Redis 和 gevent 27，网络 Twisted 一个基于事件驱动的网络引擎 28，WSGI服务器 bjoern 一个快速超轻量级的HTTP/1.
+  
+  <div class="read-more-link">
+    <a href="/5.41/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.40/">django-rest-framework</a>
+  </h1>
+  <time datetime="2016-12-16T15:02:04Z" class="post-date">2016-12-16 15:02:04</time>
+  REST是它是一种架构风格 。REST就是通过使用HTTP协议和URI，利用client/server对资源进行CRUD操作。 REST优点： 1.客户端-服务端分离 优点：提高用户界面的便携性，通过简化服务器提高可伸缩性 2..无状态（Stateless）：从客户端的每个请求要包含服务器所需要的所有信息 优点：提高可见性（可以单独考虑每个请求），提高了可靠性（更容易从局部故障中修复），提高可扩展性（降低了服务器资源使用） 3.缓存（Cachable）：服务器返回信息必须被标记是否可以缓存，如果缓存，客户端可能会重用之前的信息发送请求 优点：减少交互次数，减少交互的平均延迟 4.统一接口 优点：提高交互的可见性，鼓励单独改善组件 5.支持按需代码（Code-On-Demand 可选） 优点：提高可扩展性 Django REST framework（以下简称 DRF）是一个开源的 Django 扩展，提供了便捷的 REST API 开发框架，拥有以下特性： 直观的 API web 界面。 多种身份认证和权限认证方式的支持。 内置了 OAuth1 和 OAuth2 的支持。 内置了限流系统。 根据 Django ORM 或者其它库自动序列化。 丰富的定制层级：函数视图、类视图、视图集合到自动生成 API，满足各种需要。 可扩展性，插件丰富。 广泛使用，文档丰富。 简单的使用： 1，安装与配置 pip install djangorestframework settings.py 安装子应用  INSTALLED_APPS = [ 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'mytest', 'mysite', 'myapp', 'supermarket', &quot;rest_framework&quot;, ]  2,创建序列化 serializers.py
+#导入序列化库 from rest_framework import serializers #导入数据库类 from supermarket.
+  
+  <div class="read-more-link">
+    <a href="/5.40/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.39/">django--admin组件</a>
+  </h1>
+  <time datetime="2016-11-17T18:03:14Z" class="post-date">2016-11-17 18:03:14</time>
+  一，激活管理工具（一般建立工程已创建）
+1，setting.py 中安装子应用
+INSTALLED_APPS = [ 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'mytest', 'mysite', 'myapp', 'supermarket' ]  2，urls.py 路由中配置
+urlpatterns = [ #定义图片超链接路由 re_path('^upload/(?P&lt;path&gt;.*)$',serve,{'document_root':UPLOAD_ROOT}), path('admin/', admin.site.urls), path('tu',test.tu), path('mytest',include('mytest.urls'))  二，注册admin模块
+http://127.0.0.1:8000/admin/，得到登陆界面，你可以通过命令 python manage.py createsuperuser 来创建超级用户。
+三，admin的定制（admin.py）
+from django.contrib import admin from supermarket.models import Product from mysite.models import User #注册数据类 @admin.register(Product) #继承admin基类 class ProductAdmin(admin.ModelAdmin): #显示字段 list_display =('id','name','price','count') #分页设置,系统默认一页100条 list_per_page = 5 #排序 ordering = ('-id',) #设置可进入编辑的超链接 list_display_links = ('name',) #设置直接在列表页修改 list_editable = ['price'] #设置搜索功能 search_fields = ['name'] # 定制右侧快速筛选，可以组合筛选 list_filter = ('id','name')  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.38/">gitee 使用</a>
+  </h1>
+  <time datetime="2016-10-27T05:03:20Z" class="post-date">2016-10-27 05:03:20</time>
+  gitee 使用 首先在码云仓库创建对应的仓库 当你输入错误用户名和密码 需要 清掉配置 git config --system --unset credential.helper 设置账号 git config --global user.name &quot;名称&quot; git config --global user.email &quot;邮箱&quot; 初始化版本库 git init 提交暂存 git add -A 提交修改内容 git commit -m &quot;first commit” 指定云端的项目地址 git remote add origin https://gitee.com/项目地址/项目名称.git 拉取云端文件 git pull origin master --allow-unrelated-histories 《提示》：如果密码或用户名输入错误可以在windows 凭据中删除重新执行 推送同步到远端 git push -u origin master Git 忽略文件（不想上传的文件） 使用git bash 在项目根目录下创建 .gitignore文件  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.37/">内外网同时上网处理方法</a>
+  </h1>
+  <time datetime="2016-10-07T12:13:21Z" class="post-date">2016-10-07 12:13:21</time>
+  ---双网卡的网络IP地址配置示例 -外网地址设置 本地IP地址：192.168.1.10 子网掩码： 255.255.255.0 网关： 192.168.1.1 -内网地址设置 本地IP地址： 192.168.2.33 子网掩码：255.255.255.0 网关：192.168.2.1 第一步、route delete 0.0.0.0 删除所有的0.0.0.0的路由。 第二步、route -p add 0.0.0.0 mask 0.0.0.0 mask 192.168.1.1 ::添加0.0.0.0网络路由，这个是缺省时路由用192.168.1.1,加上-p的目的是设为静态(永久)路由，防止下次重起时配置消失。 第三步、route -p add 192.168.2.0 mask 255.255.255.0 192.168.2.33 ::添加192.168.2.0网段路由为192.168.2.33内网路由，可以根据需要调整ip段和子网掩码太到多网段内网路由的效果 ---单网卡的情况实现同时上内网和外网 第一步 填写外网的IP、掩码、网关、DNS 第二步 点击“高级”，然后在“IP地址”下边点添加，输入内网的ip地址和掩码 如果内网有DNS则要填 第三步 配置电脑静态路由route -p add 192.168.2.0 mask 255.255.0.0 192.168.2.1  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.36/">部分激光打印机清零方法</a>
+  </h1>
+  <time datetime="2016-09-28T08:02:15Z" class="post-date">2016-09-28 08:02:15</time>
+  部分打印机加粉后清零操作 原因：厂商为了控制用户的耗材利用率，在机器内部增加了计数程序或增加了计数芯片 兄弟7360打印机加粉清零方法 碳粉清零： 1、打开前盖 2、按清除键，显示跟换硒鼓，不理它 3、再按启用键，然后按00 ，过几秒就可以关前盖，就可以了。 硒鼓清零： 1、打开前盖 2、按清除键，显示跟换硒鼓： 1是2否 3、按1 ，过几秒就可以关前盖，就可以了。 兄弟2140硒鼓清零方法： 在开机情况下打开前盖，按住GO键不放（此时应前盖已经打开，必须按住机器内部的白色按钮，如下图圆圈所示位置），约4秒钟，面板上三个灯依次亮起，又同时熄灭，此时松手。 然后取出鼓单元，重新装入机器，关上前盖，机器自检，完成清零。 连续快速按下GO键3次，打印设置页，可以见到硒鼓条（DRUM）显示满了，打印机又可以恢复工作了 兄弟7030打印机加粉后清零步骤 打开前盖， 1点按选项键， 2按功能键， 3按清除返回键就会出现是否更换硒鼓，按▲后再按ok键就可以了，最后关上前盖。 （1.2.3键要按得快1秒内。） 兄弟MFC 7420/7220,DCP7010N/7025如何重设硒鼓计数器 1、要重置硒鼓计数器,请确保前盖打开,然后按控制面板上的Option(选项)键 2 、 A,对于DCP系列机器当屏幕上出现Replace Drum?(更换硒鼓)信息时, 请按▲键.当屏幕上出现Accepted(已接受)信息时,请合上前盖. B, 对于MFC系列的机器当屏幕上出现Replace Drum?(更换硒鼓)信息时,请按数字1.当屏幕上出现Accepted ( 已接受)信息时,请合上前盖. 兄弟7010硒鼓清零方法: 按住&quot;菜单&quot;键开机,用&quot;+&quot;或&quot;-&quot;选择,&quot;81&quot;选项,按&quot;设置&quot;项进行,安&quot;确认&quot;键进行确定 三星4521换粉清零方法： 按菜单 按# 按1934（两秒钟内完成）--按菜单—按用滚动键找到NEW开头的选项—按2次确认---按菜单---按#--按1完成 联想M7020/M7030更换硒鼓后将硒鼓置数器清零： 1 开机通电状态下打开前盖 2 按选项键，屏幕提示change drum?▲YES ??NO 3 按机器面板的向上箭头▲按键，屏幕提示ACCEPTED即可M7030M7020打印用户配置页方法,维护模式打印自检页 1 按功能键和上或下箭头键选择1.General Setup（设备信息）按设定键。 2按上或下箭头键选择6.User settings 3 按”设定”键 4按启动键。机器会打印一张用户配置页 联想M7120/M7130更换硒鼓后清零： M7120/M7130如更换硒鼓后屏幕仍提示更换硒鼓可做如下操作： 1 开机通电状态下打开前盖 2 按选项键，屏幕提示changedrum? 1 YES 2 NO3 按数字键1，屏幕提示ACCEPTED即可 联想M7030复位操作 按住”功能”键开机2 屏幕显示”MAINTENANCE”,按上下键选01 3按”设定”键4按上下键选99,再按”设定”重启机器 联想LJ2800将硒鼓复位清零： 在更换新硒鼓时，需要进行重置硒鼓计数器操,操作方法是:打印机开机状态下，打开前盖，按住启动键不放，直至所有LED指示灯亮，松开启动键，合上前盖，打印机自动重新预热，即完成硒鼓计数器重置。 联想2000恢复出厂方法： 首先进入用户模式，方法是：打印机前盖处于关闭状态，关闭打印机电源，然后按住机器上的启动（GO键）同时打开电源，机器面板上TONER/DRUM/PAPER指示灯亮起，只有READY就绪灯熄灭时松开启动键（GO键）并在所有指示灯熄灭后在按八次启动（GO键）即可将打印机恢复成出厂状态。 联想2400L打印机更换碳粉后清零方法 1、打开前盖，关闭电源 2、按住功能键不放，打开电源，此时指示灯全亮 3、按功能键 2下，之后指示灯全亮 4、按功能键6下，此时，错误指示灯亮， 5、 合上前盖，打印机预热，可以正常工作了。 美能达1300W 加粉后清零： 前提：红灯不能亮才可以 1．打开机器前盖板，并拆下。 2．取一个粉量为100%的粉仓装入机器。 3．关闭前门开关（可用纸张顶死）。 4．打开电源，检查“状态显示”内的碳粉容量是否为100%。确认后，取出粉仓。 5．装入需加粉的粉仓（请务必确认装到位），并打印一张（覆盖率在5%以上）。 6．退出“状态显示”，松开前门开关。 7．重新运行“状态显示”。关闭前门开关。 8．检查“状态显示”内的碳粉容量是否为100%。若仍为原容量，请重复上述步骤。 9．若容量变为100%，则给粉仓加粉，并恢复机器。 联想LJ2312P、2412、6012、6112、6212、8212硒鼓清零： 1、 先卸掉硒鼓上端的两颗镙丝。 2、 用改锥压住硒鼓两端卡子并轻轻往上提硒鼓盖子。 3、 撬开硒鼓后面的两个卡子。 4、 轻轻取下硒鼓上盖。 5、 取下硒鼓无齿轮一侧中心轴上的E型卡簧。 6、 取下另一侧的E型卡簧。 7、 请从无齿轮一侧将硒鼓轴心取出，千万不要从有齿轮一侧取轴心，这样将会损坏硒鼓的接地。 8、 小心取下硒鼓芯，注意有齿轮一端是两个齿轮，一个和鼓芯相连另一个是分离的，另一端有一个盖板和一个分离弹簧，请不要弄丢了。 9、 小心取下硒鼓的的转印辊，请不要弄脏转印辊，以免造成打印打印脏和打印颜色淡。10、清洁转印辊、清洁毛刷、电晕丝等。 11、更换新鼓芯，并将硒鼓装配起来，上机测试5-10张A4纸。 12、更换硒鼓后，请务必重新复位打印机，具体复位的步骤如下： 如2312P 无液晶显示，打开前盖，按住复位按扭，所有灯灭后在亮。 如有液晶显示，打开前盖，按一下“清除键clear”，显示“Replacedrum?
+  
+  <div class="read-more-link">
+    <a href="/5.36/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.35/">django2.0内置分页</a>
+  </h1>
+  <time datetime="2016-09-20T11:02:15Z" class="post-date">2016-09-20 11:02:15</time>
+  #导入分页器 from django.core.paginator import Paginator
+1视图逻辑
+#读取数据库 res = Product.objects.all() #建立分页器对象 ,第一个参数结果集，第二个每页的参数 paginator = Paginator(res,3) #接收分页的参数 page = request.GET.get('page',1) #将结果集按照分页逻辑切片 res = paginator.get_page(page)  2模板输出
+{#分页逻辑#} &lt;div&gt; 当前第{{res.number}}页,共有{{res.paginator.num_pages}}页 &lt;br&gt; {# 判断首页和上一页#} &lt;a href=&quot;?page=1&quot;&gt;首页&lt;/a&gt; {#判断上一页#} {% if res.has_previous %} &lt;a href=&quot;?page={{res.previous_page_number}}&quot;&gt;上一页&lt;/a&gt; {% endif %} {#判断下一页#} {% if res.has_next %} &lt;a href=&quot;?page={{res.next_page_number}}&quot;&gt;下一页&lt;/a&gt; {%endif%} &lt;a href=&quot;?page={{res.paginator.num_pages}}&quot;&gt;尾页&lt;/a&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;input style=&quot;width: 20px&quot; type=&quot;text&quot; id=&quot;jump&quot;&gt; &amp;nbsp;&amp;nbsp; &lt;button onclick=&quot;jump()&quot;&gt;跳转&lt;/button&gt; &lt;/div&gt;  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.34/">django上下文处理器</a>
+  </h1>
+  <time datetime="2016-08-20T13:11:04Z" class="post-date">2016-08-20 13:11:04</time>
+  上下文处理器（context processors）
+上下文处理器是可以返回一些数据，在全局模板中都可以使用。比如登录后的用户信息，在很多页面中都需要使用，
+那么我们可以放在上下文处理器中，就没有必要在每个视图函数中都返回这个对象
+Django中的Context Processor主要是应用于模板，完成页面的绘制的一些处理，也就是所说的页面渲染
+一,Django内置上下文处理器
+创建项目时系统自动生成的上下文处理器
+TEMPLATES = [ { 'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [os.path.join(BASE_DIR,'templates')], 'APP_DIRS': True, 'OPTIONS': { 'context_processors': [ 'django.template.context_processors.debug', 'django.template.context_processors.request', 'django.contrib.auth.context_processors.auth', 'django.contrib.messages.context_processors.messages', #自定义上下文处理器的位置 'supermarket.context_processor.get_daytime', ], }, }, ]  二 ，自定义上下文处理器
+1.创建上下文处理器
+需在项目目录创建context_processor.py 2.将上下文处理器添加到模板 3.页面模板中使用 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.33/">jquery键盘事件</a>
+  </h1>
+  <time datetime="2016-07-24T11:13:15Z" class="post-date">2016-07-24 11:13:15</time>
+  场景：当我们遇到onclick按钮事件时需要按回车执行时就用到了键盘监听事件
+例如：
+&lt;button id=&quot;sign_in_button&quot; class=&quot;btn btn-lg btn-warning btn-block&quot; style=&quot;opacity: 0.9&quot; onclick=&quot;sign_in()&quot;&gt;登 录&lt;/button&gt; //监听事件 event参数是键盘事件监听 $(document).keyup(function(event){ //判断回车键的CODE if(event.keyCode == 13){ // 第一种 如果确定键盘键，就调用登录方法 // sign_in(); // 第二种 模拟点击按钮 $(&quot;#sign_in_button&quot;).click(); } })  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.32/">类视图装饰器</a>
+  </h1>
+  <time datetime="2016-07-23T09:13:01Z" class="post-date">2016-07-23 09:13:01</time>
+  方法一
+#导入类视图装饰器包 from django.utils.decorators import method_decorator 复制代码 #登录逻辑的装饰器 def login(func): def inner(request,*args,**kwargs): if not request.COOKIES.get('username'): return HttpResponseRedirect('/supermarket/login') return func(request,*args,**kwargs) return inner #商品列表页 method_decorator装饰器使用name参数指明被装饰的方法 class Prolist(View): @method_decorator(login) def get(self,request): res = Product.objects.all() username = request.COOKIES.get('username',&quot;未取到&quot;) #用户名解码 try: username = username.encode(&quot;ISO-8859-1&quot;).decode(&quot;utf-8&quot;) except: pass # 解析模板 return render(request,'supermarket/prolist.html',locals())  方法二:
+在路由中导入装饰器并用视图 path('/cartlist',login(CartList.as_view()))  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.31/">django 类视图</a>
+  </h1>
+  <time datetime="2016-06-18T10:42:15Z" class="post-date">2016-06-18 10:42:15</time>
+  首先views.py导入 from django.shortcuts import render from django.http import HttpResponse,HttpResponseRedirect #导入类视图模块 from django.views import View #导入数据库 from mysite.models import User #导入类视图模块模板 from django.views.generic import TemplateView #导入通用类视图 from django.views.generic import ListView #定义一个通用类视图 class MyList(ListView): #指定模板名称 template_name = &quot;myapp/mytem.html&quot; #指定变量名称 # context_object_name = &quot;user_list&quot; #读取数据库 使用重写 def get_queryset(self): user_list = User.objects.all() return user_list #定义一个混合视图 class MyClassDef(View): def get(self,request): return render(request,&quot;d2_index.html&quot;) #定义一个类视图，用来渲染模板文件 class MyTem(TemplateView): template_name = &quot;myapp/mytem.html&quot; #定义一个子应用的视图方法 def myapp_index(request): return HttpResponse(&quot;子应用的视图方法&quot;) #定义类视图 class MyView(View): hello = '你好' def get(self,request): return HttpResponse(self.
+  
+  <div class="read-more-link">
+    <a href="/5.31/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.30/">Django 子程序</a>
+  </h1>
+  <time datetime="2016-05-20T10:42:15Z" class="post-date">2016-05-20 10:42:15</time>
+  在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。 Django的视图编写是放在子应用中的 1创建子应用 python manage.py startapp 子应用名称 #manage.py是创建工程时自动生成的管理文件 ,创建子应用需先进入工程目录下。 默认生成文件如下： admin.py 文件跟网站的后台管理站点配置相关。 apps.py 文件用于配置当前子应用的相关信息。 migrations 目录用于存放数据库迁移历史文件。 models.py 文件用户保存数据库模型类。 tests.py 文件用于开发测试用例，编写单元测试。 views.py 文件用于编写Web应用视图。 2注册安装子应用 创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。 在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用，初始工程中的INSTALLED_APPS 3主应用路由包含子路由（include） 在主路由（urls.py）导入from django.urls import include urlpatterns = [ path(&quot;myapp&quot;,include(&quot;myapp.urls&quot;)) ]  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.29/">使用axios加入进度条</a>
+  </h1>
+  <time datetime="2016-05-04T17:44:15Z" class="post-date">2016-05-04 17:44:15</time>
+  思路：（安慰剂按钮）首先当触发按钮时，设置拦截器，启动进度条从0开始到100满（html进度条用数值value来控制，默认为0)，设置进度条的配置函数 然后在后端返回函数中启动停止精度条的函数，为了保持返回函数和进度条效果的一致性，加入延时，达到线程同步的效果 代码如下： 首先导入jquery和axios js包 其次需要加入进度条的前端加入进度条 然后在写入：
+&lt;script&gt; //建立进度条对象 let pg = document.getElementById(&quot;pg&quot;); //定义登录方法 function login(){ var username = $(&quot;#username&quot;).val(); var password = $(&quot;#password&quot;).val(); var code = $(&quot;#code&quot;).val(); //拦截器 axios.interceptors.request.use(function(config){ //启动进度条 icount = setInterval(function(){ //判断进度条的进度 if(pg.value != 100){ pg.value++; } else{ pg.value = 0; } },100); //返回配置文件. return config; }); //使用axios来请求接口 //初始化传参 let param = new URLSearchParams(); //将参数传递给对象 param.append('username',username); param.append('password',password); param.append('code',code); axios({ //指定请求地址 url:'/supermarket/do_login', //请求参数 data:param, //请求类型 method:'post', //接口返回值类型 resposeType:&quot;text&quot; }) .
+  
+  <div class="read-more-link">
+    <a href="/5.29/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.28/">jquery.axios无刷新机制删除</a>
+  </h1>
+  <time datetime="2016-04-18T08:02:15Z" class="post-date">2016-04-18 08:02:15</time>
+  思路：无刷新机制就是不用的刷新动作 ，用前端html语法删除和后端的数据库删，同时删除的效果，来实现无刷新的方法 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.27/">使用中文用户名登录异常处理办法</a>
+  </h1>
+  <time datetime="2016-04-08T12:02:10Z" class="post-date">2016-04-08 12:02:10</time>
+  环境：使用cookie存储并且登录时读取cookie读取登录
+异常1，在后端报错&rsquo;NoneType&rsquo; object has no attribute &lsquo;split&rsquo;
+异常2，触发登录无响应（cookie无法存储）
+解决思路：编码问题导致，在登录成功时进行对存储的cookie进行编码，
+然后在进行展示前读取cookie后进行解码
+解决办法
+例如：
+编码 解码 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.26/">jquery.ajax与axios及定义拦截器</a>
+  </h1>
+  <time datetime="2016-03-31T11:02:11Z" class="post-date">2016-03-31 11:02:11</time>
+  首先导入jquery和axios包
+jquery.ajax
+function reg(){ var username = $(&quot;#username&quot;).val(); var password = $(&quot;#password&quot;).val(); // $.ajax({ // url:&quot;/supermarket/do_reg&quot;, // data:{&quot;username&quot;:username,'password':password}, // type:&quot;POST&quot;, // dataType:&quot;json&quot;, // success:function(obj){ // alert(obj.mes); // }, // //前置操作 // beforeSend:function(){ // //将按钮设置失效 // $(&quot;#sub&quot;).attr({disabled:&quot;disabled&quot;}) // }, // //后置操作 // complete:function(){ // //设置按钮生效 // $(&quot;#sub&quot;).removeAttr(&quot;disabled&quot;); // } // }) // }  axios
+&lt;script&gt; function reg(){ var username = $(&quot;#username&quot;).val(); var password = $(&quot;#password&quot;).val(); //使用axios来请求接口 //初始化传参 let param = new URLSearchParams(); //将参数传递给对象 param.
+  
+  <div class="read-more-link">
+    <a href="/5.26/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.25/">列表推导式和字典推导式</a>
+  </h1>
+  <time datetime="2016-03-05T19:00:15Z" class="post-date">2016-03-05 19:00:15</time>
+  列表推导式
+ urllist = [&quot;http://www.zhuangxiule.cn/c{}p{}/&quot;.format(i,x) for i in range(16,26) for x in range(0,25)] print(urllist)  字典推导式
+cookie = 'sts=0; UM_distinctid=16797c557a946-0f8967c2c5550c-4947311e-100200-16797c557aa5f8; Hm_lvt_9bb494db4665e40147cd57b89d6628e2=1544439553; remember=1; name_ie=%25113%25117%2597%25110%25115%25104%25117%25111%25103%25117%25111; I=i%3D3475276%26u%3D4040051%26n%3Dquanshuoguo%26m%3D0%26t%3D1544658451.1589200%26s%3Df041303d8e24b17642821e0ff5ef3579%26v%3D1.1; Hm_lvt_6ab7a391c8d69b4f62b7c54b2d70919c=1544767110,1544767165,1544767909,1544767975; site_str_flag=3; lc=57091; lc2=57091; wc=57091; wc_n=%25u5F00%25u5C01; bdUid=C83B6815683EEF2C20B73C89AD4A' cookie_list = {i.split(&quot;=&quot;)[0]:i.split(&quot;=&quot;)[-1] for i in cookie.split(&quot;; &quot;)} print(cookie_list)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.24/">scrapy windows下出现importError:No module named &#39;win32api&#39;</a>
+  </h1>
+  <time datetime="2016-02-29T13:02:10Z" class="post-date">2016-02-29 13:02:10</time>
+  scrapy windows下出现importError:No module named &lsquo;win32api&rsquo;
+需安装 pip install pypiwin32 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/pip/">Django 配置Mysql数据库</a>
+  </h1>
+  <time datetime="2016-02-17T09:50:54Z" class="post-date">2016-02-17 09:50:54</time>
+  pip技巧（linux同样）
+某些开发包下载过程中会很慢，会出现timeout的情况，解决办法：
+可以配置下镜像，加速下载和安装
+1.python的豆瓣源地址（镜像）
+https://pypi.doubanio.com/simple/
+2格式 pip install -i https://pypi.doubanio.com/simple/ 镜像或模块名
+例如: 
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/django_upload/">djaogo 图片上传与读取</a>
+  </h1>
+  <time datetime="2016-02-05T11:20:54Z" class="post-date">2016-02-05 11:20:54</time>
+  1.首先上传图片表单需&lt;form method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot;&gt; 2.视图py 中获取片名字 #接收文件以对象形式 img = request.FILES.get('img') #文件名称是name属性 #建立文件流对象 with open(os.path.join(settings.UPLOAD_ROOT,'',img.name),'wb') as f: #写文件 for chunk in img.chunks(): f.write(chunk) user = User(username = username,password=password,img=img.name) user.save() 注意：写入图片（文件）需在setting.py中定义上传文件夹的路径 UPLOAD_ROOT = os.path.join(BASE_DIR,'upload') 3.读取展示图片 在视图py中读取数据（要展示的内容）res = User.objects.get(id=18) 然后在模板文件中展示图片&lt;img src=&quot;/upload/{{res.img}}&quot;&gt; 注意：展示图片需在路由（urls.py）中导入 #导入文件路由库 from django.views.static import serve #导入文件配置路径 from mysite.settings import UPLOAD_ROOT 定义图片的链接 re_path('^upload/(?P&lt;path&gt;.*)$',serve,{'document_root':UPLOAD_ROOT})  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask4/">falsk 与 django 过滤器的使用与区别</a>
+  </h1>
+  <time datetime="2016-01-29T19:33:54Z" class="post-date">2016-01-29 19:33:54</time>
+  1，flask中内置的过滤器模板中常用方法：
+{#过滤器调用方式{{变量|过滤器名称}} #} &lt;!-- safe过滤器，可以禁用转义 --&gt; {{'&lt;strong&gt;hello&lt;/strong&gt;'|safe}} &lt;br/&gt; 大写转小写 {{'HELLO'|lower}} 小写转大写 {{'hello'|upper}} &lt;br/&gt; 字符串反转 {{'abc'|reverse}} 首字母大写 {{'james'|capitalize}} 过滤HTML标签 {{'&lt;em&gt;apple&lt;/em&gt;'| striptags}} &lt;br/&gt; 只显示list首个元素 {{[100,95,55,81]|first}} 只显示list最后一个元素 {{[100,95,55,81]|last}} 显示list的长度 {{[100,95,55,81]|length}} list里所有元素求和 {{[100,95,55,81]|sum}} list进行排序 {{[100,95,55,81]|sort}} format：格式化输出 {{ '%s is %d' | format('name',17) }} &lt;br/&gt; 对语句块进行过滤 {% filter upper%} qwedr,tyuio,piuytre,rtyuiuyt afaife oifafa, afaf {%endfilter%} &lt;br/&gt; 链式调用过滤器 {{'abc'|reverse|upper}} &lt;br&gt;&lt;br&gt; 自定义过滤器 {{100|my_filter}}  自定义过滤器（后端视图函数）
+@app.template_filter(&quot;my_filter&quot;) #自定义过滤器 def my_filter(val): return '$' + str(val)  2，django中内置的过滤器模板中常用方法：
+{#通过内置过滤器实现加减法#} {{test_int | add:10}} {{list.
+  
+  <div class="read-more-link">
+    <a href="/flask4/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask3/">falsk 与 django 钩子方法</a>
+  </h1>
+  <time datetime="2016-01-24T06:20:44Z" class="post-date">2016-01-24 06:20:44</time>
+  falsk 四大钩子方法 # 在第一次请求之前调用 @app.before_first_request def before_first_request(): print(&quot;这是第一次请求之前调用的方法&quot;) #在每一次请求之前调用 @app.before_request def before_request(): print('每一次请求之前，调用这个方法') #在请求之后调用方法，必须传响应参数，然后将响应内容返回 @app.after_request def after_request(response): print('在请求之后调用这个方法') return response # 在请求之后，调用服务器出现的错误信息 @app.teardown_request def teardown_request(e): print('服务器出现的错误是%s'%str(e)) django的钩子方法（状态保持） 1.首先在setting中配置 # 中间件#自定义中间件 项目名.文件名.类名 MIDDLEWARE = ['mysite.my_middle.MyMiddle'] 2.建立templatetags 文件夹 ---my_imddle.py #导入中间件库 from django.utils.deprecation import MiddlewareMixin #定义中间件类 class MyMiddle(MiddlewareMixin): #定义请求之前的方法 def process_request(self,request): request.session['str'] = 'welcome' print(&quot;在请求之前&quot;) #定义请求之后 def process_response(self,request,response): print(&quot;在请求之后&quot;) return response 3.可以在py文件中拿取session 如：print(request.session.get('str','未收到')) 也可以在请求之后删除session  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/falsk2/">falsk 与 django 捕获异常</a>
+  </h1>
+  <time datetime="2016-01-22T16:30:14Z" class="post-date">2016-01-22 16:30:14</time>
+  falsk捕获异常 @app.errorhandler(405) def internal_server_error(e): return '这个接口不能被GET请求到，只能post' django 捕获异常 如果统一捕获异常，意味着服务以上线，最后应关闭调试模式 DEBUG = False 设置允许访问的来源 *代表所有来源 ALLOWED_HOSTS = ['*'] 首先在py中定义提示的友好页面的方法 def page_not_found(request,**kwargs): return HttpResponse(&quot;您的页面找不到了&quot;) 然后在注册路由（urls.py） 需导入自定义模块from . import day1 #统一捕获异常404 项目名.模块名.方法名 handler404 = &quot;mysite.d2.page_not_found&quot;  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/falsk1/">falsk 与 django cookie和session存、取、删的区别</a>
+  </h1>
+  <time datetime="2016-01-12T16:38:44Z" class="post-date">2016-01-12 16:38:44</time>
+  alsk cookie的存取删需导入from flask import Flask,make_response,request # 存COOKIE的方法 @app.route('/setcookie') def setcookie(): res = make_response('存储cookie') # 使用set_cookie方法来存储key_value形式的数据 res.set_cookie('productname','卫生纸',max_age = 3600) return res # 调用cookie的方法 @app.route('/getcookie') def get_cookie(): # 通过REQUEST模块的COOKIES属性的GET方法指定key来调用value ret = request.cookies.get('productname') return ret #删除cookie的方法 @app.route('/delcookie') def del_cookie(): #通过make_respose对象内置的DELETE_COOKIE方法来指定KEY删除VALUE ret = make_response('删除cookie') ret.delete_cookie(&quot;productname&quot;) return ret falsk cookie的存取删需导入from flask import Flask,session @app.route('/set_session') def set_session(): #直接使用session对存储内容赋值 session['username'] = '你好' return '存储session成功' #调用session的方法 @app.route('/get_session') def get_session(): #通过session直接对内容进行调用 ret = session['username'] return ret #删除session方法 @app.route('/del_session') def del_session(): #通过session的pop方法指定key来删除value session.
+  
+  <div class="read-more-link">
+    <a href="/falsk1/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/wapper/">Flask需要登录权限的装饰器写法</a>
+  </h1>
+  <time datetime="2015-12-30T19:10:12Z" class="post-date">2015-12-30 19:10:12</time>
+  def wapper(func): def inner(*args,**kwargs): if not request.cookies.get(&quot;username&quot;): return redirect(&quot;/sign_in&quot;) return func(*args,**kwargs) return inner  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/mongo/">mongo 的简单查询语法</a>
+  </h1>
+  <time datetime="2015-12-22T22:14:12Z" class="post-date">2015-12-22 22:14:12</time>
+  小白的我对MONGO的一些语句搜集用于区别mysql及一些小常识
+pymongo 语法 按照id进行倒序操作db.news.find().limit(20).sort([(&quot;_id&quot;,-1)]) group = {'$group':{&quot;_id&quot;:&quot;$region&quot;,'count':{'$sum':1}}} db.problem.aggregate([group]) select region,count(*) from problem group by region; 查找新闻表标题以name 开头,并且不区分大小写 db.news.find({'title':{'$regex':'^'+name,&quot;$options&quot;:'i'}}) db.mycol.aggregate([{$group : {_id : &quot;$by_user&quot;, num_tutorial : {$sum : 1}}}]) select by_user, count(*) from mycol group by by_user 查看所有的数据库：show dbs /show databases 切换数据库：use db_name 删除当前的数据库：db.dropDatabase() 查看集合：show collections 删除集合：db.集合名称.drop() mongodb的增删改查 增 db.collection_name.insert({&quot;_id&quot;:&quot;111&quot;}) _id如果已经存在，insert方法会报错，不存在的时候，会插入新数据 db.collection_name.save({&quot;_id&quot;:&quot;111&quot;,&quot;name&quot;:&quot;bob&quot;,&quot;age&quot;:&quot;18&quot;}) _id如果存在，会更ddvd cx x新其他键对应的值(name,age)，不存在的时候，会新插入数据 删 db.collection_name.remove({条件},{justOne:true}) 默认情况下，会删除全部满足条件的内容，justOne:true时值删一条 db.collections_name.drop() 删除整个集合（collections_name） 改 db.collections_name.update({name:&quot;bon&quot;},{name:&quot;fan&quot;}) 更新 将名字为”bon”改为”fan” 弊端：会将collections_name内容代替如： db.text01.find() { &quot;_id&quot; : &quot;3&quot;, &quot;name&quot; : &quot;fan&quot;, &quot;age&quot; : &quot;16&quot; } db.
+  
+  <div class="read-more-link">
+    <a href="/mongo/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/json/">json 脚本入库的几种方法</a>
+  </h1>
+  <time datetime="2015-12-18T19:14:22Z" class="post-date">2015-12-18 19:14:22</time>
+  json 脚本入库的几种方法，见代码：
+#第一种mongodb入库
+# from pymongo import * # import json # conn = MongoClient('127.0.0.1',27017) # db = conn.p2p # content = open('static/data/text.json','r',encoding='utf-8',errors='ignore') # data = json.load(content) # db.order.insert(data) # print(db.order.count())  第二种SQLALCHEMY入库mysql # import json # from flask import Flask # from flask_sqlalchemy import SQLAlchemy # app = Flask(__name__) # app.config.from_pyfile(&quot;config.ini&quot;) # db = SQLAlchemy(app) # class Product(db.Model): # __tablename__= 'product' # id = db.Column(db.Integer,primary_key=True) # name = db.
+  
+  <div class="read-more-link">
+    <a href="/json/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/git/">git 码云的常用命令（版本控制）</a>
+  </h1>
+  <time datetime="2015-12-12T20:15:28Z" class="post-date">2015-12-12 20:15:28</time>
+  首先在码云仓库创建对应的仓库 当你输入错误用户名和密码 需要 清掉配置 git config --system --unset credential.helper 设置账号 git config --global user.name &quot;名称&quot; git config --global user.email &quot;邮箱&quot; 初始化版本库 git init 提交暂存 git add -A 提交修改内容 git commit -m &quot;first commit” 指定云端的项目地址 git remote add origin https://gitee.com/项目地址/项目名称.git 拉取云端文件 git pull origin master --allow-unrelated-histories 《提示》：如果密码或用户名输入错误可以在windows 凭据中删除重新执行 推送同步到远端 git push -u origin master  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/html/">html 标签笔记</a>
+  </h1>
+  <time datetime="2015-12-09T08:33:15Z" class="post-date">2015-12-09 08:33:15</time>
+  《一、HTML 基础结构》 &lt;html&gt; ________________________________ &lt;head&gt; &lt;title&gt;无标题文档&lt;/title&gt; &lt;/head&gt; ________________________________ &lt;body&gt; &lt;/body&gt; ________________________________ &lt;/html&gt; HTML的常用标记: 1.文档结构标记 用来指明一个Html文档的基本结构。 （1）文档标记：&lt;Html&gt;...&lt;Html&gt; 整个HTML文档内容均在此标记之中。 （2）头部标记：&lt;HEAD&gt;...&lt;/HEAD&gt; 凡是在从此标记之内的内容，例如标题等，均属于头部信息。头部信息不显示在Web页中。 （3）标题标记：&lt;TITLE&gt;...&lt;/TITLE&gt; 此标记之间的内容将作为文档标题显示在浏览器的标题栏中。 注意：&lt;TITLE&gt;...&lt;/TITLE&gt;标记只能放在&lt;HEAD&gt;...&lt;/HEAD&gt;标记之间。 （4）主体标记：&lt;BODY&gt;...&lt;/BODY&gt;主体是Web页的主要部分，在&lt;BODY&gt;...&lt;/BODY&gt;标记之间的内容将显示在Web页中。 _____________________________________________________________________________________________________________ _____________________________________________________________________________________________________________ 《二、文本标记》 （1）标题标记： &lt;hn&gt;&lt;/hn&gt;(n的范围为1-6) &lt;h1&gt;&lt;/h1&gt;是最大的标题 &lt;h2&gt;使用h2的标题&lt;/h2&gt; &lt;h3&gt;使用h3的标题&lt;/h3&gt; &lt;h4&gt;使用h4的标题&lt;/h4&gt; &lt;h5&gt;使用h5的标题&lt;/h5&gt;&lt;h6&gt;&lt;/h6&gt;是最小的标题。 注意：被标示的文字将以粗体的方式显示在页面中。 （2）字体标记：&lt;b&gt;&lt;/b&gt;、&lt;i&gt;&lt;/i&gt;、&lt;u&gt;&lt;/u&gt;、&lt;s&gt;&lt;/s&gt; &lt;b&gt;&lt;/b&gt; 之间的文本以黑体字的形式输出 &lt;i&gt;&lt;/i&gt; 之间的文本以斜体字的形式输出 &lt;u&gt;&lt;/u&gt; 之间的文本以加下划线的形式输出 &lt;s&gt;&lt;/s&gt;之间的文本以删除线的形式输出 （3）斜体和加重标记：&lt;em&gt;&lt;/em&gt;,&lt;strong&gt;&lt;/strong&gt; 1.&lt;em&gt;&lt;/em&gt;用来输出需要强调的文本（通常是斜体） 2.&lt;strong&gt;&lt;/strong&gt;则用来输出加重文本（通常是黑体） （4）字型标记：&lt;font&gt;&lt;/font&gt; 此标记通常用来控制文字的字型，大小，颜色。它主要有3个属性face，size，color。 1.face属性用来指定文字的字型，如果指定的字型不存在于系统中，将使用默认字型。 2.size属性用来指定文字的大小，可以取值1-6，-1—-6，1-7,7为最大字体 3.color属性用来指定文字的颜色，颜色的取值可以是预设的颜色名称或者十六进制的RGB颜色码。 例如：&lt;font face=&quot;黑体&quot; size=&quot;5&quot; color=&quot;red&quot;&gt;写文字内容&lt;/font&gt; （5） 1、&lt;sup&gt;...&lt;/sup&gt;标签可定义上标文本。 （全称：superscript - sup） 包含在 &lt;sup&gt; 标签和其结束标签 &lt;/sup&gt; 中的内容将会以当前文本流中字符高度的一半来显示，但是与当前文本流中文字的字体和字号都是一样的。 提示：这个标签在向文档添加脚注以及表示方程式中的指数值时非常有用。如果和 &lt;a&gt; 标签结合起来使用，就可以创建出很好的超链接脚注。 2、&lt;sub&gt;...&lt;/sub&gt;标签可定义下标文本。 （全称：subscript - sub） 包含在 &lt;sub&gt; 标签和其结束标签 &lt;/sub&gt; 中的内容将会以当前文本流中字符高度的一半来显示，但是与当前文本流中文字的字体和字号都是一样的。 提示：无论是 &lt;sub&gt; 标签还是和它对应的 &lt;sup&gt; 标签，在数学等式、科学符号和化学公式中都非常有用。 ________________________________________________________________________________________________ ________________________________________________________________________________________________ 《三、格式标记》 （1）段落标记：&lt;p&gt;.
+  
+  <div class="read-more-link">
+    <a href="/html/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/echarts/">ECharts图形库</a>
+  </h1>
+  <time datetime="2015-12-08T23:03:55Z" class="post-date">2015-12-08 23:03:55</time>
+  ECharts图形库百度的项目,图形的创建也比较简单，直接引用Javascript即可
+1,引入
+&lt;script src=&quot;{{ url_for(&quot;static&quot;,filename='js/echarts-all-2.2.7.js') }}  2定义绘图方法
+&lt;script&gt; // function show_source(dname,data){ // //初始化echarts,在data_summary内部绘图 // var source_chart = echarts.init(document.getElementById('data_summary')); // //定义绘图配置 // var option = { // //悬停提示配置 // tooltip:{ // //定义鼠标 // truigger:&quot;item&quot;, // //显示数据格式 // formatter:&quot;{b}:{d}%&quot; // }, // //传递数据,传入来源名称 // legend:{ // data:dname // }, // //传递具体数据 // series:[{ // //指定绘图类型 // type:&quot;pie&quot;, // //具体数据 // data:data // }] // } // //将配置文件和绘图对象结合 // source_chart.setOption(option); // } // // 发送ajax请求来拿取JSon数据，来拼图 // $.
+  
+  <div class="read-more-link">
+    <a href="/echarts/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_login/">python_flask 注册，登陆，退出思路 ---纯个人观点</a>
+  </h1>
+  <time datetime="2015-12-06T08:07:29Z" class="post-date">2015-12-06 08:07:29</time>
+  1注册逻辑首先查询数据库用户名
+并判断用户是否存在，如不存在就插入数据
+并返回响应给前端
+2前端模板获取注册信息
+判断 用户名不能为空及密码不能为空，和密码不一致
+拼接注册url 组成get获取对象
+响应数据并判断 如该用户名已存在
+注册成功并跳转到登陆页面 window.location.href=&ldquo;/login&rdquo;
+3首先登陆页面验证逻辑get
+读取数据库并判断注册值是否存在
+4在前段模板获取注册值并拼接成url 组成get获取对象
+响应数据判断 不存在就输出用户名或密码错误
+否则登陆成功并跳转到首页 window.location.href=&ldquo;/&rdquo;
+保存cookie 为关闭浏览器下次登陆体验和
+做欢迎个人信息及退出做准备
+5在主页模板页判断如登陆成功 则登陆和注册按钮隐藏并
+显示登陆成功的个人信息 和退出按钮
+个人信息渲染用字符串拼接（欢迎+获取的cookie）
+退出按钮用方法删除cookie 并更新界面（window.location.reload()）
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/excel/">pyhton读取excel表格文件</a>
+  </h1>
+  <time datetime="2015-12-05T20:03:28Z" class="post-date">2015-12-05 20:03:28</time>
+  excel表格文件办公中常用，如通过Python操作这些数据需导入并有序读取这些数据
+特随笔，供以后查阅
+代码如下：
+import xlrd # file = '1.xls' # # def read_excel(): # wb = xlrd.open_workbook(filename=file)#打开文件 # # print(wb.sheet_names())#获取所有表格名字 # print(wb....) # sheet1 = wb.sheet_by_index(0)#通过索引获取表格 # sheet2 = wb.sheet_by_name('无爱')#通过名字获取表格 # print(sheet2) # print(sheet1.name,sheet1.nrows,sheet1.ncols) # rows = sheet1.row_values(2)#获取行内容 # cols = sheet1.col_values(3)#获取列内容 # print(rows) # print(cols) # print(sheet1.cell(1,0).value)#获取表格里的内容，三种方式 # print(sheet1.cell_value(1,0)) # print(sheet1.row(1)[0].value) boos= xlrd.open_workbook('1.xls') sheet = boos.sheet_by_index(0) for user in range(1, sheet.nrows): print(sheet.row_values(user, 0, sheet.ncols))  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/spider/">pyhton 爬虫爬去吾爱精品软件的信息并写入excel</a>
+  </h1>
+  <time datetime="2015-12-03T17:02:25Z" class="post-date">2015-12-03 17:02:25</time>
+  之前的爬虫信息下载后只写入txt文档,想到了以后工作加入有特殊需求,趁放假有时间将这写数据写入excel表格
+以吾爱精品软件去为例,代码如下:
+# -*- coding: utf-8 -*- import json,xlwt import os import requests from lxml import etree class Wuai(object): def __init__(self): self.url= &quot;https://www.52pojie.cn/forum-16-{}.html&quot; self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.90 Safari/537.36 2345Explorer/9.5.0.17997'} self.files = open(&quot;wuai.txt&quot;,&quot;wb&quot;) self.start=0 def get_data(self,url): response = requests.get(url) return response.text def xml_data(self,data): html = etree.HTML(data) mes = html.xpath(&quot;//table[@summary='forum_16']&quot;) name=['类型','标题','时间'] f=xlwt.Workbook() sheet1 = f.add_sheet(&quot;无爱&quot;,cell_overwrite_ok=True) for x in range(0,len(name)): sheet1.write(0,x,name[x]) for i in mes: type = i.
+  
+  <div class="read-more-link">
+    <a href="/spider/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_/">flask之SQLAlchemy语法和原生mysql语法</a>
+  </h1>
+  <time datetime="2015-12-02T15:30:44Z" class="post-date">2015-12-02 15:30:44</time>
+  作为一个程序员，我想把有限的大脑空间留给有价值的知识，本人偏向于原生语法
+特随笔于易查阅
+# -*- encoding: utf-8 -*- from flask import Flask,render_template from flask_sqlalchemy import SQLAlchemy app = Flask(__name__) #从配置文件导入 app.config.from_pyfile(&quot;config.ini&quot;) #指定数据库连接和库名 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql@127.0.0.1:3306/myflask?charset=utf8' #建立数据库对象 db = SQLAlchemy(app) #建立数据库类，用来映射数据库,将数据库的模型作为参数传入 class User(db.Model): #声明表名= # __tablename__=&quot;user&quot; #建立字段函数 id = db.Column(db.Integer,primary_key=True) name =db.Column(db.String(200)) password =db.Column(db.String(200)) @app.route(&quot;/&quot;) def index(): #增，入库逻辑 #声明对象 user= User(name=&quot;你好&quot;,password=&quot;123123&quot;) #调用添加方法 db.session.add(user) return &quot;hehe&quot; @app.route(&quot;/del&quot;) def del_user(): #根据某个字段删除,filter_by可以理解为where 例如delete from user where id = 1 User.query.filter_by(id=7).delete() return &quot;删除操作&quot; @app.route(&quot;/update&quot;) def update_user(): #根据某个字段修改操作 updata ueser set name=&quot;张三&quot; where id=2 User.
+  
+  <div class="read-more-link">
+    <a href="/flask_/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_form/">flask之表单验证</a>
+  </h1>
+  <time datetime="2015-12-01T08:30:42Z" class="post-date">2015-12-01 08:30:42</time>
+  #flask的消息闪现依赖于flash库,用户发送的请求方式存储在request模块中 #跳转依赖于redirect模块,还可以通过url_for方法来进行方法上的寻址
+from flask import Flask,flash,render_template,request,session,redirect,url_for  #导入wtf扩展的表单类
+from flask_wtf import FlaskForm  #导入自定义表单需要用到的字段类型
+from wtforms import SubmitField,StringField,PasswordField  #新建一个表单类
+class RegisterForm(FlaskForm): username = StringField('用户名') password = PasswordField('密码') password1 = PasswordField('确认密码') submit = SubmitField('注册') #建立对象 app = Flask(__name__) #载入配置文件 app.config.from_pyfile('config.ini') #登陆成功后跳转的页面 @app.route(&quot;/hello&quot;) def hello(): return ' hello 欢迎 %s ' % session['username'] #指定请求方式，使用methods属性 @app.route('/',methods=['GET','POST']) def index(): #判断client发送的请求类型 #自己请求自己的逻辑中，GET只用来解析模板，而POST用来判断数据逻辑 if request.method == &quot;POST&quot;: #使用form属性来接收表单提交过来的数据 username = request.form.get(&quot;username&quot;) password = request.form.get(&quot;password&quot;) password1 = request.
+  
+  <div class="read-more-link">
+    <a href="/flask_form/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/random/">python 随机模块常用命令</a>
+  </h1>
+  <time datetime="2015-11-30T10:30:30Z" class="post-date">2015-11-30 10:30:30</time>
+  import random print(random.random()) #用于生成一个0到1之间的随机浮点数 print(random.uniform(1,3))# 用于生成一个指定范围内的随机浮点数 print(random.uniform(3,1))# 两个参数一个是上限，一个是下限。 print(random.randint(1,3)) # 用于生成一个指定范围内的整数。 #random.randrange([start],stop[,step]) 从指定范围内，按指定的基数递增的集合中获取一个随机数 print(random.randrange(0,100,2)) # 取 0到100之间的随机偶数 # random.choice 从序列中获取一个随机元素。其函数原型为random.choice(sequence)，参数sequence表示 # 一个有序类型。 print(random.choice('改变世界')) # 世 print(random.choice(['sunshine','is','lower'])) #lower print(random.choice(('sunshine','always','18'))) # 18 # random.shuffle(x[,random]) 用于将一个列表中的元素打乱。 s = ['改','变','世','界'] random.shuffle(s) print(s) # ['变', '世', '改', '界'] # random.sample(sequence,k) 从指令序列中随机获取指定长度的片段。sample函数不会修改原有的序列。 l = [1,2,3,4,5,6,7,8] print(random.sample(l,3)) # [7, 3, 5]  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/blueprint/">falsk_蓝图（blueprint）</a>
+  </h1>
+  <time datetime="2015-11-29T18:02:15Z" class="post-date">2015-11-29 18:02:15</time>
+  蓝图(blueprint)
+随着业务代码的增加，将所有代码都放在单个程序文件中，是非常不合适的。这不仅会让代码阅读变得困难，而且会给后期维护带来麻烦。
+什么是蓝图
+蓝图：用于实现单个应用的视图、模板、静态文件的集合。
+蓝图就是模块化处理的类。
+简单来说，蓝图就是一个存储操作路由映射方法的容器，主要用来实现客户端请求和URL相互关联的功能。 在Flask中，使用蓝图可以帮助我们实现模块化应用的功能。
+蓝图的运行机制
+蓝图是保存了一组将来可以在应用对象上执行的操作。注册路由就是一种操作,当在程序实例上调用route装饰器注册路由时，这个操作将修改对象的url_map路由映射列表。当我们在蓝图对象上调用route装饰器注册路由时，它只是在内部的一个延迟操作记录列表defered_functions中添加了一个项。当执行应用对象的 register_blueprint() 方法时，应用对象从蓝图对象的 defered_functions 列表中取出每一项，即调用应用对象的 add_url_rule() 方法，这将会修改程序实例的路由映射列表。
+demo:
+-- encoding: utf-8 -- 使用蓝图需要依赖BLUEPRINT库 from flask import Flask,Blueprint #导入自定义蓝图文件
+from day06_part import mypart app = Flask(__name__) app.config.from_pyfile('config.ini')  #注册定义好的蓝图文件,给蓝图的url加前缀,若不加前缀则同路由将被重写
+app.register_blueprint(mypart,url_prefix='/henan') @app.route(&quot;/&quot;) def index(): return &quot;shouye&quot; @app.route(&quot;/henan&quot;) def henan(): return &quot;henan&quot; if __name__ == &quot;__main__&quot;: app.run() # -*- encoding: utf-8 -*- from flask import Flask,Blueprint app = Flask(__name__) app.config.from_pyfile('config.ini') #注册蓝图 mypart = Blueprint('mypart',__name__) @mypart.
+  
+  <div class="read-more-link">
+    <a href="/blueprint/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/time/">Python 常用的日期时间命令</a>
+  </h1>
+  <time datetime="2015-11-28T16:35:55Z" class="post-date">2015-11-28 16:35:55</time>
+  今天用到自动添加当前时间，居然把之前的知识忘了，特整理常用的日期时间命令
+代码：
+# 获取当前时间 # import time # localtime = time.localtime(time.time()) # print(&quot;本地时间为：&quot;,localtime) # # 获取格式划时间 # import time # localtime = time.asctime(time.localtime(time.time())) # print(&quot;本地时间为：&quot;,localtime) # import time # print(time.strftime(&quot;%Y-%m-%d \t %H:%M:%S&quot;,time.localtime())) # # 获取日历 # import calendar # cal = calendar.month(2018,2) # print(&quot;以下是输出日历：\n&quot;, cal) # # import datetime # i = datetime.datetime.now() # print(&quot;当前的日期和时间是%s&quot;%i)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_sqlalchmy/">flask_SQLAlchemy常用数据类型及列选项</a>
+  </h1>
+  <time datetime="2015-11-27T15:23:50Z" class="post-date">2015-11-27 15:23:50</time>
+  SQLAlchemy常用数据类型：
+ Integer：整形，映射到数据库中是int类型。
+ Float：浮点类型，映射到数据库中是float类型。他占据的32位。
+ Double：双精度浮点类型，映射到数据库中是double类型，占据64位。
+ String：可变字符类型，映射到数据库中是varchar类型.
+ Boolean：布尔类型，映射到数据库中的是tinyint类型。
+ DECIMAL：定点类型。是专门为了解决浮点类型精度丢失的问题的。在存储钱相关的字段的时候建议大家都使用这个数据类型。并且这个类型使用的时候需要传递两个参数，第一个参数是用来标记这个字段总能能存储多少个数字，第二个参数表示小数点后有多少位。
+ Enum：枚举类型。指定某个字段只能是枚举中指定的几个值，不能为其他值。在ORM模型中，使用Enum来作为枚举
+ Date：存储时间，只能存储年月日。映射到数据库中是date类型。在Python代码中，可以使用datetime.date来指定
+ DateTime：存储时间，可以存储年月日时分秒毫秒等。映射到数据库中也是datetime类型。在Python代码中，可以使用datetime.datetime来指定。示例代码如下：
+ Time：存储时间，可以存储时分秒。映射到数据库中也是time类型。在Python代码中，可以使用datetime.time来至此那个。
+ Text：存储长字符串。一般可以存储6W多个字符。如果超出了这个范围，可以使用LONGTEXT类型。映射到数据库中就是text类型。
+ LONGTEXT：长文本类型，映射到数据库中是longtext类型。
+  SQLAlchemy列选项
+选项名 说明
+1.primary_key 如果设为True，这列就是表的主键
+2.unique 如果设为True，这列不允许出现重复的值
+3.index 如果设为True，这列创建索引，提升查询效率
+4.nullable 如果设为True，这列允许使用空值；如果设为False，这列不允许使用空值
+5.default 为这列定义默认值
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_cookie_session/">flask中cookie,session的存储，调用，删除 方法(代码demo)</a>
+  </h1>
+  <time datetime="2015-11-25T11:23:05Z" class="post-date">2015-11-25 11:23:05</time>
+  # -*- encoding: utf-8 -*- # cookie,session的存储，调用，删除 from flask import Flask,make_response,request,session ret = Flask(__name__) ret.config.from_pyfile('config.ini') @ret.route(&quot;/&quot;) def index(): return &quot;shou ye &quot; @ret.route(&quot;/set_cookie&quot;) def set_cookie(): re = make_response(&quot;cookie以保存&quot;) re.set_cookie(&quot;apple&quot;,'苹果',max_age=3600) return re @ret.route(&quot;/get_cookie&quot;) def get_cookie(): re =request.cookies.get(&quot;apple&quot;) return re @ret.route('/del_cookie') def del_cookie(): re = make_response(&quot;cookie以删除&quot;) re.delete_cookie(&quot;apple&quot;) return re @ret.route(&quot;/set_session&quot;) def set_session(): session['hello'] = '你好' return '存储成功' @ret.route(&quot;/get_session&quot;) def get_session(): ret = session['hello'] return ret @ret.route('/del_session') def del_session(): session.pop(&quot;hello&quot;) return &quot;删除成功&quot; if __name__ == &quot;__main__&quot;: ret.
+  
+  <div class="read-more-link">
+    <a href="/flask_cookie_session/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/vscode/">vs code 设置工作区背景图片方法</a>
+  </h1>
+  <time datetime="2015-11-24T10:22:45Z" class="post-date">2015-11-24 10:22:45</time>
+  1.扩展&ndash;安装background
+2.文件&ndash;首选项&ndash;设置&ndash;在settings.josn中编辑&ndash;右侧用户设置添加
+&quot;background.useFront&quot;: false, &quot;background.useDefault&quot;:false, &quot;background.customImages&quot;: [&quot;file:///c:/1.jpg&quot;],  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/falsk/">flask 小知识总结</a>
+  </h1>
+  <time datetime="2015-11-23T08:02:55Z" class="post-date">2015-11-23 08:02:55</time>
+  Visual Studio Code
+1.自定义python组建,方便某功能和代码的便捷操作
+文件&ndash;首选项&ndash;用户代码片段&ndash;python.json&ndash;自定义需要的代码和功能
+2.自定义快捷键方法
+文件&ndash;首选项&ndash;键盘快捷方式&ndash;搜索要加入快捷键的命令，自定义快捷键
+3.设置自动保存文件
+文件&ndash;首选项&ndash;设置&ndash;auto save&ndash;将默认off设为onFoucusChange
+4.将vs code 设置中文
+左侧&ndash;扩展&ndash;输入chinese&ndash;安装简体中文插件
+5.python插件安装（同4）
+# -*- encoding: utf-8 -*- from flask import Flask # 建立FLASK对象 app = Flask(__name__)  
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/bolg/">bokeyuan_python文章爬去入mongodb读取--lowbiprogrammer</a>
+  </h1>
+  <time datetime="2015-11-22T09:02:15Z" class="post-date">2015-11-22 09:02:15</time>
+  # -*- coding: utf-8 -*- import requests,os from lxml import etree from pymongo import * class Boke(object): def __init__(self): self.url =&quot;https://www.cnblogs.com/cate/python/&quot; self.headers={'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.90 Safari/537.36 2345Explorer/9.3.2.17331'} def get_data(self,url): response = requests.get(url,headers=self.headers) return response.content def xml_data(self,data): html = etree.HTML(data) mes = html.xpath(&quot;//div[@class='post_item']&quot;) for i in mes: dict={} info_url = i.xpath(&quot;./div[@class='post_item_body']/h3/a/@href&quot;)[0] self.info_data(info_url) dict['url'] = info_url self.write_dbs(dict) def info_data(self,data): path = &quot;f:/woc/&quot; if not os.path.exists(path): os.makedirs(path) mes = self.
+  
+  <div class="read-more-link">
+    <a href="/bolg/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/spider_360/">360电影主页和详情页爬去入Mysql库链表读取--lowbiprogrammerr</a>
+  </h1>
+  <time datetime="2015-11-18T09:35:35Z" class="post-date">2015-11-18 09:35:35</time>
+  import requests,os,json from lxml import etree from pymysql import * class Movie(object): def __init__(self): self.url=&quot;https://www.360kan.com/dianying/list.php?year=all&amp;area=all&amp;act=all&amp;cat=106&amp;pageno={}&quot; self.headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'} self.start=0 # 请求数据接受数据 def get_data(self,url): response = requests.get(url,headers=self.headers) return response.content # 解析数据 def xml_data(self,data): html = etree.HTML(data) mes = html.xpath(&quot;//ul[@class='list g-clear']/*&quot;) dict = {} for i in mes: dict['title'] = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='detail']/p/span/text()&quot;)[0] dict['zhuyan'] = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='detail']/p[last()]/text()&quot;)[0] info_url = &quot;https://www.360kan.com&quot; + i.xpath(&quot;./a[@class='js-tongjic']/@href&quot;)[0] poto_url = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='cover g-playicon']/img/@src&quot;) potoname =self.
+  
+  <div class="read-more-link">
+    <a href="/spider_360/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/two/">python进程池爬取下载美女图片（xpath）--lowbiprogrammer</a>
+  </h1>
+  <time datetime="2015-11-15T06:22:01Z" class="post-date">2015-11-15 06:22:01</time>
+  # -*- coding: utf-8 -*- import requests,os from lxml import etree import multiprocessing from retrying import retry # 创建地址池 urllist = [&quot;http://www.zhuangxiule.cn/c{}p{}/&quot;.format(i,x) for i in range(16,26) for x in range(0,25)] @retry(stop_max_attempt_number=3) def get_data(url): response = requests.get(url,timeout=3) data = response.content html = etree.HTML(data) # xpath匹配首页的标题和详情的url mes = html.xpath(&quot;//div[@class='main']/dl[@class='list-left public-box']/*&quot;) for i in mes: if i.xpath(&quot;./a/span/text()&quot;): title = i.xpath(&quot;./a/span/text()&quot;) poto_url= i.xpath(&quot;./a/@href&quot;)[0] if len(i.xpath(&quot;./a/@href&quot;))&gt;0 else None print(title) poto=requests.get(poto_url) # 请求每个详情页的图片地址 html = etree.HTML(poto.content) mes = html.
+  
+  <div class="read-more-link">
+    <a href="/two/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/one/">python进程池爬取下载美女图片（xpath）--lowbiprogrammer</a>
+  </h1>
+  <time datetime="2015-11-12T08:33:35Z" class="post-date">2015-11-12 08:33:35</time>
+  # -*- coding: utf-8 -*- import requests,os from lxml import etree import multiprocessing from retrying import retry # 创建地址池 urllist = [&quot;http://www.zhuangxiule.cn/c{}p{}/&quot;.format(i,x) for i in range(16,26) for x in range(0,25)] @retry(stop_max_attempt_number=3) def get_data(url): response = requests.get(url,timeout=3) data = response.content html = etree.HTML(data) # xpath匹配首页的标题和详情的url mes = html.xpath(&quot;//div[@class='main']/dl[@class='list-left public-box']/*&quot;) for i in mes: if i.xpath(&quot;./a/span/text()&quot;): title = i.xpath(&quot;./a/span/text()&quot;) poto_url= i.xpath(&quot;./a/@href&quot;)[0] if len(i.xpath(&quot;./a/@href&quot;))&gt;0 else None print(title) poto=requests.get(poto_url) # 请求每个详情页的图片地址 html = etree.HTML(poto.content) mes = html.
+  
+  <div class="read-more-link">
+    <a href="/one/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/flask_mysql/">Django 配置Mysql数据库</a>
+  </h1>
+  <time datetime="2015-11-10T09:23:50Z" class="post-date">2015-11-10 09:23:50</time>
+  首先在setting文件数据库配置中设置
+DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': &quot;mydjango&quot;, 'USER':&quot;root&quot;, &quot;PASSWORD&quot;:&quot;mysql&quot;, # ''空位默认 'HOST':'', 'PORT':'', 'OPTIONS':{'autocommit':True} } }  然后在init.py中初始化mysql()类
+import pymysql pymysql.install_as_MySQLdb()  其次在项目根目录中设置初始化（命令提示窗）
+python manage.py makemigrations python manage.py migrate  
+  
+</article>
+</div>
+    </main>
+
+    
+  </body>
+</html>

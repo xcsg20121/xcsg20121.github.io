@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python基础题 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python基础题</h1>
+  <time datetime=2017-01-09T09:09:53Z class="post-date">Mon, Jan 9, 2017</time>
+  <pre><code>大家尽可能别把答案删掉自己做一遍 一定让初学者怀疑人生
+
+一、选择题（32分）
+1、python不支持的数据类型有：（A）
+　　A、char　　B、int　　C、float　　D、list
+2、x = “foo”
+y = 2
+print(x+y) （E）
+　　A.foo 　　B.foofoo　　 C.foo2 　　D.2　　 E.An exception is thrown
+　解释：不同数据类型不可以相加，但是字符串可以与数字相乘，以上例题若改为print（x*y），结果为B答案
+3、关于字符串下列说法错误的是：（B）
+　　A、字符应该视为长度为1的字符串　　　　　　　　　　 B、字符串以\0标志字符串的结束　　
+　　C、既可以用单引号，也可以用双引号创建字符串　　　　D、在三引号字符串中可以包含换行回车等特殊字符
+4、以下不能创建一个字典的语句是：（C）
+　　A、dic1 = {}　　　　B、dic2 = {123:345}　　　　C、dic3 = {[1,2,3]:'uestc'}　　　　D、dic3 = {(1,2,3):'uestc'}
+解释：字典的key值必须为不可变数据类型
+5．答案为：（D）
+Kvps = {‘1’:1,’2’:2}
+theCopy = kvps
+kvps[‘1’] = 5
+sum = kvps[‘1’] + theCopy[‘1’]
+Print sum
+　　A.1 　　B.2 　　C.7 　　D.10
+解释：kvps与thecopy是赋值关系，指向的为同一个内存地址，一个发生变化，则均会发生变化
+6、以下何者是不合法的布尔表达式：（B）
+　　A．x in range(6) 　　B.3=a　　C.e&gt;5 and 4==f　　 D(x-6)&gt;5
+解释：py2中range（）为列表类型，xrange()为一个生成器，py3中只有range（），与py2中的xrange（）性质基本相同，A答案在这三种环境中均为合法的bool值，
+bool表达式即有判断作用的语句，B答案为赋值，无判断作用
+7、下列表达式的值为True的是：（无答案）
+　　A．5+4j&gt;2-3j　　 B.3&gt;2&gt;2　　C.e&gt;5 and 4==f 　　D.(x-6)&gt;5
+解释：A答案为复数，复数不可以比大小
+8、已知x=43，ch=‘A’，y = 1，则表达式(x&gt;=y and ch&lt;‘b’ and y)的值是：（B）
+　　A、0 　　B、1 　　C、出错　　D、True
+解释：结果与y值相同，若表达式改为：(x&gt;=y and ch&lt;‘b’ and y&gt;0)，则结果为：True
+9、下列表达式中返回 为True的是:(C)
+　　A、3&gt;2&gt;2　　B、’abc’&gt;’xyz’　　C、0x56 &gt;56　　D、(3,2)&lt;(‘a’,’b’)
+解释：A、B结果为False，正确答案为C，十六进制数字比十进制大，D答案不合法，int与str数据类型不可以比较，若改为('a',2)&lt;('b',3)则输出True
+10、下列Python语句正确的事:(AD)
+　　A、min = x if x &lt; y else y　　　　B、max = x &gt; y ? x : y　（c语言三元运算符）　C、if(x&gt;y) print(x)　　　 D、while True:pass
+11.若k为整形，下述while循环执的次数为：（A）
+k=1000
+　　while k&gt;1：
+　　　　print k
+　　　　k=k/2
+　　A.9　　 B.10　　C.11 　　D.100
+解释：通过print语句判断为py2中代码，py2中除法为向下取整
+12、以下叙述正确的是：（B）
+　　A、continue语句的作用是结束整个循环的执行　　　　　　 B、只能在循环体内使用break语句
+　　C、在循环体内使用break语句或continue语句的作用相同　　　　D、从多层循环嵌套中退出时，只能使用goto语句
+13、关于python中的复数，下列说法错误的是:(B)
+　　 A、表示复数的语法是real+image j 　　B、实部和虚部都是浮点数　　C、虚部必须后缀j且j不区分大小写　　D、方法conjugate返回复数的共轭复数
+14、下面的语句哪个会无限循环下去：(B)　　
+　　A、for a in range(10):
+　　　　　　time.sleep(10)
+　　B、while 1&lt;10:
+　　　　　　time.sleep(10)
+　　C、while True:
+　　　　　　break
+　　D、a = [3,-1,',']
+　　　 for i in a[:]:
+　　　　　　 if not a:
+　　　　　　　　 break
+
+15、下面的代码，哪些会输出1,2,3三个数字(多选,选错不得分):(BD)
+　　A 、for i in range(3):
+　　　 print(i)
+　　B、aList = [0,1,2]
+　　 for i in aList:
+　　　　　　print(i+1)
+　　C、i = 1
+　 while i &lt; 3:
+　　　　　　print(i) i+=1
+　　D、for i in range(3):
+　　　　 　　print(i+1)
+16、Python如何定义一个函数:（C）
+　　A、class &lt;name&gt;(&lt;type&gt; arg1,&lt;type&gt; arg2,…&lt;type&gt; argN) 　　　　B、function &lt;name&gt;(arg1,arg2,…argN)
+　　C、def &lt;name&gt;(arg1,arg2,…argN)　　　　　　　　　　　　　　 D、def &lt;name&gt;(&lt;type&gt; arg1,&lt;type&gt; arg2,…&lt;type&gt; argN)
+二、填空题(10分)
+1、以下函数需要在其中饮用一个全局变量k，请填写语句： def fun():
+_____#global.k
+k = k+1
+2、L=range(100) #生成器可以可以直接作为列表取值
+　　1) 取第一到第三个元素_______L[0：4]
+　　2) 取倒数第二个元素_______L[-2]
+　　3) 取后十个元素_______L[-10:]
+　　4) 把L复制给L1用_______L1=L.copy()
+3、判断dict有没有某个key用的方法是_______dic.get(key)
+4、获取list的元素个数，和向末尾追加元素的方法分别是______len() _______append()
+5.以下的代码的输出将是什么: _______
+
+def extendList(val,list=[]):
+list.append(val)
+return list
+list1 = extendList(10)
+list2 = extendList(123, [])
+list3 = extendList('a')
+print('list1 = % s' %list1) #输出结果为：list1 = [10, 'a']
+print('list2 = % s' %list2) #输出结果为：list2 = [123]
+print('list3 = % s' %list3) #输出结果为：list3 = [10, 'a']
+解释：函数中可变默认参数存在陷阱，重复调用会使原默认参数发生变化
+6.下 程序的输出结果是：_________yes
+
+x=True
+y=False
+z=False
+if x or y and x: 
+print &quot;yes&quot;
+else:
+print &quot;no&quot;
+三、简答题（20分）
+1、如何判断一个变量是不是字符串。------if type(name)==str
+2、is 和 == 的区别。
+3、Python 如何实现tuple和list的转换。------tuple（），list（）
+4、list和tuple有什么不同。------list为可变数据类型，tuple为不可变数据类型
+5、如何得到列表list的交集与差集。------利用set（），将列表转换为集合数据类型，利用difference（）方法求差集，利用intersection（）方法求交集
+6、Python中定义函数时如何书写可变参数和关键字参数？------顺序为（位置参数，*args，关键参数，**kwargs）
+7、*args和**kwargs在什么情况下会使 到？请给出使 **kwargs的事例------定义函数时参数不确定时用，例装饰器
+8、请描述unicode,utf-8,gbk等编码之间的关系？
+9、如何使用python删除一个文件
+　　import os
+　　os.remove(‘file’）
+10、def func(a,b,*args,c=0,**kwargs):pass ，*args,**kwargs的作用是什么？
+四、写代码（38分）
+1、d={‘a’:1,’b’:2,’c’:3}请打印出key、value对（3分）
+
+#思路一：
+d={'a':1,'b':2,'c':3}
+for i in d:
+print(i,d)
+#思路二：
+d = {'a': 1, 'b': 2, 'c': 3}
+for a,b in d.items():
+print(a, b)
+2、请写出 段Python代码实现删除 个list 的重复元素。（6分）
+
+#方法一：
+li=[1,'a',2,4,2,'a']
+se=set(li)
+li=list(se)
+print(li)
+#方法二：
+li=[1,'a',2,4,2,'a']
+result=[]
+for i in range(0,len(li)):
+for j in range(i+1,len(li)):
+if li==li[j]:
+result.append(li)
+for i in li:
+if i not in result:
+result.append(i)
+print(result)
+3、使 Python/C 上机解决以下题 （13分）
+1)、斐波那契数列1,2,3,5,8,13,21.....根据这样的规律，编程求出400万以内最大的斐波那契数，并求出他是第 个斐波那契数。
+li=[1,2]
+while li[-1]&lt;4000000:
+li.append(li[-1]+li[-2])
+del li[-1]
+print(li[-1])
+print(len(li))
+2)、dicta = {&quot;a&quot;:1,&quot;b&quot;:2,&quot;c&quot;:3,&quot;d&quot;:4,&quot;f&quot;:&quot;hello&quot;} ，dictb = {&quot;b&quot;:3,&quot;d&quot;:5,&quot;e&quot;:7,&quot;m&quot;:9,&quot;k&quot;:&quot;world&quot;}
+　　要求写 段代码，实现两个字典的相加，不同的key对应的值保留，相同的key对应的值相加后保留，如果是字符串就拼接，如上 例得到结果为：
+　　dictc = {&quot;a&quot;:1,&quot;b&quot;:5,&quot;c&quot;:3,&quot;d&quot;:9,&quot;e&quot;:7,&quot;m&quot;:9,&quot;f&quot;:&quot;hello&quot;,&quot;k&quot;:&quot;world&quot;}
+
+dicta={'a':1,'b':2,'c':3,'d':4,'f':'hello'}
+dictb={'b':3,'d':5,'e':7,'m':9,'k':'world'}
+dic={}
+for key1 in dicta:
+for key2 in dictb:
+if key1==key2:
+dic[key1]=dicta[key1]+dictb[key2]
+for a in dicta:
+if a not in dic:
+dic[a]=dicta[a]
+for b in dictb:
+if b not in dic:
+dic=dictb
+print(dic)
+5、什么是装饰器？写 个装饰器，可以打印输出 法执 时长的信息（8分）
+　　装饰器：在不修改原函数内容及调用方式上，实现函数的功能扩展
+
+import time
+def timmer(func):
+def inner(*args,**kwargs):
+start=time.time()
+ret=func(*args,**kwargs)
+end=time.time()
+print(end-start)
+return ret
+return inner
+@timmer
+def name(a,b):
+print('%s+%s等于%s' %(a,b,a+b))
+name(3,5)
+6、请写出log的实现(主要功能是打印函数名)（8分）
+　　@log
+　　def now():
+　　　　print ‘2017-08-31’
+　　&gt;&gt;&gt;now()
+　　输出: call now():
+　　2017-08-31
+
+def log(func):
+def inner(*args,**kwargs):
+print('call %s()' %func.__name__)
+ret=func(*args,**kwargs)
+return ret
+return inner
+@log
+def now():
+print('2017-08-31')
+now()
+
+
+data={'time':'2016-08-05T13;13:05',
+'some_ID':'ID1234',
+'graps1':{'fld1':1,'fld2':2},
+'xxx2':{'fld3':0,'fld5':0.4},
+'fld6':11,
+'fld7':7,
+'fld':8
+}
+# 类递归思想 # 栈的思想
+fields = 'fld2|fld3|fld7|fld9'
+fields_lst = fields.split('|') #['fld2', 'fld3', 'fld7', 'fld9']
+result = {}
+data_lst = [1]
+while data != 1:
+for key in data:
+if key in fields_lst:
+result[key] = data[key]
+if type(data[key]) == dict:
+data_lst.append(data[key])
+data = data_lst.pop() 
+print(result)
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

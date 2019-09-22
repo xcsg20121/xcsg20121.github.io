@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>django-rest-framework &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>django-rest-framework</h1>
+  <time datetime=2016-12-16T15:02:04Z class="post-date">Fri, Dec 16, 2016</time>
+  <pre><code>REST是它是一种架构风格 。REST就是通过使用HTTP协议和URI，利用client/server对资源进行CRUD操作。
+REST优点：
+1.客户端-服务端分离
+优点：提高用户界面的便携性，通过简化服务器提高可伸缩性
+2..无状态（Stateless）：从客户端的每个请求要包含服务器所需要的所有信息
+优点：提高可见性（可以单独考虑每个请求），提高了可靠性（更容易从局部故障中修复），提高可扩展性（降低了服务器资源使用）
+3.缓存（Cachable）：服务器返回信息必须被标记是否可以缓存，如果缓存，客户端可能会重用之前的信息发送请求
+优点：减少交互次数，减少交互的平均延迟
+4.统一接口
+优点：提高交互的可见性，鼓励单独改善组件
+5.支持按需代码（Code-On-Demand 可选）
+优点：提高可扩展性
+
+Django REST framework（以下简称 DRF）是一个开源的 Django 扩展，提供了便捷的 REST API 开发框架，拥有以下特性：
+直观的 API web 界面。
+多种身份认证和权限认证方式的支持。
+内置了 OAuth1 和 OAuth2 的支持。
+内置了限流系统。
+根据 Django ORM 或者其它库自动序列化。
+丰富的定制层级：函数视图、类视图、视图集合到自动生成 API，满足各种需要。
+可扩展性，插件丰富。
+广泛使用，文档丰富。
+
+简单的使用：
+1，安装与配置
+pip install djangorestframework
+
+settings.py 安装子应用
+</code></pre>
+
+<pre><code>INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'mytest',
+    'mysite',
+    'myapp',
+    'supermarket',
+    &quot;rest_framework&quot;,
+]
+</code></pre>
+
+<p>2,创建序列化 serializers.py</p>
+
+<pre><code>#导入序列化库
+from rest_framework import serializers
+#导入数据库类
+from supermarket.models import Product
+#定义序列化类
+class ProductSerializers(serializers.ModelSerializer):
+    #定义内置类  
+    class Meta:
+        #指定序列化的字段
+        model = Product
+        # fields = ('id','name','price','count')
+        #取所有的字段
+        fields = &quot;__all__&quot;
+</code></pre>
+
+<p>3,views.py 定义json接口</p>
+
+<pre><code>#导入视图类
+from rest_framework import viewsets
+from .serializers import ProductSerializers
+#定义类，属于rest专用类，专门定义json接口
+class ProductViewsets(viewsets.ModelViewSet):
+    #输出序列化类
+    #定义sql
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+</code></pre>
+
+<p>4,配置路由</p>
+
+<pre><code>#导入路由库
+from rest_framework.routers import DefaultRouter
+from .views import ProductViewsets
+#定义路由对象
+router = DefaultRouter()
+#注册路由
+router.register('/json',ProductViewsets)
+
+
+#将路由注入
+urlpatterns += router.urls
+</code></pre>
+
+<p><img src="/images/DRF.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

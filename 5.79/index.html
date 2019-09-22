@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Matplotlib 简单的使用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Matplotlib 简单的使用</h1>
+  <time datetime=2018-10-24T19:12:00Z class="post-date">Wed, Oct 24, 2018</time>
+  <p>Matplotlib是一个Python 2D绘图库， 只需几行代码即可生成绘图，直方图，功率谱，条形图，错误图，散点图等。 有关示例，请参阅示例图和缩略图库。</p>
+
+<pre><code>import matplotlib.pyplot as plt
+import numpy as np
+class TestPlot(object):
+    def __init__(self,plt):
+        self.plt = plt
+    #定义内部属性
+    # 解决中文乱码问题（第二种）
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    #指定编码
+    plt.rcParams['axes.unicode_minus'] = False
+    
+    #定义面积图方法(*********************************************)
+
+    def my_area(self):
+        #定义日期区间
+        data = ['2019-03-01','2019-03-02','2019-03-03','2019-03-04','2019-03-05']
+        #定义数据
+        #收入
+        earn = [166,155,355,422,622]
+        #支出
+        pay = [[16,30,25,46,20],[10,15,20,144,122]]
+        #将数据传入方法
+        self.plt.stackplot(data,earn,pay,colors=['green','yellow','orange']) 
+        #生成图例
+        self.plt.plot([],[],color='green',label=&quot;收入&quot;)
+        self.plt.plot([],[],color='yellow',label=&quot;午餐&quot;)
+        self.plt.plot([],[],color='orange',label=&quot;晚餐&quot;)
+        #设置标题
+        self.plt.title(&quot;面积图样例&quot;)
+        self.plt.legend()
+        self.plt.show()
+    #定义柱状图(*********************************************)
+    def my_bar(self):
+        my_plt = self.plt
+        GDP = [12404.1,13396.222,5335.22,5223.22]
+        my_plt.bar([&quot;北京&quot;,'上海','深圳','重庆'],GDP,align='center',color=&quot;lime&quot;,alpha=0.8)
+        my_plt.ylabel(&quot;生产总值&quot;)
+        #添加标题
+        my_plt.title(&quot;直辖市GDP&quot;)
+        #刻度范围
+        my_plt.ylim([5000,15000])
+        my_plt.show()
+    #定义饼图(*********************************************)
+    def my_pie(self):
+        my_plt = self.plt
+        beijing = [17,22,23,46]
+        #定义标签
+        label = ['2-3年','3-4年','4-5年','五年以上']
+        color = ['red','green','blue','purple']
+        #将数值最大的突出展示
+        indic = []
+        #使用enumerate方法来添加索引
+        for index,i in enumerate(beijing):
+            if i == max(beijing):
+                indic.append(0.5)
+            elif index == 1:
+                indic.append(0.2)
+            else:
+                indic.append(0)
+        # for i in beijing:
+        #     if i == max(beijing):
+        #         indic.append(0.1)
+        #     else:
+        #         indic.append(0)
+        #将数据传入 ，数据，标签，颜色，角度，阴影，突出显示
+        my_plt.pie(
+            beijing,
+            labels= label,
+            colors = color,
+            startangle=90,
+            shadow = True,
+            explode = tuple(indic),
+            #格式化数字
+            autopct = &quot;%1.1f%%&quot;
+        )
+        # 设置标题
+        my_plt.title(&quot;饼图实例-统计北京程序员工龄占比&quot;)
+        my_plt.show()
+    ##曲线图走势图(*********************************************)
+    def my_line(self):
+        my_line= self.plt
+        # #设置本机字体(第一种)
+        # font = FontProperties(fname='C:/Windows/Fonts/simhei.ttf',size=15)
+        #定制数据
+        x1 = ['2019-03-01','2019-03-02','2019-03-03','2019-03-04','2019-03-05','2019-03-06']
+        y1 = [0,6,9,5,3,2]
+        y2 = [10,12,16,12,16,17]
+        #填充数据
+        my_line.plot(x1,y1,label='temperature')
+        my_line.plot(x1,y2,label='water')
+        #设置标题
+        # my_line.title(&quot;趋势图&quot;,FontProperties=font)
+        my_line.title(&quot;趋势图&quot;)
+        # #显示图例
+        my_line.legend()
+        my_line.show()
+    #点状图(*********************************************)
+    def my_dot(self):
+        my_dot = self.plt
+        x  = list(range(101))
+        y = [xvalue * np.random.rand() for xvalue in x]
+        #填充数据 s 点的大小和粗细 c 颜色
+        my_dot.scatter(x,y,s=20,c='lime')
+        #绘图
+        my_dot.show()
+    # 定义横向条形图(*********************************************)
+    def my_barh(self):
+        my_plt = self.plt
+        #定义价格
+        price = [40,32.8,20,19.6]
+        #将数据传入
+        my_plt.barh(range(4),price,align=&quot;center&quot;,color=&quot;red&quot;,alpha=0.5)
+        #设置标签
+        my_plt.xlabel('价格')
+        #将数据传入y轴
+        my_plt.yticks(range(4),['红楼梦','三国演义','西游记','水浒传'])
+        #设置上下限
+        my_plt.xlim([10,60])
+        #设置标题
+        my_plt.title(&quot;四大名著&quot;)
+        #绘制
+        my_plt.show()
+
+
+if __name__ == &quot;__main__&quot;:
+    testplot = TestPlot(plt)
+    # testplot.my_area()
+    # testplot.my_bar()
+    # testplot.my_pie()
+    # testplot.my_line()
+    # testplot.my_dot()
+    # testplot.my_barh()
+
+
+
+#   # Matplot 生成子图（一个图中两个子图）
+#      #第一组数据
+#     x1 = list(range(5))
+#     y1 = list(map(lambda x:x**2,x1))
+#     #第二组数据
+#     x2 = list(range(4,10))
+#     y2 = list(map(lambda x:x**2/2,x2))
+
+#     ##做第一幅图 2*1矩阵
+#     ax1 = plt.subplot(121)
+#     #传入数据
+#     ax1.plot(x1,y1)
+#     ax2 = plt.subplot(122)
+#     ax2.plot(x2,y2)
+#     # #删除字图
+#     # plt.delaxes(ax2)
+#     # #增加字图
+#     # plt.subplot(ax2)
+#     plt.show() 
+
+    
+     #画散点图 
+
+    # df = pd.read_excel('tips.xlsx','sheet1')
+    # df.plot(kind='hist',x='tip',y='total_bill',color='lime',label='bill_tip')
+    # plt.title(&quot;heelo&quot;)
+    # plt.show()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

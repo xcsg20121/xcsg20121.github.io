@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>用Pyinstaller 实现py.转化为exe可执行文件----二维码实例 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>用Pyinstaller 实现py.转化为exe可执行文件----二维码实例</h1>
+  <time datetime=2017-04-24T14:12:55Z class="post-date">Mon, Apr 24, 2017</time>
+  <p>1，安装 Pyinstaller</p>
+
+<p>命令提示符窗口：pip install pyinstaller</p>
+
+<p>2，制作二维码脚本 d5_code.py</p>
+
+<pre><code>from MyQR import myqr
+#生成二维码
+words = input(&quot;请输入您要生成二维码的网址:&quot;)
+#save_name 生成的图片, picture 二维码背景图, colorized 是否开启颜色
+# myqr.run(words=words,save_name='mysite.jpg',picture='test_numpy.jpg',colorized=True)
+myqr.run(words=words,save_name='QR_code.jpg')
+</code></pre>
+
+<p>3,打包 Python脚本</p>
+
+<p>　在运行 pyinstaller命令需在py同一个目录下</p>
+
+<p>　　pyinstaller -F d5_code.py</p>
+
+<p>　**常用的一些附加：</p>
+
+<p>　　　　-D，&ndash;onedir 这会创建一个包含可执行文件的单文件夹包（默认）</p>
+
+<p>　　　　-F，&ndash;onefile 这个只会创建一个可执行文件</p>
+
+<p>　　　　&ndash;specpath DIR 用于存储生成的spec文件的文件夹（默认值：当前目录）</p>
+
+<p>　　　　-n NAME， &ndash;name NAME 应用程序的名称（默认值：第一个脚本的名称）</p>
+
+<p>　　　　-i FILE.ico , &ndash;icon FILE.ico 为你的程序添加一个图标</p>
+
+<p>　　报错误总结</p>
+
+<p>　　　　1. AttributeError: ‘str’ object has no attribute ‘items’</p>
+
+<p>　　　　解决方法： 需要更新一下你的setuptools pip install &ndash;upgrade setuptools</p>
+
+<p>　　　　2,打包后运行.exe程序调试闪退</p>
+
+<p>　　　　解决方法：在cmd行里面运行你的.exe文件</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

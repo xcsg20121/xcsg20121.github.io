@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Centos上配置nginx&#43;uwsgi&#43;负载均衡配置 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Centos上配置nginx&#43;uwsgi&#43;负载均衡配置</h1>
+  <time datetime=2019-06-08T14:15:39Z class="post-date">Sat, Jun 8, 2019</time>
+  <p>负载均衡在服务端开发中算是一个比较重要的特性。因为Nginx除了作为常规的Web服务器外，还会被大规模的用于反向代理后端，Nginx的异步框架可以处理很大的并发请求，把这些并发请求hold住之后就可以分发给后台服务端(backend servers, 后面简称backend)来做复杂的计算、处理和响应，并且在业务量增加的时候可以方便地扩容后台服务器。</p>
+
+<pre><code>说白了就是，随着业务和用户规模的增长，仅仅一台服务器无法肩负起高并发的响应，所以需要两台以上的服务器共同分担压力，而分担压力的媒介就是万能的Nginx。 
+</code></pre>
+
+<p><img src="/images/z1.jpg" alt="" />
+首先，利用wsgi在不同的端口上起两个Django服务，比如8000和8001（不用启动nginx服务）</p>
+
+<p>然后修改nginx网站配置，将原uwsgi_pass注释，改成变量绑定</p>
+
+<pre><code>server {
+    listen       8000;
+    server_name  localhost;
+
+    access_log      /root/myweb_access.log;
+    error_log       /root/myweb_error.log;
+
+
+    client_max_body_size 75M;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass mytest;
+        #uwsgi_pass 127.0.0.1:8001;
+        uwsgi_param UWSGI_SCRIPT video_back.wsgi;
+        uwsgi_param UWSGI_CHDIR  /root/video_back;
+    }
+
+
+    location /static {
+        alias /root/video_back/static;
+    }
+
+    location /upload {
+        alias /root/video_back/upload;
+    }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+server {
+    listen       80;
+    server_name  localhost;
+
+    access_log      /root/video_vue_access.log;
+    error_log       /root/video_vue_error.log;
+    
+    client_max_body_size 75M;
+
+
+    location / {
+        #include uwsgi_params;
+        # uwsgi_pass 127.0.0.1:8000;
+        #uwsgi_pass mytest;
+        root /root/video_vue;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+
+    }
+
+    location /static {
+        alias /root/video_vue/static;
+    }
+
+    error_log    /root/video_vue/error.log    error;
+
+}
+</code></pre>
+
+<p>然后修改主配置文件 vim /etc/nginx/nginx.conf，在http配置内添加负载均衡配置</p>
+
+<pre><code>user  root;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
+                      '$status $body_bytes_sent &quot;$http_referer&quot; '
+                      '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+    upstream mytest {
+    server 39.106.172.65:8000 weight=3;  #负载均衡服务器群
+    server 39.97.117.229:8001 weight=7;
+        }
+}
+</code></pre>
+
+<p>然后重启服务即可：</p>
+
+<p>systemctl restart nginx.service</p>
+
+<pre><code>值得注意的是常用的负载均衡策略有以下几种：
+1、轮询（默认）
+每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。
+
+upstream backserver {
+    server 192.168.0.14;
+    server 192.168.0.15;
+}
+
+
+2、权重 weight
+指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。
+
+upstream backserver {
+    server 192.168.0.14 weight=3;
+    server 192.168.0.15 weight=7;
+}
+
+
+3、ip_hash（ IP绑定）
+上述方式存在一个问题就是说，在负载均衡系统中，假如用户在某台服务器上登录了，那么该用户第二次请求的时候，因为我们是负载均衡系统，每次请求都会重新定位到服务器集群中的某一个，那么已经登录某一个服务器的用户再重新定位到另一个服务器，其登录信息将会丢失，这样显然是不妥的。
+
+我们可以采用ip_hash指令解决这个问题，如果客户已经访问了某个服务器，当用户再次访问时，会将该请求通过哈希算法，自动定位到该服务器。
+
+每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。
+
+upstream backserver {
+    ip_hash;
+    server 192.168.0.14:88;
+    server 192.168.0.15:80;
+}
+
+
+4、fair（第三方插件）
+按后端服务器的响应时间来分配请求，响应时间短的优先分配。
+
+upstream backserver {
+    server server1;
+    server server2;
+    fair;
+}
+
+
+5、url_hash（第三方插件）
+按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。
+
+upstream backserver {
+    server squid1:3128;
+    server squid2:3128;
+    hash $request_uri;
+    hash_method crc32;
+}
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

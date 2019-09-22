@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>html 标签笔记 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>html 标签笔记</h1>
+  <time datetime=2015-12-09T08:33:15Z class="post-date">Wed, Dec 9, 2015</time>
+  <pre><code>《一、HTML 基础结构》
+
+
+&lt;html&gt;
+________________________________
+&lt;head&gt;
+&lt;title&gt;无标题文档&lt;/title&gt;
+&lt;/head&gt;
+________________________________
+&lt;body&gt; 
+&lt;/body&gt;
+________________________________
+&lt;/html&gt;
+
+
+HTML的常用标记:
+
+1.文档结构标记
+用来指明一个Html文档的基本结构。
+（1）文档标记：&lt;Html&gt;...&lt;Html&gt; 整个HTML文档内容均在此标记之中。
+
+（2）头部标记：&lt;HEAD&gt;...&lt;/HEAD&gt; 
+凡是在从此标记之内的内容，例如标题等，均属于头部信息。头部信息不显示在Web页中。
+
+（3）标题标记：&lt;TITLE&gt;...&lt;/TITLE&gt; 此标记之间的内容将作为文档标题显示在浏览器的标题栏中。
+注意：&lt;TITLE&gt;...&lt;/TITLE&gt;标记只能放在&lt;HEAD&gt;...&lt;/HEAD&gt;标记之间。
+
+（4）主体标记：&lt;BODY&gt;...&lt;/BODY&gt;主体是Web页的主要部分，在&lt;BODY&gt;...&lt;/BODY&gt;标记之间的内容将显示在Web页中。
+
+_____________________________________________________________________________________________________________
+_____________________________________________________________________________________________________________
+
+ 
+
+《二、文本标记》
+
+（1）标题标记： &lt;hn&gt;&lt;/hn&gt;(n的范围为1-6)
+&lt;h1&gt;&lt;/h1&gt;是最大的标题
+&lt;h2&gt;使用h2的标题&lt;/h2&gt;
+&lt;h3&gt;使用h3的标题&lt;/h3&gt;
+&lt;h4&gt;使用h4的标题&lt;/h4&gt;
+&lt;h5&gt;使用h5的标题&lt;/h5&gt;&lt;h6&gt;&lt;/h6&gt;是最小的标题。
+注意：被标示的文字将以粗体的方式显示在页面中。
+
+（2）字体标记：&lt;b&gt;&lt;/b&gt;、&lt;i&gt;&lt;/i&gt;、&lt;u&gt;&lt;/u&gt;、&lt;s&gt;&lt;/s&gt;
+&lt;b&gt;&lt;/b&gt; 之间的文本以黑体字的形式输出
+&lt;i&gt;&lt;/i&gt; 之间的文本以斜体字的形式输出
+&lt;u&gt;&lt;/u&gt; 之间的文本以加下划线的形式输出
+&lt;s&gt;&lt;/s&gt;之间的文本以删除线的形式输出
+
+（3）斜体和加重标记：&lt;em&gt;&lt;/em&gt;,&lt;strong&gt;&lt;/strong&gt;
+1.&lt;em&gt;&lt;/em&gt;用来输出需要强调的文本（通常是斜体）
+2.&lt;strong&gt;&lt;/strong&gt;则用来输出加重文本（通常是黑体）
+
+（4）字型标记：&lt;font&gt;&lt;/font&gt;
+此标记通常用来控制文字的字型，大小，颜色。它主要有3个属性face，size，color。
+1.face属性用来指定文字的字型，如果指定的字型不存在于系统中，将使用默认字型。
+2.size属性用来指定文字的大小，可以取值1-6，-1—-6，1-7,7为最大字体
+3.color属性用来指定文字的颜色，颜色的取值可以是预设的颜色名称或者十六进制的RGB颜色码。
+例如：&lt;font face=&quot;黑体&quot; size=&quot;5&quot; color=&quot;red&quot;&gt;写文字内容&lt;/font&gt;
+
+
+（5）
+1、&lt;sup&gt;...&lt;/sup&gt;标签可定义上标文本。 （全称：superscript - sup）
+包含在 &lt;sup&gt; 标签和其结束标签 &lt;/sup&gt; 中的内容将会以当前文本流中字符高度的一半来显示，但是与当前文本流中文字的字体和字号都是一样的。
+提示：这个标签在向文档添加脚注以及表示方程式中的指数值时非常有用。如果和 &lt;a&gt; 标签结合起来使用，就可以创建出很好的超链接脚注。
+
+2、&lt;sub&gt;...&lt;/sub&gt;标签可定义下标文本。 （全称：subscript - sub）
+包含在 &lt;sub&gt; 标签和其结束标签 &lt;/sub&gt; 中的内容将会以当前文本流中字符高度的一半来显示，但是与当前文本流中文字的字体和字号都是一样的。
+提示：无论是 &lt;sub&gt; 标签还是和它对应的 &lt;sup&gt; 标签，在数学等式、科学符号和化学公式中都非常有用。
+
+ 
+
+________________________________________________________________________________________________
+________________________________________________________________________________________________
+
+《三、格式标记》
+
+（1）段落标记：&lt;p&gt;...&lt;/p&gt;
+此标记用来创建一个段落，在此标记之间的文本讲按照段落的格式显示。
+
+（2）换行标记：&lt;/br&gt;
+此标记没有结束标记，用来创建一个换行。
+
+
+(3) 项目列表标记：&lt;dl&gt;&lt;/dl&gt;,&lt;dt&gt;&lt;dd&gt;
+1.&lt;dl&gt;&lt;/dl&gt;用来创建项目列表
+2.&lt;dt&gt;用来创建列表中的上层项目
+3.&lt;dd&gt;用来创建列表中的下层项目
+&lt;dt&gt;和&lt;dd&gt;都必须放在&lt;dl&gt;&lt;/dl&gt;标记之间。
+
+（4）有/无序号列表标记：&lt;ol&gt;&lt;/ol&gt;,&lt;ul&gt;&lt;/ul&gt;,&lt;li&gt;
+1.&lt;ol&gt;&lt;/ol&gt;标记用来创建有序号列表
+2.&lt;ul&gt;&lt;/ul&gt;标记用来创建无序号列表
+3.&lt;li&gt;标记只能在&lt;ol&gt;&lt;/ol&gt;或&lt;ul&gt;&lt;/ul&gt;标记之间使用，用来创建列表项。
+注意：若&lt;li&gt;放在&lt;ol&gt;&lt;/ol&gt;之间，则每个列表项前有一个数字：
+若放在&lt;ul&gt;&lt;/ul&gt;之间，则每个列表项前有一个圆点。
+
+《有序号样式如下》
+（5）&lt;ol type=“1”&gt;阿拉伯数字（有序列表的默认效果）
+（6）&lt;ol type=&quot;a&quot;&gt;小写字母显示
+（7）&lt;ol type=&quot;A&quot;&gt;大写字母显示
+（8）&lt;ol type=&quot;i&quot;&gt;小写罗马数字显示
+（9）&lt;ol type=&quot;I&quot;&gt;大写罗马数字显示
+
+《无序号样式如下》
+（10）&lt;ul type=&quot;disc&quot;&gt;实心圆显示（无序列表默认效果）
+（11）&lt;ul type=&quot;circle&quot;&gt;空心圆显示
+（12）&lt;ul type=&quot;square&quot;&gt;实心矩形显示
+
+
+有序/无序号列表标记示例=====================
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;有序/无序号列表标记示例&lt;/title&gt;&lt;/head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt; 恢复中文乱码
+&lt;body text=&quot;#66CC00&quot;&gt; 网页中所有文字变色
+&lt;ol&gt;中国城市
+&lt;li&gt;北京
+&lt;li&gt;上海
+&lt;li&gt;广州
+&lt;/ol&gt;
+&lt;ul&gt;美国城市
+&lt;li&gt;华盛顿
+&lt;li&gt;芝加哥
+&lt;li&gt;纽约
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+
+《四、超链接标记》
+
+（1）&lt;a href=&quot;目标地址&quot;&gt;...&lt;/a&gt;
+（1）href属性用来指定链接的目标地址，可使用URL。
+
+（2）在标记之间可指定作为超链接的文本或图像。
+例如：网址链接 &lt;a href=&quot;http://www.baidu.com&quot;&gt;百度&lt;/a&gt;
+网址链接+导入图片 &lt;a href=&quot;http://www.baidu.com&quot;&gt;
+&lt;img src=&quot;图片地址&quot;&gt;
+&lt;/a&gt;
+（3）href属性的值也可以是“mailto:Email地址”的形式。
+例如：&lt;a href=&quot;mailto:xiaocai2419@126.com&quot;&gt;联系我&lt;/a&gt;
+
+（4）&lt;a&gt;&lt;/a&gt;标记还具有target属性，此属性用来指明链接网页显示的目标窗口，
+可取_self，_blank，_parent或_top四个值中的任何一个，_self为默认值。
+例如：&lt;a href=&quot;http://www.sina.com&quot;target=&quot;_blank&quot;&gt;新浪网&lt;/a&gt;
+
+各网址：
+百度：http://www.baidu.com
+新浪：http://www.sina.com
+
+ 
+
+
+图像标记和多媒体标记
+（1）图像标记：
+&lt;img src=&quot;图像文件存储位置与名称&quot;&gt;
+此标记用于将图像文件加载到网页文档中显示。
+例如，网页文档于图像文件Whu.jpg在同一个目录下，则图像标记写成：&lt;img src=&quot;Whu.jpg&quot;&gt;
+假如图像文件放在网页文档所在目录的一个子目录（images）下，则图像标记写成：&lt;img src=&quot;images/whu.jpg&quot;&gt;
+假如图像文件放在网页文档所在目录的上层目录下，则图像标记写成：&lt;img src=&quot;../whu.jpg&quot;&gt;。
+此外，&lt;img&gt;标记还有如下一些常用属性：
+·alt：当浏览器不能显示指定图像时，则以指定给alt属性的字符串替代图像。
+·align：对齐方式。
+·border：设定图像的边框，如果值为0就表示不显示边框。
+·width：设定图像宽度，单位为像素或百分比。
+·height：设定图像高度，单位为像素或百分比。 
+·right：往右移动
+
+ 
+
+___________________________________________________________________________________________________________
+________________________________________________________________________________________________________
+
+《五、添加动态文字》
+
+·设置滚动文字
+使用marquee标记可以将文字设置为动态滚动的效果。
+&lt;marquee&gt; 滚动文字&lt;/marquee&gt;
+
+·设置文字的滚动方向
+&lt;marquee direction=”滚动方向”&gt; 滚动文字&lt;/marquee&gt; 
+direction包含四个值，up上、down下、left左、right右
+
+·设置文字的滚动方式
+&lt;marquee behavior=”滚动方式”&gt; 滚动文字&lt;/marquee&gt;
+
+取值  滚动的效果
+alternate 来回交替进行滚动 
+scroll  循环滚动，默认效果 
+slide   只滚动一次就停止
+
+
+代码如下：
+&lt;marquee direction=&quot;right&quot; behavior=&quot;slide&quot; scrollamount=&quot;30&quot;&gt; 往右滚动文字，只滚动一次就停止，慢&lt;/marquee&gt;
+
+&lt;marquee direction=&quot;up&quot; behavior=&quot;scroll&quot; &gt; 往上滚动文字，循环滚动（默认）&lt;/marquee&gt;
+
+ 
+
+·设置文字的滚动循环次数
+&lt;marquee loop=”循环次数”&gt; 滚动文字&lt;/marquee&gt;
+当loop=-1表示一直滚动下去直到页面刷新。
+其中默认情况是向左滚动无限次。
+
+·设置文字的滚动速度
+&lt;marquee scrollamount=”滚动速度”&gt; 滚动文字&lt;/marquee&gt;
+数值越大滚动的速度越快，通常不需要设定（默认速度6）。
+
+·设置滚动文字的背景色
+&lt;marquee bgcolor=”颜色代码”&gt; 滚动文字&lt;/marquee&gt;
+
+·设置滚动文字的背景面积
+&lt;marquee width=”背景宽度” height=”背景高度”&gt; 滚动文字&lt;/marquee&gt;
+
+·设置空白空间
+&lt;marquee hspace=水平范围 vspace=垂直范围&gt; 滚动文字&lt;/marquee&gt; 
+_____________________________________________________________________________________________________
+__________________________________________________________________________________________________________
+
+
+《六、创建表格》
+创建表格有以下3个标签 分别是：
+&lt;table&gt;&lt;/table&gt; 创建表格 
+&lt;tr&gt;&lt;/tr&gt; 创建表格中的行 
+&lt;td&gt;&lt;/td&gt; 创建表格中的单元格
+
+
+&lt;table&gt;里的属性如下：
+border 表格边框线 （数值越大边框线越粗、不设置就没有边框线）
+align 水平对齐方式：left靠左 center居中 right靠右（可在table、tr、td标签内添加） 
+cellspacing 单元格与边框间距 
+cellpadding 字与单元格的间距 
+bordercolor 边框线颜色 
+bgcolor 背景颜色（可在body、table、tr、td标签内添加） 
+background 背景图片（可在body、table、tr、td标签内添加） 
+colspan 横向合并单元格（在td标签内添加） 
+rowspan 竖向合并单元格（在td标签内添加）
+
+ 
+
+代码如下：
+&lt;table border=&quot;1&quot; &gt;
+&lt;tr&gt;
+&lt;td &gt;球队&lt;/td&gt; 
+&lt;td &gt;基本资料&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+__________________________________________________________________________________________________________________
+____________________________________________________________________________________________________________________
+
+《七、创建表单》
+
+&lt;form&gt;&lt;/form&gt;创建表单
+
+&lt;input&gt; 属性
+
+&lt;type&gt; 类型（类型里面有10个属性 必须记住）
+
+value 这个值是传给后台用的。（name也是）
+
+
+1.text 文本框（明文信息来表示） 
+输入名称：&lt;input type=&quot;text&quot; name=&quot;user&quot; value=&quot;123&quot; placeholder=&quot;请输入你的昵称&quot;/&gt;
+&lt;!--用户名是明文信息 input属性 type类型 text文本框 user用户名 value值（会默认） placeholder占位符--&gt;
+
+
+2.password 密码（非明文信息来表示）
+输入密码：&lt;input type=&quot;password&quot; name=&quot;psw&quot; value=&quot;123&quot;/&gt;
+&lt;!--密码是小点来标示属于非明文信息 password密码 psw非明文信息状态--&gt;
+
+
+3.radio 单选框 &lt;!--checked标地属性（默认值）--&gt;
+选择性别：&lt;input type=&quot;radio&quot; name=&quot;sex&quot; value=&quot;nan&quot;/&gt;男 
+&lt;input type=&quot;radio&quot; name=&quot;sex&quot; value=&quot;nv&quot; checked=&quot;checked&quot;/&gt;女
+
+注意：
+单选按钮一次只能选择一个，所以我们要给它健组，把多个单选按钮放到组里面去，就会出现选择效果了，那什么叫组呢？每个单选框里加上name值 name=&quot;nan&quot; name=&quot;nv&quot;,就行了，
+但是如果你想多个单选按钮一次只能选择一个的时候必须要存到同一个组里，现在name=&quot;nan&quot; name=&quot;nv&quot;是2个组，
+我们要把name值改为相同的就可以了，把name里面的nan或nv，改为相同的sex，name值保持一致就可实现单选效果。
+如果我们遇到的是美容网址针对的只有女性没有男性就不能像现在这样选择了？我们就给它默认值，checked=&quot;checked&quot;（这个属性称为标地属性，属性名和属性值是相同的）输入后默认这个女性单选框。
+
+ 
+
+4.checkbox 复选框 tech(技术)
+选择技术：&lt;input type=&quot;checkbox&quot; name=&quot;tech&quot; value=&quot;JAVA&quot;/&gt;JAVA 
+&lt;input type=&quot;checkbox&quot; name=&quot;tech&quot; value=&quot;HTML&quot;/&gt;HTML
+&lt;input type=&quot;checkbox&quot; name=&quot;tech&quot; value=&quot;CSS&quot;/&gt;CSS
+
+
+5.file 文件 
+选择文件：&lt;input type=&quot;file&quot; name=&quot;file&quot;/&gt;
+
+
+6.image 图片
+一个图片：&lt;input type=&quot;image&quot; src=&quot;图片提交按钮2.jpg&quot;/&gt; 
+&lt;!--image图片 图片提交按钮（跟提交数据一样但比提交数据美观）--&gt;
+
+
+7.hidden 隐藏 
+隐藏组件：&lt;input type=&quot;hidden&quot; name=&quot;myke&quot; value=&quot;myvalue&quot;/&gt;
+&lt;!--后期做开发时常用，数据不需要客户端知道，但是可以将其提交到服务端知道 （客户端是用来显示的，服务端是用来记录的）--&gt;
+
+
+8.button 按钮 
+一个按钮：&lt;input type=&quot;button&quot; value=&quot;有个按钮&quot; onclick=&quot;alert('有个按钮')&quot;/&gt;
+&lt;!--没有默认的点击事件源我们就来注册一个 直接注册动作--&gt;
+
+
+9.reset 重置 &lt;input type=&quot;reset&quot;/&gt; 
+&lt;input type=&quot;reset&quot; value=&quot;清除数据&quot;/&gt;
+
+直接打&lt;input type=&quot;reset&quot;/&gt; &lt;input type=&quot;submit&quot;/&gt;保存预览下，是重置和提交，我们也可以写成另一种显示，在reset重置的后面空格输入value属性名，属性值写清除数据，
+在subimt提交的后面空格输入value属性名，属性值写清除数据，在保存看一下，显示的名字是不是我们设置的属性值的文字了，
+把前面的选框输入点击清除数据试一下，是不是都没了？但是说清除数据的话也不太贴切，因为清除数据是把所有表单里面的属性给状态还原了，
+你们看咱们设置的性别里默认女性那个属性栏，咱们状态还原后是不是显示的默认女性的属性，对吧（如果是清除的话，是不是就都清除了？）
+
+ 
+
+10.submit 提交
+&lt;input type=&quot;submit&quot; value=&quot;提交数据&quot;/&gt;
+&lt;!--这两个本身带有默认的点击事件效果，都有默认处理方式，--&gt;
+
+点击提交信息后，看你的网址位置，信息就会提交到服务端，你没有指定服务端的话它会提交到当前页面，
+（sex=on数据信息会在后面跟随）看你的网址是不是只有sex=on（sex性别，但是男是女显示的吗？没有吧）其他什么都没有吧，
+因为每个信息都没有标识，如果在名称里面输入ABC它知道ABC是密码？还是名称？什么都不知道吧，就是因为这个问题才会只显示sex=on，那怎么才能让他显示数据信息呢。
+表单数据如果要给服务端提交的话，每个表单的组建都必须指定name和value属性，name=&quot;user&quot;（user用户名的意思） value=&quot;123&quot;（value默认为123是吧？）保存预览下，
+现在把123删掉，直接在页面里面输入123看下你的数据信息会不会显示，一样显示对吧？name就是这个按键 value就是这个按键的值。
+
+11、下拉菜单：
+&lt;select&gt;
+&lt;option&gt;--北京--&lt;/option&gt;
+&lt;option selected=&quot;selected&quot;&gt;--上海--&lt;/option&gt;
+&lt;option&gt;--深圳--&lt;/option&gt;
+&lt;/select&gt;
+
+ 
+
+12、textarea &lt;!--文本域用于输入更多内容的--&gt;
+&lt;textarea name=&quot;text&quot;textarea cols=&quot;30&quot; rows=&quot;4&quot; style=&quot;border-radius: 5px 5px 5px 5px&quot;&gt;&lt;/textarea&gt;设置文本框为圆角文本框。
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

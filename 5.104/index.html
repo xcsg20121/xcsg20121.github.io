@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>centos7.6上部署vue.js2.6前端应用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>centos7.6上部署vue.js2.6前端应用</h1>
+  <time datetime=2019-05-08T09:10:19Z class="post-date">Wed, May 8, 2019</time>
+  <p>1，VUE逻辑编写完成后在当前项目下打包</p>
+
+<p>npm run build
+<img src="/images/q1.jpg" alt="" /></p>
+
+<p>需要注意的是，当打包完毕后，需要将入口的index.html的项目dist路径改成相对路径
+<img src="/images/q2.png" alt="" /></p>
+
+<p>另外需要注意的一点是，一旦打包vue.js项目，需要确保项目内必须使用vue.js语法来写功能，比如a标签要替换成<router-link>, 传统的window.location.href跳转页面也要换成this.$router.push({ path: &lsquo;/home/first&rsquo; })这种形式。</p>
+
+<p>2，建立要部署上线的前端文件夹，放入dist ，src(static),,index 三个文件
+<img src="/images/q3.jpg" alt="" />
+3，登录centos系统，运行 chmod 755 /root/video_vue 对项目文件授权</p>
+
+<p>修改nginx 配置文件 vim /etc/nginx/conf.d/default.conf  增加下面的配置，这里前端服务默认监听80端口</p>
+
+<pre><code>//后端管理系统入口
+server {
+    listen       8000;
+    server_name  localhost;
+
+    access_log      /root/myweb_access.log;
+    error_log       /root/myweb_error.log;
+
+
+    client_max_body_size 75M;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:8001;
+        uwsgi_param UWSGI_SCRIPT video_back.wsgi;
+        uwsgi_param UWSGI_CHDIR  /root/video_back;
+    }
+
+
+    location /static {
+        alias /root/video_back/static;
+    }
+
+    location /upload {
+        alias /root/video_back/upload;
+    }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+//前端入库配置
+server {
+    listen       80;
+    server_name  localhost;
+
+    access_log      /root/video_vue_access.log;
+    error_log       /root/video_vue_error.log;
+
+
+    client_max_body_size 75M;
+
+
+    location / {
+
+        root /root/video_vue;
+        index index.html;
+
+    }
+
+    error_log    /root/video_vue/error.log    error;
+
+}
+</code></pre>
+
+<p>需要注意的是端口不能重复监听，所以之前的django服务需要让出80端口，改成监听8000，而uwsgi服务也需要让出8000端口改成在8001端口运行服务</p>
+
+<p>4，mypro_wsgi.ini配置文件改端口（后台项目根目录下建立此文件）</p>
+
+<pre><code>[uwsgi]
+
+    chdir           = /root/video_back
+    module          = video_back.wsgi
+    master          = true
+    processes       = 3
+    socket            = 0.0.0.0:8001
+    vacuum          = true
+    pythonpath      = /usr/bin/python3
+    daemonize  = /root/video_back/uwsgi.log
+</code></pre>
+
+<p>5,重启nginx服务</p>
+
+<p>systemctl restart nginx.service</p>
+
+<p>完成访问测试
+<img src="/images/q4.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

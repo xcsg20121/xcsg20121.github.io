@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django 正向解析与反向解析 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django 正向解析与反向解析</h1>
+  <time datetime=2017-09-05T14:11:30Z class="post-date">Tue, Sep 5, 2017</time>
+  <p>正向解析就是按照顺序查找访问（urls.py&mdash;view&ndash;templates）</p>
+
+<p>反向解析就是根据命名空间命名来调到指定的页面</p>
+
+<p>用反向解析的原因：</p>
+
+<p>随着功能的增加会出现更多的视图，可能之前配置的正则表达式不够准确，于是就要修改正则表达式，但是正则表达式一旦修改了，之前所有对应的超链接都要修改，真是一件麻烦的事情，而且可能还会漏掉一些超链接忘记修改，有办法让链接根据正则表达式动态生成吗？ 就是用反向解析的办法。</p>
+
+<p>应用范围：模板中的超链接 、视图中的重定向</p>
+
+<p>使用方法：</p>
+
+<p>定义url时，需要为include定义namespace属性，为url定义name属性</p>
+
+<p>使用时，在模板中使用url标签，在视图中使用reverse函数，根据正则表达式动态生成地址，减轻后期维护成本。
+1，创建urls</p>
+
+<pre><code>from django.urls import path,include,re_path
+from myapp.d2_views import Index
+from myapp.d3_views import Avgage
+from django.views.generic import TemplateView
+from myapp.d11_view import Test,Testrev,TestrevDict
+
+#声明命名空间
+app_name = 'myapp'
+
+urlpatterns = [
+    path('',TemplateView.as_view(template_name='index.html')),
+    path(&quot;avgage&quot;,Avgage.as_view()),
+    path(&quot;test&quot;,Test.as_view()),
+    #反向解析 第二个参数，制定命名
+    re_path(&quot;^test_rev_(.+?)$&quot;,Testrev.as_view(),name=&quot;test_name&quot;),
+    #kwargs
+    re_path(&quot;^test_dict_(?P&lt;username&gt;.+?)$&quot;,TestrevDict.as_view(),name=&quot;test_name_dict&quot;)
+]
+</code></pre>
+
+<p>2,创建templates(index.html)</p>
+
+<pre><code>&lt;a href=&quot;test&quot;&gt;正向解析&lt;/a&gt;
+    {# 第一个参数命名空间 第二个自定义命名 456表示需要传递的参数#}
+    &lt;a href=&quot;{% url 'myapp:test_name' 456 %}&quot;&gt;反向解析&lt;/a&gt;
+    &lt;a href=&quot;{% url 'myapp:test_name_dict' username=55 %}&quot;&gt;反向解析(kwargs)&lt;/a&gt;
+</code></pre>
+
+<p>3,创建视图（views.py）</p>
+
+<pre><code>from django.http import HttpResponse,HttpResponseRedirect
+from django.views import View
+from myapp.models import Student
+from django.shortcuts import redirect,render
+#导入方向解析方法
+from django.urls import reverse
+
+#定义类视图
+class Test(View):
+    def get(self,request):
+        # 第一个参数命名空间 第二个自定义命名 
+        return redirect(reverse('myapp:test_name_dict',kwargs={'username':66}))
+        return redirect(reverse('myapp:test_name',args=(789,)))
+        return HttpResponseRedirect(reverse('myapp:test_name'))
+        return HttpResponse('正向解析')
+
+#定义反向解析方法
+class Testrev(View):
+    def get(self,request,p1):
+        print(p1)
+        return HttpResponse('反向解析')
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

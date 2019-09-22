@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>360电影主页和详情页爬去入Mysql库链表读取--lowbiprogrammerr &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>360电影主页和详情页爬去入Mysql库链表读取--lowbiprogrammerr</h1>
+  <time datetime=2015-11-18T09:35:35Z class="post-date">Wed, Nov 18, 2015</time>
+  <pre><code>import requests,os,json
+from lxml import etree
+from pymysql import *
+class Movie(object):
+def __init__(self):
+self.url=&quot;https://www.360kan.com/dianying/list.php?year=all&amp;area=all&amp;act=all&amp;cat=106&amp;pageno={}&quot;
+self.headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'}
+self.start=0
+# 请求数据接受数据
+def get_data(self,url):
+response = requests.get(url,headers=self.headers)
+return response.content
+# 解析数据
+def xml_data(self,data):
+html = etree.HTML(data)
+mes = html.xpath(&quot;//ul[@class='list g-clear']/*&quot;)
+dict = {}
+for i in mes:
+dict['title'] = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='detail']/p/span/text()&quot;)[0]
+dict['zhuyan'] = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='detail']/p[last()]/text()&quot;)[0]
+info_url = &quot;https://www.360kan.com&quot; + i.xpath(&quot;./a[@class='js-tongjic']/@href&quot;)[0]
+
+poto_url = i.xpath(&quot;./a[@class='js-tongjic']/div[@class='cover g-playicon']/img/@src&quot;)
+potoname =self.write_poto(poto_url)
+dict['poto'] = potoname
+mes = self.get_data(info_url)
+meslist = etree.HTML(mes)
+mes_info = meslist.xpath(&quot;//div[@class='top-info-detail g-clear']&quot;)
+dictid = self.write_database(dict)
+for w in mes_info:
+dict1 = {}
+dict1['daoyan'] = w.xpath(&quot;./div[@class='g-clear item-wrap']/p[5]/a/text()&quot;)[0]
+dict1['diqu'] = w.xpath(&quot;./div[@class='g-clear item-wrap']/p[3]/text()&quot;)[0]
+dict1['year'] = w.xpath(&quot;./div[@class='g-clear item-wrap']/p[2]/text()&quot;)[0]
+dict1['info'] = w.xpath(&quot;./div[@class='item-desc-wrap g-clear js-open-wrap']/p/text()&quot;)[0]
+dict1['t_id'] = str(dictid)
+self.info_write_database(dict1)
+# 存图片
+def write_poto(self,data):
+path = &quot;d:/img/&quot;
+if not os.path.exists(path):
+os.makedirs(path)
+for n in data:
+poto_mes = self.get_data(n)
+potoname = n.split(&quot;/&quot;)[-1]
+with open(path+potoname,&quot;wb&quot;) as f:
+f.write(poto_mes)
+return potoname
+# 写入数据库
+def database(self):
+conn = connect(host=&quot;127.0.0.1&quot;,port=3306,user=&quot;root&quot;,password=&quot;mysql&quot;,database=&quot;lianxi&quot;,charset=&quot;utf8mb4&quot;)
+cur = conn.cursor()
+return cur,conn
+# 写入数据库
+def write_database(self,data):
+cur,conn = self.database()
+title = data[&quot;title&quot;]
+zhuyan = data[&quot;zhuyan&quot;]
+poto = data[&quot;poto&quot;]
+try:
+cur.execute(&quot;insert into movie values(0,'&quot;+title+&quot;','&quot;+zhuyan+&quot;','&quot;+poto+&quot;')&quot;)
+except:
+pass
+new_id = cur.lastrowid
+conn.commit()
+
+return new_id
+
+
+# 读取数据库
+def read_database(self,):
+cur,conn = self.database()
+cur.execute(&quot;select * from movie inner join movies on movie.id=movies.t_id limit 10;&quot;)
+ret =cur.fetchall()
+cur.close()
+conn.close()
+list = json.dumps(ret,ensure_ascii=False)
+print(list)
+# info写入数据库
+def info_write_database(self,data1):
+cur,conn = self.database()
+cur.execute(&quot;insert into movies values(0,'&quot;+data1['daoyan']+&quot;','&quot;+data1['diqu']+&quot;','&quot;+data1['year']+&quot;','&quot;+data1['info']+&quot;','&quot;+data1['t_id']+&quot;')&quot;)
+conn.commit()
+
+def run(self):
+while True:
+url = self.url.format(self.start)
+data = self.get_data(url)
+if data ==[]:
+break
+else:
+if self.start == 2:
+break
+else:
+self.start+=1
+self.xml_data(data)
+
+
+if __name__ == '__main__':
+movie = Movie()
+movie.run()
+movie.read_database()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

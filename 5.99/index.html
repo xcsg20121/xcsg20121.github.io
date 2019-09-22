@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django之JWT理解及简单应用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django之JWT理解及简单应用</h1>
+  <time datetime=2019-04-25T09:07:53Z class="post-date">Thu, Apr 25, 2019</time>
+  <p>Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（(RFC 7519).该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。简单来说就是 JWT(Json Web Token)是实现token技术的一种解决方案</p>
+
+<p>JWT的使用场景主要包括：</p>
+
+<p>　　1) 认证，这是比较常见的使用场景，只要用户登录过一次系统，之后的请求都会包含签名出来的token，通过token也可以用来实现单点登录。</p>
+
+<p>　　2)交换信息，通过使用密钥对来安全的传送信息，可以知道发送者是谁、放置消息被篡改。</p>
+
+<p>token验证和session认证的区别</p>
+
+<p>传统的session认证</p>
+
+<p>http协议本身是一种无状态的协议，而这就意味着如果用户向我们的应用提供了用户名和密码来进行用户认证，那么下一次请求时，用户还要再一次进行用户认证才行，因为根据http协议，我们并不能知道是哪个用户发出的请求，所以为了让我们的应用能识别是哪个用户发出的请求，我们只能在服务器存储一份用户登录的信息，这份登录信息会在响应时传递给浏览器，告诉其保存为cookie,以便下次请求时发送给我们的应用，这样我们的应用就能识别请求来自哪个用户了,这就是传统的基于session认证。</p>
+
+<p>session缺点</p>
+
+<p>基于session的认证使应用本身很难得到扩展，随着不同客户端用户的增加，独立的服务器已无法承载更多的用户</p>
+
+<p>Session方式存储用户id的最大弊病在于要占用大量服务器内存，对于较大型应用而言可能还要保存许多的状态。</p>
+
+<p>基于session认证暴露的问题</p>
+
+<p>Session需要在服务器保存，暂用资源
+扩展性 session认证保存在内存中 ，无法扩展到其他机器中
+CSRF 基于cookie来进行用户识别的, cookie如果被截获，用户就会很容易受到跨站请求伪造的攻击。</p>
+
+<p>JWT包含了使用.分隔的三部分： Header 头部 Payload 负载 Signature 签名</p>
+
+<p>优点</p>
+
+<p>因为json的通用性，所以JWT是可以进行跨语言支持的。
+因为有了payload部分，所以JWT可以在自身存储一些其他业务逻辑所必要的非敏感信息。
+便于传输，jwt的构成非常简单，字节占用很小，所以它是非常便于传输的。
+它不需要在服务端保存会话信息, 所以它易于应用的扩展
+python 中的Demo:</p>
+
+<pre><code>import jwt
+encoded_jwt = jwt.encode({'username':'adimn'},'secret_key',algorithm='HS256')
+de_code = jwt.decode(encoded_jwt,'secret_key',algorithms=['HS256'])
+print(encoded_jwt)
+print(de_code)
+
+#运行结果：
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkaW1uIn0.MeQOdDiiI39mBpgbFNnBVNdJMDhUpRTxziPeFJKB2fA'
+{'username': 'adimn'}
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

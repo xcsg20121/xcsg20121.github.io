@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python webbrowser模块（浏览器操作） &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python webbrowser模块（浏览器操作）</h1>
+  <time datetime=2019-04-21T10:27:31Z class="post-date">Sun, Apr 21, 2019</time>
+  <p>webbrowser模块提供了一个高级接口来显现基于Web的文档，大部分情况下只需要简单的调用open()办法。</p>
+
+<p>webbrowser定义了如下的反常：</p>
+
+<p>exception webbrowser.Error, 当浏览器控件发作过错是会抛出这个反常</p>
+
+<p>webbrowser有以下办法：</p>
+
+<p>webbrowser.open(url[, new=0[, autoraise=1]])</p>
+
+<p>这个办法是在默许的浏览器中显现url, 假如new = 0, 那么url会在同一个浏览器窗口下打开，假如new = 1, 会打开一个新的窗口，假如new = 2, 会打开一个新的tab, 假如autoraise ＝ true, 窗口会主动增加。</p>
+
+<p>webbrowser.open_new(url)</p>
+
+<p>在默许浏览器中打开一个新的窗口来显现url, 否则，在仅有的浏览器窗口中打开url</p>
+
+<p>webbrowser.open_new_tab(url)</p>
+
+<pre><code>import webbrowser as web
+#new:0：同一浏览器窗口打开 1：打开浏览器新的窗口，2：打开浏览器窗口新的tab #autoraise=True:窗口自动增长
+web.get('chrome').open('http://www.baidu.com',new=0,autoraise=True)                                              
+web.open_new('http://www.baidu.com')
+web.open_new_tab('http://www.baidu.com')
+</code></pre>
+
+<p>在默许浏览器中当开一个新的tab来显现url, 否则跟open_new()相同</p>
+
+<p>webbrowser.get([name]) 依据name返回一个浏览器目标，假如name为空，则返回默许的浏览器</p>
+
+<p>webbrowser.register(name, construtor[, instance])</p>
+
+<p>注册一个名字为name的浏览器，假如这个浏览器类型被注册就能够用get()办法来获取。</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django-- KindEditor 富文本编辑器使用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django-- KindEditor 富文本编辑器使用</h1>
+  <time datetime=2018-12-28T15:41:02Z class="post-date">Fri, Dec 28, 2018</time>
+  <p>KindEditor是一款还不错的开源的HTML可视化编辑器，主要用于让用户在网站上获得所见即所得编辑效果，兼容IE、Firefox、Chrome、Safari、Opera等主流浏览器。之所以推荐这一款编辑器，是因为它非常的轻量化，也不需要安装，从而耦合度非常低，无论是使用表单提交内容还是异步提交，都非常方便，这里简单介绍一下如何在Django2.0.4中使用这款富文本编辑器。</p>
+
+<p>　　首先 在官网下载文件 <a href="http://kindeditor.net/down.php">http://kindeditor.net/down.php</a></p>
+
+<p>　　解压后，删除掉一些没有用的文件，只留下lang(语言包) themes(风格包) plugins(插件) 和 kindeditor-all-min.js</p>
+
+<p>　　将kindeditor文件夹放到项目目录的static/js文件中去</p>
+
+<p>　　最后在页面中就可以使用了</p>
+
+<p>首先导入</p>
+
+<pre><code>&lt;script src=&quot;{% static 'js/jquery-1.12.1.min.js' %}&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;{% static 'js/axios.js' %}&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;{% static 'js/kindeditor/kindeditor-all-min.js' %}&quot;&gt;&lt;/script&gt;
+</code></pre>
+
+<p>body中使用</p>
+
+<pre><code>内容:&lt;textarea id='content' value=&quot;&quot;&gt;{{i.content}}&lt;/textarea&gt;
+                            &lt;script&gt;
+                                initKindEditor();
+                                function initKindEditor() {
+                                    var kind = KindEditor.create('#content', {
+                                        width: '100%',       // 文本框宽度(可以百分比或像素)
+                                        height: '300px',     // 文本框高度(只能像素)
+                                        minWidth: 200,       // 最小宽度（数字）
+                                        minHeight: 400      // 最小高度（数字）
+                                    });
+                                }
+                            &lt;/script&gt;
+</code></pre>
+
+<p>异步将富文本内容提交给后台，就需要动态获取富文本的内容</p>
+
+<pre><code>&lt;script&gt;
+    function add(){
+        var content = $(document.getElementsByTagName(&quot;iframe&quot;)[0].contentWindow.document.body).html()
+        let params = new URLSearchParams();
+        params.append('id',$(&quot;#id&quot;).val())
+        params.append('title',$(&quot;#tit&quot;).val())
+        params.append('author',$(&quot;#author&quot;).val())
+        params.append('content',content)
+        axios({
+            url:'news_update',
+            data:params,
+            method:'post',
+            responseType:&quot;text&quot;,
+        })
+        .then(function(obj){
+            console.log(obj.data)
+            if(obj.data == '更新成功'){
+                alert(&quot;更新成功&quot;)
+                window.location.href=&quot;news&quot;
+                
+            }
+            else{
+                alert(&quot;更新失败&quot;)s
+            }    
+        })
+    }
+      
+   
+   &lt;/script&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

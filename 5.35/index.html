@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>django2.0内置分页 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>django2.0内置分页</h1>
+  <time datetime=2016-09-20T11:02:15Z class="post-date">Tue, Sep 20, 2016</time>
+  <p>#导入分页器
+from django.core.paginator import Paginator</p>
+
+<p>1视图逻辑</p>
+
+<pre><code>#读取数据库
+        res = Product.objects.all()
+        #建立分页器对象 ,第一个参数结果集，第二个每页的参数
+        paginator = Paginator(res,3)
+        #接收分页的参数
+        page = request.GET.get('page',1)
+        #将结果集按照分页逻辑切片
+        res = paginator.get_page(page)
+</code></pre>
+
+<p>2模板输出</p>
+
+<pre><code>{#分页逻辑#}
+    &lt;div&gt;
+        当前第{{res.number}}页,共有{{res.paginator.num_pages}}页
+        &lt;br&gt;
+        {# 判断首页和上一页#}
+        &lt;a href=&quot;?page=1&quot;&gt;首页&lt;/a&gt;
+        {#判断上一页#}
+        {% if res.has_previous %}
+        &lt;a href=&quot;?page={{res.previous_page_number}}&quot;&gt;上一页&lt;/a&gt;
+        {% endif %}
+        {#判断下一页#}
+        {% if res.has_next %}
+        &lt;a href=&quot;?page={{res.next_page_number}}&quot;&gt;下一页&lt;/a&gt;
+        {%endif%}
+        &lt;a href=&quot;?page={{res.paginator.num_pages}}&quot;&gt;尾页&lt;/a&gt;
+
+        &amp;nbsp;&amp;nbsp;&amp;nbsp;
+        &lt;input style=&quot;width: 20px&quot; type=&quot;text&quot; id=&quot;jump&quot;&gt;
+        &amp;nbsp;&amp;nbsp;
+        &lt;button onclick=&quot;jump()&quot;&gt;跳转&lt;/button&gt;
+    &lt;/div&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

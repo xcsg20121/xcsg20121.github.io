@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Docker 快速部署 Django项目到云服务器 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Docker 快速部署 Django项目到云服务器</h1>
+  <time datetime=2019-08-30T18:03:36Z class="post-date">Fri, Aug 30, 2019</time>
+  <p>项目结构：</p>
+
+<p><img src="/images/924.jpg" alt="" /></p>
+
+<p>1，dockerfile</p>
+
+<pre><code>FROM python:3.7
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY pip.conf /root/.pip/pip.conf
+COPY requirements.txt /usr/src/app/
+RUN pip install -r /usr/src/app/requirements.txt
+RUN rm -rf /usr/src/app
+COPY . /usr/src/app
+CMD [ &quot;python&quot;, &quot;./manage.py&quot;, &quot;runserver&quot;, &quot;0.0.0.0:8000&quot;]
+</code></pre>
+
+<p>2,pip.conf</p>
+
+<pre><code>[global]
+index-url = http://mirrors.aliyun.com/pypi/simple/
+[install]
+trusted-host=mirrors.aliyun.com
+</code></pre>
+
+<p>3,requirements.txt</p>
+
+<p>这里可以用命令自动生成</p>
+
+<pre><code>pip freeze &gt; requirements.txt
+</code></pre>
+
+<p>4，上传整个项目到服务器</p>
+
+<p>注意：虚拟环境不必加进去
+因为 docker 会自动去下载依赖
+而且虚拟环境占用 100M+- 的空间，上传的时间够等 5+ 分钟
+<img src="/images/925.jpg" alt="" /></p>
+
+<p>5，生成docker镜像</p>
+
+<p>CD项目和 dockerfile 同一级的目录，也就是项目的目录 （注意后面的 . 不要省略）</p>
+
+<pre><code>docker build -t hello_python .
+</code></pre>
+
+<p>dockerfile buid 镜像的时候，镜像大小动不动就 800+ M，漫长的等待。</p>
+
+<p>执行 docker images
+<img src="/images/926.jpg" alt="" />
+6，开启容器</p>
+
+<p>docker run -it &ndash;rm -p 8000:8000 &ndash;name hello hello-python:latest
+注意：第二个8000端口号是dockerfile决定</p>
+
+<p>效果如下：
+<img src="/images/927.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

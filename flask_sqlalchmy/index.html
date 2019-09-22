@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>flask_SQLAlchemy常用数据类型及列选项 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>flask_SQLAlchemy常用数据类型及列选项</h1>
+  <time datetime=2015-11-27T15:23:50Z class="post-date">Fri, Nov 27, 2015</time>
+  <p>SQLAlchemy常用数据类型：</p>
+
+<ol>
+<li><p>Integer：整形，映射到数据库中是int类型。</p></li>
+
+<li><p>Float：浮点类型，映射到数据库中是float类型。他占据的32位。</p></li>
+
+<li><p>Double：双精度浮点类型，映射到数据库中是double类型，占据64位。</p></li>
+
+<li><p>String：可变字符类型，映射到数据库中是varchar类型.</p></li>
+
+<li><p>Boolean：布尔类型，映射到数据库中的是tinyint类型。</p></li>
+
+<li><p>DECIMAL：定点类型。是专门为了解决浮点类型精度丢失的问题的。在存储钱相关的字段的时候建议大家都使用这个数据类型。并且这个类型使用的时候需要传递两个参数，第一个参数是用来标记这个字段总能能存储多少个数字，第二个参数表示小数点后有多少位。</p></li>
+
+<li><p>Enum：枚举类型。指定某个字段只能是枚举中指定的几个值，不能为其他值。在ORM模型中，使用Enum来作为枚举</p></li>
+
+<li><p>Date：存储时间，只能存储年月日。映射到数据库中是date类型。在Python代码中，可以使用<code>datetime.date</code>来指定</p></li>
+
+<li><p>DateTime：存储时间，可以存储年月日时分秒毫秒等。映射到数据库中也是datetime类型。在Python代码中，可以使用<code>datetime.datetime</code>来指定。示例代码如下：</p></li>
+
+<li><p>Time：存储时间，可以存储时分秒。映射到数据库中也是time类型。在Python代码中，可以使用<code>datetime.time</code>来至此那个。</p></li>
+
+<li><p>Text：存储长字符串。一般可以存储6W多个字符。如果超出了这个范围，可以使用LONGTEXT类型。映射到数据库中就是text类型。</p></li>
+
+<li><p>LONGTEXT：长文本类型，映射到数据库中是longtext类型。</p></li>
+</ol>
+
+<p>SQLAlchemy列选项</p>
+
+<p>选项名 说明</p>
+
+<p>1.primary_key 如果设为True，这列就是表的主键</p>
+
+<p>2.unique 如果设为True，这列不允许出现重复的值</p>
+
+<p>3.index 如果设为True，这列创建索引，提升查询效率</p>
+
+<p>4.nullable 如果设为True，这列允许使用空值；如果设为False，这列不允许使用空值</p>
+
+<p>5.default 为这列定义默认值</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

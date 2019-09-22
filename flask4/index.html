@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>falsk 与 django 过滤器的使用与区别 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>falsk 与 django 过滤器的使用与区别</h1>
+  <time datetime=2016-01-29T19:33:54Z class="post-date">Fri, Jan 29, 2016</time>
+  <p>1，flask中内置的过滤器模板中常用方法：</p>
+
+<pre><code>{#过滤器调用方式{{变量|过滤器名称}} #}
+    &lt;!-- safe过滤器，可以禁用转义 --&gt;
+    {{'&lt;strong&gt;hello&lt;/strong&gt;'|safe}}
+    &lt;br/&gt;
+    大写转小写
+    {{'HELLO'|lower}}
+    小写转大写
+    {{'hello'|upper}}
+    &lt;br/&gt;
+    字符串反转
+    {{'abc'|reverse}}
+    首字母大写
+    {{'james'|capitalize}}
+    过滤HTML标签
+    {{'&lt;em&gt;apple&lt;/em&gt;'| striptags}}
+    &lt;br/&gt;
+    只显示list首个元素
+    {{[100,95,55,81]|first}}
+    只显示list最后一个元素
+    {{[100,95,55,81]|last}}
+    显示list的长度
+    {{[100,95,55,81]|length}}
+    list里所有元素求和
+    {{[100,95,55,81]|sum}}
+    list进行排序
+    {{[100,95,55,81]|sort}}
+    format：格式化输出
+    {{ '%s is %d' | format('name',17) }}
+    &lt;br/&gt;
+    对语句块进行过滤
+    {% filter upper%}
+    qwedr,tyuio,piuytre,rtyuiuyt
+    afaife       oifafa, afaf
+    {%endfilter%} &lt;br/&gt;
+    链式调用过滤器
+    {{'abc'|reverse|upper}}
+
+    &lt;br&gt;&lt;br&gt;
+    自定义过滤器
+    {{100|my_filter}}
+</code></pre>
+
+<p>自定义过滤器（后端视图函数）</p>
+
+<pre><code>@app.template_filter(&quot;my_filter&quot;)
+#自定义过滤器
+def my_filter(val):
+    return '$' + str(val)
+</code></pre>
+
+<p>2，django中内置的过滤器模板中常用方法：</p>
+
+<pre><code>{#通过内置过滤器实现加减法#}
+    {{test_int | add:10}}
+    {{list.0}}
+    &lt;br&gt;
+    {%for i in list%}
+    {{i}}
+    {#打印索引 从1开始的计数器#}
+    {{forloop.counter}}
+    {#打印数组索性#}
+    {{forloop.counter0}}
+    {#倒序索引#}
+    {{forloop.revcounter}}
+    &lt;br&gt;
+    {%endfor%}
+
+    &lt;br&gt;
+    {% for i in dict%}
+    {#取首位和末尾 first last#}
+    姓名：{{i.name |first}} &amp;nbsp; 年龄：{{i.age}}
+    {%endfor%}
+    &lt;br&gt;
+    {#大写小写#}
+    {{'jack' | upper | lower}}
+    {#返回长度#}
+    {{'123456'| length}}
+    {#截断操作#}
+    {{content | truncatechars:10}}
+    截断单词{{content | truncatewords:2}}
+    {# 格式化日期#}
+    {{dt | date:'Y-m-d H:i:s'}}
+</code></pre>
+
+<p>自定义过滤器（后端视图函数）</p>
+
+<p>首先在工程文件的同名配置文件下创建templatetags文件夹，建立myfiler.py用来自定义过滤器</p>
+
+<p>例：</p>
+
+<pre><code>from django import template
+#注册过滤器对象
+register = template.Library()
+#自定义过滤器
+#通过装饰器的方式来注册自定义过滤器
+@register.filter
+def my_str(val):
+    return &quot;$&quot; +str(val)
+#定义一个双参数过滤器
+@register.filter
+def my_str_two(val,p1):
+    return val + p1
+
+#定义一个多参数的过滤器
+#注册过滤器的时候，需要注册SIMPLE_TAG
+@register.simple_tag
+def my_str_many(val,p1,p2):
+    return val + p1 + p2
+#定义一个取余数的过滤器
+@register.filter
+def get_line(val):
+    return int(val) % 2
+复制代码
+</code></pre>
+
+<p>在templates文件夹中模板文件中导入</p>
+
+<p>{#导入过滤器文件#}</p>
+
+<p>{% load myfilter %}</p>
+
+<pre><code>{#导入过滤器文件#}
+{% load my_filter %}
+{{test_str | my_str}}
+{# 两个参数进行调用#}
+{{'你好' | my_str_two:&quot;不好&quot;}}
+{#调用多参数的过滤器#}
+{% my_str_many '你好' '不好' '啊' %}                             
+{{test_list | length}}
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

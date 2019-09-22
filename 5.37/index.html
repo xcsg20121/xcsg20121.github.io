@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>内外网同时上网处理方法 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>内外网同时上网处理方法</h1>
+  <time datetime=2016-10-07T12:13:21Z class="post-date">Fri, Oct 7, 2016</time>
+  <pre><code>---双网卡的网络IP地址配置示例
+
+　　-外网地址设置
+本地IP地址：192.168.1.10
+子网掩码： 255.255.255.0
+网关： 192.168.1.1
+
+-内网地址设置
+本地IP地址： 192.168.2.33
+子网掩码：255.255.255.0
+网关：192.168.2.1
+
+第一步、route delete 0.0.0.0 删除所有的0.0.0.0的路由。
+第二步、route -p add 0.0.0.0 mask 0.0.0.0 mask 192.168.1.1 ::添加0.0.0.0网络路由，这个是缺省时路由用192.168.1.1,加上-p的目的是设为静态(永久)路由，防止下次重起时配置消失。
+第三步、route -p add 192.168.2.0 mask 255.255.255.0 192.168.2.33 ::添加192.168.2.0网段路由为192.168.2.33内网路由，可以根据需要调整ip段和子网掩码太到多网段内网路由的效果
+
+---单网卡的情况实现同时上内网和外网
+
+第一步 填写外网的IP、掩码、网关、DNS
+第二步 点击“高级”，然后在“IP地址”下边点添加，输入内网的ip地址和掩码 如果内网有DNS则要填
+第三步 配置电脑静态路由route -p add 192.168.2.0 mask 255.255.0.0 192.168.2.1
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

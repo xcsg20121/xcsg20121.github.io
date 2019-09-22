@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>django--验证码功能实现 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>django--验证码功能实现</h1>
+  <time datetime=2017-01-24T13:01:33Z class="post-date">Tue, Jan 24, 2017</time>
+  <p>首先建立验证码的视图函数
+1需要安装pillow库</p>
+
+<pre><code>#导入绘图库
+from PIL import ImageDraw
+#导入绘图字体库
+from PIL import ImageFont
+#导入图片库
+from PIL import Image
+#导入io库
+import io
+#导入随机库
+import random
+复制代码
+</code></pre>
+
+<p>1,定义验证码图片</p>
+
+<pre><code>#定义随机颜色方法
+def get_random_color():
+    
+    R = random.randrange(255)
+    G = random.randrange(255)
+    B = random.randrange(255)
+
+    return (R,G,B)
+
+#定义随机验证码
+def test_captcha(request):
+    #定义背景颜色
+    bg_color = get_random_color()
+    #定义画布大小 宽，高
+    img_size = (150,80)
+    #定义画笔 颜色种类,画布，背景颜色
+    image = Image.new(&quot;RGB&quot;,img_size,bg_color)
+    #定义画笔对象 图片对象,颜色类型
+    draw = ImageDraw.Draw(image,'RGB')
+    #定义随机字符
+    source = '0123456789asdfghjkl'
+    #定义四个字符
+    #定义好容器，用来接收随机字符串
+    code_str = ''
+    for i in range(4):
+        #获取随机颜色 字体颜色
+        text_color = get_random_color()
+        #获取随机字符串
+        tmp_num = random.randrange(len(source))
+        #获取字符集
+        random_str = source[tmp_num]
+        #将随机生成的字符串添加到容器中
+        code_str += random_str
+        #将字符画到画布上 坐标，字符串，字符串颜色，字体
+        #导入系统真实字体,字号
+        my_font = ImageFont.truetype(&quot;c:\\windows\\Fonts\\arial.ttf&quot;,20)
+        draw.text((10+30*i,20),random_str,text_color,font=my_font)
+    #使用io获取一个缓存区
+    buf = io.BytesIO()
+    #将图片保存到缓存区
+    image.save(buf,'png')
+
+    #将随机码存储到session中
+    request.session['code'] = code_str
+
+    #第二个参数声明头部信息
+    return HttpResponse(buf.getvalue(),'image/png')
+</code></pre>
+
+<p>2前端定义验证码图片和输入输入验证码</p>
+
+<pre><code>{# 利用clcik时间来刷新验证码 #}{# 通过样式来改变悬停时的图标 #}
+        &lt;img style=&quot;cursor:pointer;&quot; src=&quot;/captcha&quot; onclick='this.src=this.src+&quot;?&quot;+Math.random()'  /&gt;  
+        &lt;input name='code' type=&quot;text&quot; /&gt;
+</code></pre>
+
+<p>3.定义验证码路由，并在登录时根据前端name 获取用户输入的验证码与存入session的验证码比对实现其功能</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

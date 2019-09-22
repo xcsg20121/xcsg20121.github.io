@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Python 中文分词(结巴分词) &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Python 中文分词(结巴分词)</h1>
+  <time datetime=2019-04-15T09:15:15Z class="post-date">Mon, Apr 15, 2019</time>
+  <p>特点:</p>
+
+<p>支持三种分词模式：</p>
+
+<p>精确模式，试图将句子最精确地切开，适合文本分析；
+全模式，把句子中所有的可以成词的词语都扫描出来, 速度非常快，但是不能解决歧义；
+搜索引擎模式，在精确模式的基础上，对长词再次切分，提高召回率，适合用于搜索引擎分词。
+支持繁体分词</p>
+
+<p>支持自定义词典</p>
+
+<p>MIT 授权协议</p>
+
+<p>常用的分词：</p>
+
+<pre><code>import jieba
+
+seg_list = jieba.cut(&quot;我来到北京清华大学&quot;, cut_all=True)
+print(&quot;Full Mode: &quot; + &quot;/ &quot;.join(seg_list))  # 全模式
+
+seg_list = jieba.cut(&quot;我来到北京清华大学&quot;, cut_all=False)
+print(&quot;Default Mode: &quot; + &quot;/ &quot;.join(seg_list))  # 精确模式
+
+seg_list = jieba.cut(&quot;他来到了网易杭研大厦&quot;)  # 默认是精确模式
+print(&quot;, &quot;.join(seg_list))
+
+seg_list = jieba.cut_for_search(&quot;小明硕士毕业于中国科学院计算所，后在日本京都大学深造&quot;)  # 搜索引擎模式
+print(&quot;, &quot;.join(seg_list))
+</code></pre>
+
+<pre><code>输出:
+
+【全模式】: 我/ 来到/ 北京/ 清华/ 清华大学/ 华大/ 大学
+
+【精确模式】: 我/ 来到/ 北京/ 清华大学
+
+【新词识别】：他, 来到, 了, 网易, 杭研, 大厦    (此处，“杭研”并没有在词典中，但是也被Viterbi算法识别出来了)
+
+【搜索引擎模式】： 小明, 硕士, 毕业, 于, 中国, 科学, 学院, 科学院, 中国科学院, 计算, 计算所, 后, 在, 日本, 京都, 大学, 日本京都大学, 深造
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

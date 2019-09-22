@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>mongo 的简单查询语法 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>mongo 的简单查询语法</h1>
+  <time datetime=2015-12-22T22:14:12Z class="post-date">Tue, Dec 22, 2015</time>
+  <p>小白的我对MONGO的一些语句搜集用于区别mysql及一些小常识</p>
+
+<pre><code>pymongo 语法
+按照id进行倒序操作db.news.find().limit(20).sort([(&quot;_id&quot;,-1)])
+
+group = {'$group':{&quot;_id&quot;:&quot;$region&quot;,'count':{'$sum':1}}}
+db.problem.aggregate([group])
+select region,count(*) from problem group by region;
+
+查找新闻表标题以name 开头,并且不区分大小写
+db.news.find({'title':{'$regex':'^'+name,&quot;$options&quot;:'i'}})
+
+db.mycol.aggregate([{$group : {_id : &quot;$by_user&quot;, num_tutorial : {$sum : 1}}}])
+select by_user, count(*) from mycol group by by_user
+查看所有的数据库：show dbs /show databases
+切换数据库：use db_name 
+删除当前的数据库：db.dropDatabase() 
+查看集合：show collections 
+删除集合：db.集合名称.drop()
+
+mongodb的增删改查
+增
+db.collection_name.insert({&quot;_id&quot;:&quot;111&quot;})
+_id如果已经存在，insert方法会报错，不存在的时候，会插入新数据
+db.collection_name.save({&quot;_id&quot;:&quot;111&quot;,&quot;name&quot;:&quot;bob&quot;,&quot;age&quot;:&quot;18&quot;})
+_id如果存在，会更ddvd cx x新其他键对应的值(name,age)，不存在的时候，会新插入数据
+删
+db.collection_name.remove({条件},{justOne:true})
+默认情况下，会删除全部满足条件的内容，justOne:true时值删一条
+db.collections_name.drop()
+删除整个集合（collections_name）
+改
+db.collections_name.update({name:&quot;bon&quot;},{name:&quot;fan&quot;})
+更新 将名字为”bon”改为”fan” 弊端：会将collections_name内容代替如： 
+db.text01.find() 
+{ &quot;_id&quot; : &quot;3&quot;, &quot;name&quot; : &quot;fan&quot;, &quot;age&quot; : &quot;16&quot; } 
+db.text01.update({name:&quot;fan&quot;},{name:&quot;xlnx&quot;}) 
+{ &quot;_id&quot; : &quot;3&quot;, &quot;name&quot; : &quot;xlnx&quot; } 
+db.collections_name.update({nmae:&quot;bob&quot;},{$set:{name:&quot;fan&quot;}})
+只能修改一条数据，并不会代替，将bob修改为fan
+db.collection_name.update({条件},{$set:{name:jack}},{multi:true})
+默认情况下会修改一条，multi:true时可以修改满足条件的全部数据
+注意：multi update only works with $ operatorsmulti:true 只能跟$set连用
+查
+db.collection_name.find({&quot;age&quot;:16}) 查询年龄为16
+db.collections_name.findOne() 查询只返回第一个
+db.collections_name.find().pretty()将查询结果格式化
+数据库的备份与回复
+数据库的备份 mongodump -h hostname -d db -o path
+数据库的恢复 mongorestore -h hostname -d db -dri path
+比较运算符
+等于 默认就是等于判断，没有运算符
+大于 $gt db.collection_name.find({age:{$gt:18}}) 查询年龄大于18
+大于等于$gte db.collection_name.find({age:{$gte:18}})
+小于 $lt db.collections_name.find({age:{$lt:18}})查询年龄小于18
+小于等于$lte db.collection_name.find({age:{$lte:18}})
+不等于 $ne db.collection_name.find({age:{$ne:18}})
+逻辑运算符
+and 
+在JSON中写多个条件即可:查询年龄大于或等于18， 并且性别为true的学生
+db.collections_name.find({age:{$gte:18}},gender:&quot;true&quot;})
+or $or 
+使用$or 值为数组，数组中每个元素为json：查询年龄大于18， 或性别为false的学生
+db.collection_name.find({$or:[{age:{$gte:18}},{gender:true}]})
+形式 db.collection_name.find({$or:[{条件1},{条件2},{条件3}.....]})
+范围运算符
+使用”in&quot;，&quot;in&quot;，&quot;nin” 判断是否在某个范围内查询年龄为18、 28
+db.collection_name.find({age:{$in:[18,28]}})
+$nin 不在范围内
+db.collections_name.find({age:{$gt:{$in:[25,16]}}})
+mongodb的语句
+选择年龄大于等于18并且gender为ture 
+db.stu.find({age:{$gte:18},gender:ture})
+选择年龄是16，18，20 并且hometown为蒙古 或者gender 为ture 
+db.collection_name.find({$or:[{age:{$in:[16,18,20]},hometown:&quot;蒙古&quot;},{gender:true}]})
+支持正则表达式（两种方式）
+使用 /xxx/ 
+db.collection_name.find({sku:/^a/}) 查找sku字段中以a开头的
+db.collections_name.find({sku:/9$/})查找sku字段中以9结尾的
+$regex 编写正则 值必须时字符串 
+db.collection_name.find({sku:{$regex:&quot;^a&quot;}})查找sku字段中以a开头的
+db.collections_name.find({sku:{$regex:&quot;9$&quot;&quot;}})查找sku字段中以9结尾的
+limt skip
+方法limit()： 用于读取指定数量的文档db.集合名称.find().limit(NUMBER) 
+db.collection_name.find().limit(2)取两条
+方法skip()： 用于跳过指定数量的文档db.集合名称.find().skip(NUMBER) 
+db.collection_name.find().skip(2)跳过两条
+连用 
+db.collection_name.find().limit(2).skip(2)先取两页再跳过2条
+db.collections_name.find().skip(2).limi(2)先跳两页，再取2条 —–比较高效常用
+sort排序
+db.collections_name.find({}).sort({name:1,gender:-1})1为升序，-1为降序
+统计 count
+db.collections_name.find().count()
+db.collections_name.count({gender:true})统计geder:true的个数
+去重distinct
+db.collections_name.distinct(&quot;去重字段&quot;,{条件})
+db.collections_name.distinct(&quot;hometown&quot;,{gneder:true,age:{$gt:18}}) 
+给hometown字段去重，并且gender为true ，age大于18的
+返回的是一个列表
+聚合
+是基于数据处理的聚合管道，每个文档通过一个由多个阶段（stage）组成的管道，可以对每个阶段的管道进行分组、过滤等功能，然后经过一系列的处理，输出相应的结果
+db.collections_name.aggregate(管道:{表达式})
+常用管道
+$group将文档分组，可用于统计结果
+$match过滤，输出符合条件的文档
+$project修改文档的结构，如：重命名，增加，删除字段，创建统计结果
+$sort 将文档排序后，输出
+$limt 限制聚合管道返回的档数,取几条
+$skip跳过指定数量的文档， 并返回余下的文档
+$unwind将数组类型的字段进行拆分
+表达式
+处理输出文档并输出
+语法：表达式:'$列名' {$..:{}}
+常用表达式:
+sum：计算总和，sum：计算总和，sum:1 表示以1倍计数 表示把每一条数据当作1来计算
+$avg： 计算平均值
+$min： 获取最小值
+$max： 获取最大值
+$push： 在结果文档中插入值到一个数组中
+$first： 根据资源文档的排序获取第1个文档数据
+$last： 根据资源wenwen档的排序获取最后1个文档数据
+连用
+$group
+按照一个字段分组
+db.stu.aggregate({$group:{_id:&quot;$hometown&quot;,age_sum:{$sum:&quot;$age&quot;}}})
+按照两个字段分组
+db.stu.aggregate({$group:{_id:{hometown:&quot;$hometown&quot;,name:&quot;$name&quot;},sum:{$sum:1}}})
+不分组，统计整个文档，将id设为null
+db.stu.aggregate({$group:{_id:null,count:{$sum:1}}})
+$match 
+db.col.aggragate({match:{age:{match:{age:{gt:18}}})
+过滤
+$project
+db.col.aggragate({project:{_id:0,name:1,new_country:&quot;project:{_id:0,name:1,new_country:&quot;country”}})
+$sort
+db.col.aggragate({$sort:{name:1}})
+$limit
+db.col.aggragate({$limit:20})
+$skip
+db.col.aggragate({$skip:20})
+$unwind
+db.col.aggragate({unwind:&quot;unwind:&quot;size”})
+属性 值为false表示丢弃属性值为空的?档属性preserveNullAndEmptyArrays值为true表示保留属性值为空的?档用法：
+db.col.aggragate({unwind:{path:&quot;unwind:{path:&quot;size”,perserveNullandEmptyArray:true}})
+db.stu.find()
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d5507a7101e4eaa600&quot;), &quot;name&quot; : &quot;郭靖&quot;, &quot;hometown&quot; : &quot;蒙古&quot;, &quot;age&quot; : 20, &quot;gender&quot; : true }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d6507a7101e4eaa601&quot;), &quot;name&quot; : &quot;?蓉&quot;, &quot;hometown&quot; : &quot;桃花岛&quot;, &quot;age&quot; : 18, &quot;gender&quot; : false }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d6507a7101e4eaa602&quot;), &quot;name&quot; : &quot;华筝&quot;, &quot;hometown&quot; : &quot;蒙古&quot;, &quot;age&quot; : 18, &quot;gender&quot; : false }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d6507a7101e4eaa603&quot;), &quot;name&quot; : &quot;?药师&quot;, &quot;hometown&quot; : &quot;桃花岛&quot;, &quot;age&quot; : 40, &quot;gender&quot; : true }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d6507a7101e4eaa604&quot;), &quot;name&quot; : &quot;段誉&quot;, &quot;hometown&quot; : &quot;?理&quot;, &quot;age&quot; : 16, &quot;gender&quot; : true }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d6507a7101e4eaa605&quot;), &quot;name&quot; : &quot;段王爷&quot;, &quot;hometown&quot; : &quot;?理&quot;, &quot;age&quot; : 45, &quot;gender&quot; : true }
+{ &quot;_id&quot; : ObjectId(&quot;5a0401d7507a7101e4eaa606&quot;), &quot;name&quot; : &quot;洪七公&quot;, &quot;hometown&quot; : &quot;华?&quot;, &quot;age&quot; : 18, &quot;gender&quot; : true }
+db.stu.aggregate({$group:{_id:&quot;$hometown&quot;,age_sum:{$sum:&quot;$age&quot;}}}) 将属于华山的年龄想加，属于大理的年龄相加
+{ &quot;_id&quot; : &quot;华?&quot;, &quot;age_sum&quot; : 18 }
+{ &quot;_id&quot; : &quot;?理&quot;, &quot;age_sum&quot; : 61 } 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+平均值
+db.stu.aggregate({$group:{_id:&quot;$hometown&quot;,avg:{$avg:&quot;$age&quot;}}}) 
+{ &quot;_id&quot; : &quot;华?&quot;, &quot;avg&quot; : 18 } 
+{ &quot;_id&quot; : &quot;?理&quot;, &quot;avg&quot; : 30.5 } 
+{ &quot;_id&quot; : &quot;桃花岛&quot;, &quot;avg&quot; : 29 } 
+{ &quot;_id&quot; : &quot;蒙古&quot;, &quot;avg&quot; : 19 } 
+统计
+将hometown 分组，，然后统计 
+db.stu.aggregate({$group:{_id:&quot;$hometown&quot;,sum:{$sum:1}}}) 
+{ &quot;_id&quot; : &quot;华?&quot;, &quot;sum&quot; : 1 } 
+{ &quot;_id&quot; : &quot;?理&quot;, &quot;sum&quot; : 2 } 
+{ &quot;_id&quot; : &quot;桃花岛&quot;, &quot;sum&quot; : 2 } 
+{ &quot;_id&quot; : &quot;蒙古&quot;, &quot;sum&quot; : 2 } 
+动手
+db.tv3.aggregate({$group:{_id:{country:&quot;$country&quot;,province:&quot;$province&quot;,userid:&quot;$userid&quot;}}},{$group:{_id:{country:'$_id.country',province:'$_id.province'},count:{$sum:1}}})
+unwind
+-将?档中的某?个数组类型字段拆分成多条， 每条包含数组中的?个值 
+语法：db.集合名称.aggregate({unwind:′unwind:′字段名称’})
+db.t2.insert({_id:1,item:’t-shirt’,size:[‘S’,’M’,’L’]}) 
+db.t2.aggregate({unwind:′unwind:′size’})结果如下： 
+{ &quot;_id&quot; : 1, &quot;item&quot; : &quot;t-shirt&quot;, &quot;size&quot; : &quot;S&quot; } 
+{ &quot;_id&quot; : 1, &quot;item&quot; : &quot;t-shirt&quot;, &quot;size&quot; : &quot;M&quot; } 
+{ &quot;_id&quot; : 1, &quot;item&quot; : &quot;t-shirt&quot;, &quot;size&quot; : &quot;L&quot; } 
+投影
+返回特定的字段
+db.collection_name.find({条件},{name:1,_id:0})
+_id 不需要显示的时候，值为0，其他字段不需要的时候，不写即可显示时值为1
+db.collections_name.find({条件}，{name:1,_id:0}) 显示name 不显示其他字段，不需要id时就爱那个id设为0
+统计个数
+db.collection_name.find({条件}).count()
+db.collection_name.count({条件})
+去重
+db.stu.distinct(“hometown”,{gender:true,age:{$gt:18}})
+返回数组
+索引
+创键索引 
+db.colllectons_name.ensureIndex({属性：1})语法：db.集合.ensureIndex({属性:1})，1表示升序， -1表示降序具体操作：`db.t1.ensureIndex({name:1})“
+db.collection_name.creatreIndex({属性：1}).explain('executionStats')explain(‘executionStats’)查看查询的时间
+创建唯一索引 
+db.collections_name.ensureindex({name:1},{&quot;unique&quot;:true})
+创建联合索引——去重一般用三个字段 
+db.collection_name.ensureindex({name:1,age:1})
+查看索引 
+db.collection_name.getindexes()
+删除索引 
+db.collection_name.dropindex()
+数据去重
+数据库建立索引，需要建立联合索引，通过数据库来实现数据的自动去重
+根据url地址去重，把url地址存在redis的集合中，后续新来一个url地址，判断他是否存在redis中，不存在才抓取 
+url对应的响应不会变化的时候
+使用sha1加密数据(可以选择加密某些字段)，把得到的结果存入redis的集合中，后续新抓到的数据同样的方式进行加密，判断得到的值在redis的集合中是否存在，存在就更新，不存在就插入
+
+数，并返回剩下的文档数 同时使用时先使用skip在使用limit 使用示例如下： 查询2条学生信息 db.stu.aggregate( {$limit:2} ) 查询从第三条开始的学生信息 db.stu.aggregate( {$skip:3} ) 统计男女生人数，按照人数升序，返回第二条数据 db.stu.aggregate( {$group:{_id:&quot;$gender&quot;,counter:{$sum:1}}}, {$sort:{counter:-1}}, {$skip:1}, {$limit:1} )
+
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

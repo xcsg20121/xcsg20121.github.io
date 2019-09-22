@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Redisearch实现的全文检索功能服务 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Redisearch实现的全文检索功能服务</h1>
+  <time datetime=2019-09-11T14:25:01Z class="post-date">Wed, Sep 11, 2019</time>
+  <p>“检索”是很多产品中无法绕开的一个功能模块，当数据量小的时候可以使用模糊查询等操作凑合一下，但是当面临海量数据和高并发的时候，业界常用 elasticsearch 和 lucene 等方案，但是elasticsearch对运行时内存有着最低限额，其运行时大小推荐 2G 以上的内存空间，并且需要额外的磁盘空间做持久化存储。</p>
+
+<pre><code>其实mongoDB 内置的正则匹配搜索文本以及自带的 text 索引和 search 关键字也是一套靠谱的解决方案，但是这一次我们带来一种更加高效经济的文本检索方案：Redisearch
+</code></pre>
+
+<p>Redis Modules 是 redis 4.0 引入的一种扩展机制，用户可以通过实现 redis module 提供的 C api 接口为 redis 服务添加定制化功能。 redisLab 也希望籍此来规范 redis 社区的 ecosystem 实现。</p>
+
+<pre><code>redis module 本身的版本独立于redis，并且以编译成动态加载库 .so 文件的方式 release， 不同版本的 redis 可以 load 同一版本 module.so 文件。
+
+redis 提供了两种加载方式。可以通过 在 conf 文件中 加入 loadmodule /path/to/mymodule.so ，也可以在 redis-cli中使用命令 MODULE LOAD /path/to/panda.so 动态加载，MODULE UNLOAD 卸载。
+
+
+
+特性
+
+基于文档的全文索引。
+高性能增量索引。
+支持文档评分，文档字段(field) 权重机制。
+支持布尔复杂查询。
+支持自动补全。
+基于 snowball 的词干分析，多语言支持。使用 friso 支持中文分词。
+utf-8 字符集支持。
+redis 数据持久化支持。
+自定义评分机制。
+
+
+
+其原理是在 redis 的 hashmap 基础上就可以很容易实现倒排索引的结构。redisearch 倒排索引除了实现了基础功能外，还引入了内存管理等优化功能。如果有兴趣可以阅读源码中的 src/inverted_index.c 部分
+
+
+
+首先，安装Rediseach,记住一点你本地的redis服务版本必须在4.0以上，网上一大堆编译安装的攻略，繁琐又浪费时间，所以又到了Docker登场时间了，hub上有编译好的免费镜像供我们下载
+</code></pre>
+
+<p>1,安装redis</p>
+
+<p>#下载rpm源并安装</p>
+
+<pre><code>yum install -y http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+</code></pre>
+
+<p>#安装redis</p>
+
+<pre><code>yum --enablerepo=remi install -y redis
+</code></pre>
+
+<p>#启动redis服务</p>
+
+<pre><code>service redis start
+</code></pre>
+
+<p>2,安装Rediseach</p>
+
+<pre><code>docker pull redislabs/redisearch
+</code></pre>
+
+<p>下载后，直接在后台启动服务</p>
+
+<pre><code>docker run -d -p 6666:6379 redislabs/redisearch
+</code></pre>
+
+<p><img src="/images/928.jpg" alt="" />
+此时已经有一个docker容器在后台启动了，redis服务映射到了宿主的6666端口，我们来连接一下</p>
+
+<pre><code>redis-cli -h localhost -p 6666
+</code></pre>
+
+<p><img src="/images/929.jpg" alt="" />
+检查 modules 是否成功加载
+<img src="/images/930.jpg" alt="" />
+如果返回数组中存在 &ldquo;ft&rdquo; ， 则表明 redisearch 已经成功加载。</p>
+
+<p>Redisearch 的索引概念 与elasticsearch 的 index 类似，表示某一类文档资源单元。</p>
+
+<p>这里我们定义了一个 SMARTX_VM 索引，其中存储的文档 包含 了 title 和 desc 两个 类型为 TEXT 的field。</p>
+
+<pre><code>FT.CREATE SMARTX_VM SCHEMA title TEXT WEIGHT 5.0 desc TEXT
+</code></pre>
+
+<p>然后向刚刚创建的这条索引加一个文档</p>
+
+<pre><code>FT.ADD SMARTX_VM vm-20190901 1.0 LANGUAGE &quot;chinese&quot; FIELDS title &quot;中国&quot; desc &quot;我是中国人&quot;
+</code></pre>
+
+<p>LANGUAGE &ldquo;chinese&rdquo; 参数 表示 使用 中文分词器 处理文本。默认为英文</p>
+
+<pre><code>此时我们进行文档检索
+</code></pre>
+
+<p>FT.SEARCH SMARTX_VM &ldquo;中国&rdquo; LANGUAGE &ldquo;chinese&rdquo;
+  注意检索的时候也要指定语言，这里我们用中文分词，默认的英文分词是无法检索中文的
+<img src="/images/931.jpg" alt="" /></p>
+
+<p>可以看到已经返回了我们想要的结果。</p>
+
+<p>Redisearch 是一个高效，功能完备的内存存储的高性能全文检索组件， 十分适合应用在数据量适中， 内存和存储空间有限的环境。借助数据同步手段，我们可以很方便的将redisearch 结合到现有的数据存储中， 进而向产品提供 全文检索， 自动补全等服务优化功能。</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

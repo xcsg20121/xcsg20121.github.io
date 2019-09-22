@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Nginx-rtmp&#43; FFmpeg &#43;Docker &#43; vue.js 直播系统搭建 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Nginx-rtmp&#43; FFmpeg &#43;Docker &#43; vue.js 直播系统搭建</h1>
+  <time datetime=2019-05-17T14:15:39Z class="post-date">Fri, May 17, 2019</time>
+  <p>思路（如图）：
+<img src="/images/f.jpg" alt="" />
+1，开启推流服务器（这里我的Nginx-rtmp服务器搭建成功）</p>
+
+<p>进入docker 开启推流服务器  docker run -it -p 1935:1935 -p 8000:80 &ndash;rm alfg/nginx-rtmp
+<img src="/images/f1.jpg" alt="" />
+2，推流（两种方法）</p>
+
+<p>命令推流：</p>
+
+<p>查看本机摄像头及麦克风设备 ffmpeg -list_devices true -f dshow -i dummy</p>
+
+<p>音视频推流： ffmpeg -f dshow -i video=&ldquo;VMware Virtual USB Video Device&rdquo;:audio=&ldquo;Microphone (High Definition Audio Device)&rdquo; -tune:v zerolatency -f flv &ldquo;rtmp://192.168.99.100:1935/stream/test&rdquo;</p>
+
+<pre><code>#推流视频文件
+ffmpeg -re -stream_loop -1 -i test.mp4 -f flv rtmp://192.168.99.100:1935/stream/test
+播放地址http://192.168.99.100:8000/live/test.m3u8
+
+#将摄像头推流到hls
+ffmpeg -f vfwcap  -i &quot;0&quot; -c:v libx264 -preset ultrafast  -acodec libmp3lame -ar 44100 -ac 1  -f flv rtmp://localhost:1935/hls/home
+播放地址http://localhost:8080/hls/home.m3u8
+
+#将屏幕推流到rtmp
+start ffmpeg -f gdigrab -i desktop -vcodec libx264 -preset ultrafast -acodec libmp3lame -ar 44100 -ac 1 -f flv 
+播放地址rtmp://localhost:1935/live/jing
+</code></pre>
+
+<p>使用第三方软件推流：（例如：OBS Studio）</p>
+
+<p>3，拉流</p>
+
+<p>这里前端使用的是通过VUE</p>
+
+<p>注意使用video需安装以下几个依赖</p>
+
+<p>cnpm install video.js
+cnpm install aes-decrypter
+cnpm install m3u8-parser
+cnpm install mpd-parser
+cnpm install mux.js
+cnpm install url-toolkit
+cnpm install videojs-contrib-hls</p>
+
+<pre><code>&lt;video id=&quot;my-video&quot; class=&quot;video-js vjs-default-skin&quot; controls preload=&quot;auto&quot; &gt;
+                                        &lt;source src=&quot;http://192.168.99.100:8000/live/test.m3u8&quot; type=&quot;application/x-mpegURL&quot;&gt;
+                                &lt;/video&gt;
+
+&lt;script&gt;
+        //vue 的video插件
+            import videojs from 'video.js'
+            import 'videojs-contrib-hls'
+
+    export default {
+    mounted:function(){
+                    //自动执行直播平台
+                    videojs('my-video', {
+                    bigPlayButton: false,
+                    textTrackDisplay: false,
+                    posterImage: true,
+                    errorDisplay: false,
+                    controlBar: true
+            }, function () {
+                    this.play()
+            })
+        }
+    }
+}
+
+
+
+&lt;/script&gt;
+</code></pre>
+
+<p>效果如下：
+<img src="/images/f2.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

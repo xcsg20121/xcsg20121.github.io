@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>响应式网站设计---Bootstrap &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>响应式网站设计---Bootstrap</h1>
+  <time datetime=2019-05-05T09:10:23Z class="post-date">Sun, May 5, 2019</time>
+  <p>响应式布局可以帮助我们实现网站布局随屏幕大小自动调整的需求，实现不同屏幕分辨率的终端上浏览网页的不同展示方式，使得网页在PC端和手机端均可以完美的展现其内容，具有自适应性。</p>
+
+<p>使用基于Bootstrap的栅格系统</p>
+
+<pre><code> Bootstrap响应式布局是利用其栅格系统，对于不同的屏幕采用不同的类属性。在开发中可以只写一套代码在手机平板，PC端都能使用，而不用考虑使用媒体查询（针对不同的设备分别写不同的代码）。Bootstrap的官方解释：Bootstrap提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为做多12列。栅格系统用于通过一系列的行（row）与列（column）的组合来创建页面布局。
+</code></pre>
+
+<ol>
+<li>栅格系统的工作原理</li>
+</ol>
+
+<p>（1）行（row）必须包含在.container(固定宽度)或.container-fluid(100%宽度)中，以便为其赋予合适的排列内补（padding）。
+（2）通过行（row）在水平方向创建一组列（column）。
+（3）自己内容应当放置于列（column）内，并且，只有列可以作为行（row）的直接子元素。
+（4）类似.row和.col-xs-4这种预定义的类，可以用来快速创建栅格布局。
+（5）通过为列设置padding属性，从而创建列与列之间的间隔（gutter）。通过为.row元素设置负值margin从而抵消为.container元素设置的padding，也就间接为行（row）所包含的列（column）抵消掉了padding。
+（6）栅格系统的列是通过指定1到12的值来表示其跨越范围。例如三个等宽的列可以使用三个.col-xs-4来创建。
+（7）如果一行（row）中包含了的列（column）大于12，多余的列所在的元素将作为一个整体另起一行排列。
+（8）栅格类适用于与屏幕宽度大于或等于分界点大小的设备，并且针对小屏幕覆盖栅格类。</p>
+
+<pre><code> &lt;div class=&quot;container&quot;&gt;
+
+            &lt;h1&gt;Hello, world!&lt;/h1&gt;
+         
+            &lt;div class=&quot;row&quot;&gt;
+         
+               &lt;div class=&quot;col-md-3&quot; style=&quot;background-color: #dedef8;box-shadow: 
+                  inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                  &lt;h4&gt;第一列&lt;/h4&gt;
+                  &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit.&lt;/p&gt;
+               &lt;/div&gt;
+         
+               &lt;div class=&quot;col-md-9&quot; style=&quot;background-color: #dedef8;box-shadow: 
+                  inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                  &lt;h4&gt;第二列 - 分为四个盒子&lt;/h4&gt;
+                  &lt;div class=&quot;row&quot;&gt;
+                     &lt;div class=&quot;col-md-6&quot; style=&quot;background-color: #B18904;
+                        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                        &lt;p&gt;Consectetur art party Tonx culpa semiotics. Pinterest 
+                           assumenda minim organic quis.
+                        &lt;/p&gt;
+                     &lt;/div&gt;
+                     &lt;div class=&quot;col-md-6&quot; style=&quot;background-color: #B18904;
+                        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                        &lt;p&gt; sed do eiusmod tempor incididunt ut labore et dolore magna 
+                           aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+                           ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        &lt;/p&gt;
+                     &lt;/div&gt;
+                  &lt;/div&gt;
+         
+                  &lt;div class=&quot;row&quot;&gt;
+                     &lt;div class=&quot;col-md-6&quot; style=&quot;background-color: #B18904;
+                        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                        &lt;p&gt;quis nostrud exercitation ullamco laboris nisi ut 
+                           aliquip ex ea commodo consequat.
+                        &lt;/p&gt;
+                     &lt;/div&gt;   
+                     &lt;div class=&quot;col-md-6&quot; style=&quot;background-color: #B18904;
+                        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;&quot;&gt;
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+                           sed do eiusmod tempor incididunt ut labore et dolore magna 
+                           aliqua. Ut enim ad minim.&lt;/p&gt;
+                     &lt;/div&gt;
+                  &lt;/div&gt;
+         
+               &lt;/div&gt;
+         
+            &lt;/div&gt;
+         
+         &lt;/div&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

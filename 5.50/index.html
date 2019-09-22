@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>pillow与numpy实现图片素描化 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>pillow与numpy实现图片素描化</h1>
+  <time datetime=2017-05-20T14:12:55Z class="post-date">Sat, May 20, 2017</time>
+  <pre><code>from PIL import Image
+import numpy as np
+
+#封装一个图像处理类
+class TestNumpy(object):
+    def photo2paint(self,img_url):
+        # 读取图片
+        my_photo = np.asarray(Image.open(img_url).convert(&quot;L&quot;)).astype(&quot;float&quot;)
+        # print(my_photo.shape)
+        #设置灰度阈值(范围0~100)
+        depth = 40
+        # 将灰度系数映射到numpy
+        grad = np.gradient(my_photo)
+        #获取坐标
+        grad_x,grad_y = grad
+        #分别处理
+        grad_x = grad_x * depth/100
+        grad_y = grad_y * depth/100
+        #设置阿尔法值  设置坐标范围
+        A = np.sqrt(grad_x**2 + grad_y**2 + 1)
+        #重新赋值
+        uni_x = grad_x/A
+        uni_y = grad_y/A
+        uni_z = 1/A
+        #灰度光源设置 角度
+        vec_el = np.pi/2.2
+        vec_az = np.pi/4
+        #设置x轴和y轴
+        dx = np.cos(vec_el)* np.cos(vec_az)
+        dy = np.cos(vec_el)* np.sin(vec_az)
+        #设置z轴
+        dz = np.sin(vec_el)
+        #设置byte值
+        b = 255*(dx*uni_x+dy*uni_y+dz*uni_z)
+        #光源归一化
+        b = b.clip(0,255)
+        #声明图像类图像
+        im = Image.fromarray(b.astype(&quot;uint8&quot;))
+        #保存图像
+        im.save(&quot;./test_new.jpg&quot;)
+if __name__ == &quot;__main__&quot;:
+    testnumpy = TestNumpy()
+    testnumpy.photo2paint('./test_numpy.jpg')
+</code></pre>
+
+<p><img src="/images/numpy.jpg" alt="" />
+<img src="/images/numpy1.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

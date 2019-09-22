@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python作用域问题 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python作用域问题</h1>
+  <time datetime=2018-11-14T09:11:50Z class="post-date">Wed, Nov 14, 2018</time>
+  <p>今天出了个低级的错误，最后确定是作用域问题，特回顾知识点如下：</p>
+
+<p>在Python程序中创建、改变、查找变量名时，都是在一个保存变量名的空间中进行，我们称之为命名空间，也被称之为作用域。</p>
+
+<p>Python的作用域是静态的，在源代码中变量名被赋值的位置决定了该变量能被访问的范围。即Python变量的作用域由变量所在源代码中的位置决定。</p>
+
+<p>作用域的产生：</p>
+
+<p>1，只有当变量在Module(模块)、Class(类)、def(函数)中定义的时候，才会有作用域的概念。</p>
+
+<p>2，在作用域中定义的变量，一般只在作用域中有效。</p>
+
+<p>3，在if-elif-else、for-else、while、try-except/try-finally等关键字的语句块中并不会产生作用域</p>
+
+<p>作用域的类型：</p>
+
+<p>L(local)局部作用域 函数内的命名空间</p>
+
+<p>E(enclosing)嵌套作用域 外部嵌套函数的命名空间</p>
+
+<p>G(global)全局作用域 所在模块（文件）的命名空间</p>
+
+<p>B(built-in)内置作用域 Python内置模块的命名空间</p>
+
+<pre><code>globalVar = 100      #全局作用域     
+ 
+def test_scope():
+    enclosingVar = 200    #嵌套作用域
+    def func():
+        localVar = enclosingVar + 1 #局部作用域
+        print(localVar)
+ 
+print(__name__)  #内置作用域
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

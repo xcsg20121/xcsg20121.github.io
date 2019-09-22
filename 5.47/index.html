@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python中dict的fromkeys用法 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python中dict的fromkeys用法</h1>
+  <time datetime=2017-03-28T17:22:28Z class="post-date">Tue, Mar 28, 2017</time>
+  <p>fromkeys是创造一个新的字典。就是事先造好一个空字典和一个列表，fromkeys会接收两个参数，第一个参数为从外部传入的可迭代对象，会将循环取</p>
+
+<p>出元素作为字典的key值，另外一个参数是字典的value值，不写所有的key值所对应的value值均为None，写了则为默认的值</p>
+
+<pre><code>v = dict.fromkeys(range(10))
+print(v)
+
+结果：
+{0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None}
+</code></pre>
+
+<p>传入第二个参数：</p>
+
+<pre><code>v = dict.fromkeys(range(10),'hello')
+print(v)
+
+结果：
+{0: 'hello', 1: 'hello', 2: 'hello', 3: 'hello', 4: 'hello', 5: 'hello', 6: 'hello', 7: 'hello', 8: 'hello', 9: 'hello'}
+</code></pre>
+
+<p>fromkeys的append和赋值修改</p>
+
+<pre><code>v = dict.fromkeys(['k1','k2'],[])
+v['k2'].append(666)
+print(v)
+v['k1'] = 777
+print(v)
+
+结果：
+{'k1': [666], 'k2': [666]}
+{'k1': 777, 'k2': [666]}
+</code></pre>
+
+<p>结论：fromkeys方法并不适用来创建多个对象，因为我如果改变了某一个对象中的某个属性，那么其余对象都会被改变。</p>
+
+<p>但如果就想要呈现这种（连坐的）效果，那么可以这个方法。</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>jquery.ajax与axios及定义拦截器 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>jquery.ajax与axios及定义拦截器</h1>
+  <time datetime=2016-03-31T11:02:11Z class="post-date">Thu, Mar 31, 2016</time>
+  <p>首先导入jquery和axios包</p>
+
+<p>jquery.ajax</p>
+
+<pre><code>function reg(){
+            var username = $(&quot;#username&quot;).val();
+            var password = $(&quot;#password&quot;).val();
+        //     $.ajax({
+        //         url:&quot;/supermarket/do_reg&quot;,
+        //         data:{&quot;username&quot;:username,'password':password},
+        //         type:&quot;POST&quot;,
+        //         dataType:&quot;json&quot;,
+        //         success:function(obj){
+        //             alert(obj.mes);
+        //         },
+        //         //前置操作
+        //         beforeSend:function(){
+        //             //将按钮设置失效
+        //             $(&quot;#sub&quot;).attr({disabled:&quot;disabled&quot;})
+        //         },
+        //         //后置操作
+        //         complete:function(){
+        //             //设置按钮生效
+        //             $(&quot;#sub&quot;).removeAttr(&quot;disabled&quot;);
+        //         }
+        //     })
+        //  }
+
+</code></pre>
+
+<p>axios</p>
+
+<pre><code>&lt;script&gt;
+        function reg(){
+            var username = $(&quot;#username&quot;).val();
+            var password = $(&quot;#password&quot;).val();
+        //使用axios来请求接口
+        //初始化传参
+        let param = new URLSearchParams();
+        //将参数传递给对象
+        param.append('username',username);
+        param.append('password',password);
+        //定义拦截器
+        axios.interceptors.request.use(function(config){
+            //将按键设置失效
+            $(&quot;#sub&quot;).attr({disabled:&quot;disabled&quot;})
+            //显示提示文字
+            $(&quot;#waite&quot;).show();
+            //返回配置文件
+            return config;   
+        });
+        axios({
+            //指定请求地址
+            url:'/supermarket/do_reg',
+            //请求参数
+            data:param,
+            //请求类型
+            method:'post',
+            //接口返回值类型
+            resposeType:&quot;json&quot;
+        })
+        .then(function(obj){
+            //将按钮失效去除
+            $(&quot;#sub&quot;).removeAttr(&quot;disabled&quot;);
+            //将提示文字隐藏
+            $(&quot;#waite&quot;).hide()
+            // console.log(obj);
+            alert(obj.data.mes);
+            //进行页面跳转
+            if(obj.data.mes==&quot;注册成功&quot;){
+                window.location.href=&quot;/supermarket/login&quot;;
+            }
+        });
+    } 
+    
+    &lt;/script&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

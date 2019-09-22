@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Docker入门级简单的操作命令 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Docker入门级简单的操作命令</h1>
+  <time datetime=2019-04-23T08:27:33Z class="post-date">Tue, Apr 23, 2019</time>
+  <p>在理解 Docker 之前，首先得先区分清楚两个概念，容器和虚拟机。</p>
+
+<p>虚拟机都需要有自己的操作系统，虚拟机一旦被开启，预分配给它的资源将全部被占用。</p>
+
+<p>容器技术是和我们的宿主机共享硬件资源及操作系统，可以实现资源的动态分配。</p>
+
+<p>Docker 的接口相当简单，用户可以方便地创建和使用容器，把自己的应用放入容器。容器还可以进行版本管理、复制、分享、修改，就像管理普通的代码一样。</p>
+
+<p>Docker 相比于传统虚拟化方式具有更多的优势：</p>
+
+<p>1，Docker 启动快速属于秒级别。虚拟机通常需要几分钟去启动。</p>
+
+<p>2，Docker 需要的资源更少。Docker 在操作系统级别进行虚拟化，Docker 容器和内核交互，几乎没有性能损耗，性能优于通过 Hypervisor 层与内核层的虚拟化。</p>
+
+<p>3，Docker 更轻量。Docker 的架构可以共用一个内核与共享应用程序库，所占内存极小。同样的硬件环境，Docker 运行的镜像数远多于虚拟机数量，对系统的利用率非常高。</p>
+
+<p>Docker 中包括三个基本的概念：</p>
+
+<p>Image(镜像)
+Container(容器)
+Repository(仓库)
+镜像是 Docker 运行容器的前提，仓库是存放镜像的场所，可见镜像更是 Docker 的核心。</p>
+
+<p>为什么用docker：</p>
+
+<p>更快速的交付和部署
+Docker在整个开发周期都可以完美的辅助你实现快速交付。Docker允许开发者在装有应用和服务本地容器做开发。可以直接集成到可持续开发流程中。</p>
+
+<p>例如：开发者可以使用一个标准的镜像来构建一套开发容器，开发完成之后，运维人员可以直接使用这个容器来部署代码。 Docker 可以快速创建容器，快速迭代应用程序，并让整个过程全程可见，使团队中的其他成员更容易理解应用程序是如何创建和工作的。 Docker 容器很轻很快！容器的启动时间是秒级的，大量地节约开发、测试、部署的时间。</p>
+
+<p>高效的部署和扩容
+Docker 容器几乎可以在任意的平台上运行，包括物理机、虚拟机、公有云、私有云、个人电脑、服务器等。 这种兼容性可以让用户把一个应用程序从一个平台直接迁移到另外一个。</p>
+
+<p>Docker的兼容性和轻量特性可以很轻松的实现负载的动态管理。你可以快速扩容或方便的下线的你的应用和服务，这种速度趋近实时。</p>
+
+<p>更高的资源利用率
+Docker 对系统资源的利用率很高，一台主机上可以同时运行数千个 Docker 容器。容器除了运行其中应用外，基本不消耗额外的系统资源，使得应用的性能很高，同时系统的开销尽量小。传统虚拟机方式运行 10 个不同的应用就要起 10 个虚拟机，而Docker 只需要启动 10 个隔离的应用即可。</p>
+
+<p>更简单的管理
+使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分发和更新，从而实现自动化并且高效的管理。</p>
+
+<p>用命令</p>
+
+<p>安装时注意修改 git安装路径</p>
+
+<p>显示版本号</p>
+
+<p>docker –versions</p>
+
+<p>下载镜像</p>
+
+<p>docker pull centos:版本号</p>
+
+<p>显示镜像</p>
+
+<p>docker images</p>
+
+<p>保存镜像</p>
+
+<p>docker save -o /home/dyufei/tensorflow.tar tensorflow/tensorflow</p>
+
+<p>或者 docker save tensorflow/tensorflow &gt; /home/dyufei/tensorflow.tar</p>
+
+<p>加载镜像</p>
+
+<p>docker load -i ‘tensorflow.tar’</p>
+
+<p>登录系统 镜像编号</p>
+
+<p>docker run -ti 6866</p>
+
+<p>docker run -it centos /bin/bash</p>
+
+<p>提交更改</p>
+
+<p>docker commit 容器id 镜像名称</p>
+
+<p>删除镜像</p>
+
+<p>docker rmi -f 镜像id</p>
+
+<p>检查系统</p>
+
+<p>cat /etc/redhat-release</p>
+
+<p>退出镜像</p>
+
+<p>exit</p>
+
+<p>docker run -it ubuntu:rename /bin/echo &ldquo;Hello World&rdquo;</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

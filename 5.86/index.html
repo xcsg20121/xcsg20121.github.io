@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接</h1>
+  <time datetime=2019-02-22T07:24:01Z class="post-date">Fri, Feb 22, 2019</time>
+  
+
+<p>Traceback (most recent call last):
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 138, in run
+self.finish_response()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 180, in finish_response
+self.write(data)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 274, in write
+self.send_headers()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 332, in send_headers
+self.send_preamble()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 255, in send_preamble
+(&lsquo;Date: %s\r\n&rsquo; % format_date_time(time.time())).encode(&lsquo;iso-8859-1&rsquo;)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 453, in _write
+result = self.stdout.write(data)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 796, in write
+self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。</p>
+
+<h2 id="09-apr-2019-18-30-05-post-userctrl-orders-http-1-1-500-59">[09/Apr/2019 18:30:05] &ldquo;POST /userctrl/orders HTTP/1.1&rdquo; 500 59</h2>
+
+<p>Exception happened during processing of request from (&lsquo;127.0.0.1&rsquo;, 55521)
+Traceback (most recent call last):
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 138, in run
+self.finish_response()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 180, in finish_response
+self.write(data)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 274, in write
+self.send_headers()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 332, in send_headers
+self.send_preamble()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 255, in send_preamble
+(&lsquo;Date: %s\r\n&rsquo; % format_date_time(time.time())).encode(&lsquo;iso-8859-1&rsquo;)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 453, in _write
+result = self.stdout.write(data)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 796, in write
+self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。</p>
+
+<p>During handling of the above exception, another exception occurred:</p>
+
+<p>Traceback (most recent call last):
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 141, in run
+self.handle_error()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\servers\basehttp.py&rdquo;, line 86, in handle_error
+super().handle_error()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 368, in handle_error
+self.finish_response()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 180, in finish_response
+self.write(data)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 274, in write
+self.send_headers()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 331, in send_headers
+if not self.origin_server or self.client_is_modern():
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 344, in client_is_modern
+return self.environ[&lsquo;SERVER_PROTOCOL&rsquo;].upper() != &lsquo;HTTP/0.9&rsquo;
+TypeError: &lsquo;NoneType&rsquo; object is not subscriptable</p>
+
+<p>During handling of the above exception, another exception occurred:</p>
+
+<p>Traceback (most recent call last):
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 647, in process_request_thread
+self.finish_request(request, client_address)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 357, in finish_request
+self.RequestHandlerClass(request, client_address, self)
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\socketserver.py&rdquo;, line 717, in <strong>init</strong>
+self.handle()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\servers\basehttp.py&rdquo;, line 154, in handle
+handler.run(self.server.get_app())
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\handlers.py&rdquo;, line 144, in run
+self.close()
+File &ldquo;C:\Users\Administrator\AppData\Local\Programs\Python\Python37\lib\wsgiref\simple_server.py&rdquo;, line 35, in close
+self.status.split(&rsquo; &lsquo;,1)[0], self.bytes_sent</p>
+
+<h2 id="attributeerror-nonetype-object-has-no-attribute-split">AttributeError: &lsquo;NoneType&rsquo; object has no attribute &lsquo;split&rsquo;</h2>
+
+<p>在网上找到解决办法特随笔：</p>
+
+<p>原因：ajax默认是异步提交，可是有时候我们会发现,本来要求请求马上出现,可是异步会导致后面突然再执行,这样就出问题了。</p>
+
+<p>解决办法：</p>
+
+<pre><code>function jie(){
+        $.ajax({
+            url:&quot;http://127.0.0.1:8000/userctrl/orders&quot;,
+            data:{'user':$.cookie(&quot;username&quot;),&quot;good_name&quot;:$(&quot;.good_name&quot;).text(),},
+            type:&quot;post&quot;,
+            async:false,
+            dataType:&quot;text&quot;，
+　　　　　　　success:function(obj){
+
+　　　　　　　　})
+　　　　　})
+    }
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

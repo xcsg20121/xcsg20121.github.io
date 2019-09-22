@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django &#43; Redis实现页面缓存 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django &#43; Redis实现页面缓存</h1>
+  <time datetime=2018-03-25T14:18:07Z class="post-date">Sun, Mar 25, 2018</time>
+  <p>目的：把从数据库读出的数据存入的redis 中既提高了效率，又减少了对数据库的读写，提高用户体验。</p>
+
+<p>例如：</p>
+
+<p>1，同一页面局部缓存，局部动态</p>
+
+<pre><code>from django.views import View
+from myapp.models import Student
+#导入缓存库
+from django.core.cache import cache
+#导入页面缓存
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
+class Stulist(View):
+    def get(self,request,id):
+        #判断缓存内是否有数据
+        result = cache.get(&quot;res&quot;,'0')
+        if result == '0':
+            res = Student.objects.filter(id=id)
+            cache.set(&quot;res&quot;,res,100)
+            result =cache.get(&quot;res&quot;)
+        # ret = Student.objects.all()
+        # ret = [i.name for i in list(ret)]
+        # random_name = random.sample(ret,3)
+        #随机取一条 select * from student where id in(2,3) order by rand limit 1
+       #取非当前数据外三条数据随机展示
+        random_name = Student.objects.exclude(id__in=[id]).order_by(&quot;?&quot;)[0:3]
+        return render(request,'stulist.html',locals())
+</code></pre>
+
+<p>2，页面缓存</p>
+
+<pre><code>@cache_page(60)
+def page_cache(request):
+    res = Student.objects.all()
+
+    return render(request,'pagecache.html',locals())
+
+@method_decorator(cache_page(60),name=&quot;get&quot;)
+class PageCache(View):
+   
+    def get(self,request):
+        res = Student.objects.all()
+
+        return render(request,'pagecache.html',locals())
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

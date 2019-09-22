@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>关于VMware(虚拟机) 出现错误时处理办法 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>关于VMware(虚拟机) 出现错误时处理办法</h1>
+  <time datetime=2018-05-14T08:10:20Z class="post-date">Mon, May 14, 2018</time>
+  <p>我们在开发中难免会用到虚拟机。前段时间老有同学问我虚拟机报错解决办法，趁今天有空特随笔。</p>
+
+<p>错误如下图
+<img src="/images/vm1.jpg" alt="" />
+首先科普下VT是个啥？</p>
+
+<p>Intel VirtualTechnology（VT)既“虚拟化技术”</p>
+
+<p>VT技术可以让一个CPU工作起来就像多个CPU并行运行，从而使得在一部电脑内同时运行多个操作系统成为可能.市面上已经有一些软件可以达到虚拟多系统的目的，比如VMware workstation、Virtual PC等，使用这种技术就可以单CPU模拟多CPU并行，可以实现单机同时运行多操作系统.</p>
+
+<p>解决办法:</p>
+
+<p>下面以联想机型为例:
+1,在电脑开机的时候，按下F2(fn+F2)键进入BIOS设置页面，按下方向键切换至Configuration菜单项。
+2,打开Configuration菜单选项之后，在该页面中，选择Intel Virtual Technology设置选项。
+3,按照下图红框中步骤选择后并按F10保存并退出即可。
+<img src="/images/vm2.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

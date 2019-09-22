@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>falsk 与 django cookie和session存、取、删的区别 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>falsk 与 django cookie和session存、取、删的区别</h1>
+  <time datetime=2016-01-12T16:38:44Z class="post-date">Tue, Jan 12, 2016</time>
+  <pre><code>alsk cookie的存取删需导入from flask import Flask,make_response,request
+# 存COOKIE的方法
+@app.route('/setcookie')
+def setcookie():
+res = make_response('存储cookie')
+# 使用set_cookie方法来存储key_value形式的数据
+res.set_cookie('productname','卫生纸',max_age = 3600)
+return res
+# 调用cookie的方法
+@app.route('/getcookie')
+def get_cookie():
+# 通过REQUEST模块的COOKIES属性的GET方法指定key来调用value
+ret = request.cookies.get('productname')
+return ret
+#删除cookie的方法
+@app.route('/delcookie')
+def del_cookie():
+#通过make_respose对象内置的DELETE_COOKIE方法来指定KEY删除VALUE
+ret = make_response('删除cookie')
+ret.delete_cookie(&quot;productname&quot;)
+return ret
+
+falsk cookie的存取删需导入from flask import Flask,session
+@app.route('/set_session')
+def set_session():
+#直接使用session对存储内容赋值
+session['username'] = '你好'
+return '存储session成功'
+#调用session的方法
+@app.route('/get_session')
+def get_session():
+#通过session直接对内容进行调用
+ret = session['username']
+return ret
+#删除session方法
+@app.route('/del_session')
+def del_session():
+#通过session的pop方法指定key来删除value
+session.pop('username')
+return '删除成功'
+
+django cookie的存取删需导入from django.http import HttpResponse
+from datetime import datetime
+#导入django内置时间转换模块
+from django.utils.timezone import make_aware
+注意：需在urls.py 设置路由 例：定义获取cokkie的路由path(&quot;get_cookie&quot;,d1.get_cookie)
+
+#定义设置cookie（存储）
+def save_cookie(request):
+response = HttpResponse('存储cookie ok')
+#定义过期时间
+expires = datetime(year=2019,month=11,day=20,hour=15,minute=5,second=0)
+#转储为DJANgo内置时间
+expires = make_aware(expires)
+#进行村储动作 或者用max_age村储（以秒为单位）
+response.set_cookie(&quot;username&quot;,'jack',expires=expires)
+return response
+
+#定义获取cookie
+def get_cookie(request):
+cookies = request.COOKIES
+username = cookies.get(&quot;username&quot;,'未拿到用户名')
+return HttpResponse(username)
+#定义删除COOKie的方法
+def del_cookie(request):
+response = HttpResponse(&quot;删除成功&quot;)
+response.delete_cookie(&quot;username&quot;)
+return response
+
+django cookie的存取删需导入from django.http import HttpResponse
+cookie存储在数据库需设置数据库
+#定义村储session
+def save_session(request):
+request.session['username'] = '你好'
+return HttpResponse(&quot;村储成功&quot;)
+#取session
+def get_session(request):
+return HttpResponse(request.session.get('username','未娶到'))
+#删session
+def del_session(request):
+del request.session[&quot;username&quot;]
+return HttpResponse(&quot;删除成功&quot;)
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

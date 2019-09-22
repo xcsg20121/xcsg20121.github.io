@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>使用axios加入进度条 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>使用axios加入进度条</h1>
+  <time datetime=2016-05-04T17:44:15Z class="post-date">Wed, May 4, 2016</time>
+  <p>思路：（安慰剂按钮）首先当触发按钮时，设置拦截器，启动进度条从0开始到100满（html进度条用数值value来控制，默认为0)，设置进度条的配置函数
+然后在后端返回函数中启动停止精度条的函数，为了保持返回函数和进度条效果的一致性，加入延时，达到线程同步的效果
+代码如下：
+首先导入jquery和axios js包
+其次需要加入进度条的前端加入进度条
+<img src="/images/3.jpg" alt="" />
+然后在写入：</p>
+
+<pre><code>&lt;script&gt;
+        //建立进度条对象
+        let pg = document.getElementById(&quot;pg&quot;);
+        
+
+        //定义登录方法
+        function login(){
+            var username = $(&quot;#username&quot;).val();
+            var password = $(&quot;#password&quot;).val();
+            var code = $(&quot;#code&quot;).val();
+            //拦截器
+            axios.interceptors.request.use(function(config){
+                //启动进度条
+                icount = setInterval(function(){
+                    //判断进度条的进度
+                    if(pg.value != 100){
+                        pg.value++;
+                    }
+                    else{
+                        pg.value = 0;
+                    }
+                },100);
+                //返回配置文件.
+                return config;   
+            });
+        //使用axios来请求接口
+        //初始化传参
+        let param = new URLSearchParams();
+        //将参数传递给对象
+        param.append('username',username);
+        param.append('password',password);
+        param.append('code',code);
+        axios({
+            //指定请求地址
+            url:'/supermarket/do_login',
+            //请求参数
+            data:param,
+            //请求类型
+            method:'post',
+            //接口返回值类型
+            resposeType:&quot;text&quot;
+        })
+        .then(function(obj){
+            //停止进度条
+            clearInterval(icount);
+            //将进度条填充到100
+            pg.value = 100;
+            // //进行页面跳转
+            if(obj.data==&quot;登录成功&quot;){
+                //加入延时，达到线程同步的效果
+                setTimeout(func,500);
+                function func(){
+                    alert(obj.data)
+                window.location.href=&quot;/supermarket/productlist&quot;;
+                }
+            }
+        });
+    } 
+    &lt;/script&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

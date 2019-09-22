@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django 子程序 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django 子程序</h1>
+  <time datetime=2016-05-20T10:42:15Z class="post-date">Fri, May 20, 2016</time>
+  <pre><code>在Web应用中，通常有一些业务功能模块是在不同的项目中都可以复用的，故在开发中通常将工程项目拆分为不同的子功能模块，各功能模块间可以保持相对的独立，在其他工程项目中需要用到某个特定功能模块时，可以将该模块代码整体复制过去，达到复用。
+Django的视图编写是放在子应用中的
+1创建子应用
+
+　　python manage.py startapp 子应用名称 #manage.py是创建工程时自动生成的管理文件 ,创建子应用需先进入工程目录下。
+默认生成文件如下：
+　　admin.py 文件跟网站的后台管理站点配置相关。
+
+　　apps.py 文件用于配置当前子应用的相关信息。
+
+　　migrations 目录用于存放数据库迁移历史文件。
+
+　　models.py 文件用户保存数据库模型类。
+
+　　tests.py 文件用于开发测试用例，编写单元测试。
+
+　　views.py 文件用于编写Web应用视图。
+
+2注册安装子应用
+　　创建出来的子应用目录文件虽然被放到了工程项目目录中，但是django工程并不能立即直接使用该子应用，需要注册安装后才能使用。
+　　在工程配置文件settings.py中，INSTALLED_APPS项保存了工程中已经注册安装的子应用，初始工程中的INSTALLED_APPS
+
+3主应用路由包含子路由（include）
+
+　　在主路由（urls.py）导入from django.urls import include
+　　urlpatterns = [
+　　　　path(&quot;myapp&quot;,include(&quot;myapp.urls&quot;))
+
+　　]
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

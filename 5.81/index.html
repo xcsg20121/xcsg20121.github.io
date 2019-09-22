@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>select下拉菜单实现通过数据库查询来设置默认值 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>select下拉菜单实现通过数据库查询来设置默认值</h1>
+  <time datetime=2018-11-21T12:10:22Z class="post-date">Wed, Nov 21, 2018</time>
+  <p>查询网上各种资料要不比较难理解，要么有问题，现有一种简单通俗的理解方法</p>
+
+<p>思路：读取数据库数据1，数据2需用到select选择菜单，但是又想每次查看是都显示读数据库的默认信息</p>
+
+<p>demo:</p>
+
+<pre><code>{% for i in res%}    
+&lt;tr id=&quot;tr_{{i.id}}&quot;&gt;
+        &lt;td&gt;{{i.id}}&lt;/td&gt; 
+        &lt;td&gt;{{i.author}}&lt;/td&gt;
+        &lt;td&gt;{{i.title}}&lt;/td&gt;
+        &lt;td&gt;
+            &lt;select id='select_{{i.id}}'&gt;
+            {% for n in ret%}
+            {% if i.cate_id == n.id %}
+            &lt;option value=&quot;{{n.id}}&quot; selected=&quot;selected&quot;&gt;{{n.name}}&lt;/option&gt;
+            {%else%}
+            &lt;option value=&quot;{{n.id}}&quot;&gt;{{n.name}}&lt;/option&gt;
+            {%endif%}
+            {%endfor%}
+            &lt;/select&gt;
+            &lt;button onclick=&quot;qu('{{i.id}}')&quot;&gt;确认&lt;/button&gt;
+        &lt;/td&gt;
+        &lt;td&gt;&lt;a href=&quot;{% url 'md:news_edit' i.id %}&quot;&gt;修改&lt;/a&gt;                
+        &lt;button onclick=&quot;del('{{i.id}}')&quot;&gt;删除&lt;/button&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+{%endfor%}
+
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

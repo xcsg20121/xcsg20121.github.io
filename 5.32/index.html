@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>类视图装饰器 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>类视图装饰器</h1>
+  <time datetime=2016-07-23T09:13:01Z class="post-date">Sat, Jul 23, 2016</time>
+  <p>方法一</p>
+
+<pre><code>#导入类视图装饰器包
+from django.utils.decorators import method_decorator
+复制代码
+#登录逻辑的装饰器
+def login(func):
+    def inner(request,*args,**kwargs):
+        if not request.COOKIES.get('username'):
+            return HttpResponseRedirect('/supermarket/login')
+        return func(request,*args,**kwargs)
+    return inner
+
+#商品列表页    
+method_decorator装饰器使用name参数指明被装饰的方法
+class Prolist(View):
+    @method_decorator(login)
+    def get(self,request):
+        res = Product.objects.all()
+        username = request.COOKIES.get('username',&quot;未取到&quot;)
+        #用户名解码
+        try:
+            username = username.encode(&quot;ISO-8859-1&quot;).decode(&quot;utf-8&quot;)
+        except:
+            pass
+        # 解析模板
+        return render(request,'supermarket/prolist.html',locals())
+</code></pre>
+
+<p>方法二:</p>
+
+<pre><code>在路由中导入装饰器并用视图
+
+path('/cartlist',login(CartList.as_view()))
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

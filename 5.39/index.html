@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>django--admin组件 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>django--admin组件</h1>
+  <time datetime=2016-11-17T18:03:14Z class="post-date">Thu, Nov 17, 2016</time>
+  <p>一，激活管理工具（一般建立工程已创建）</p>
+
+<p>1，setting.py 中安装子应用</p>
+
+<pre><code>INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'mytest',
+    'mysite',
+    'myapp',
+    'supermarket'
+]
+</code></pre>
+
+<p>2，urls.py 路由中配置</p>
+
+<pre><code>urlpatterns = [
+    #定义图片超链接路由
+    re_path('^upload/(?P&lt;path&gt;.*)$',serve,{'document_root':UPLOAD_ROOT}),
+    path('admin/', admin.site.urls),
+    path('tu',test.tu),
+    path('mytest',include('mytest.urls'))
+
+</code></pre>
+
+<p>二，注册admin模块</p>
+
+<p><a href="http://127.0.0.1:8000/admin/，得到登陆界面，你可以通过命令">http://127.0.0.1:8000/admin/，得到登陆界面，你可以通过命令</a> python manage.py createsuperuser 来创建超级用户。</p>
+
+<p>三，admin的定制（admin.py）</p>
+
+<pre><code>from django.contrib import admin
+from supermarket.models import Product
+from mysite.models import User
+#注册数据类
+@admin.register(Product)
+#继承admin基类
+class ProductAdmin(admin.ModelAdmin):
+    #显示字段
+    list_display =('id','name','price','count')
+    #分页设置,系统默认一页100条
+    list_per_page = 5
+    #排序
+    ordering = ('-id',)
+    #设置可进入编辑的超链接
+    list_display_links = ('name',)
+    #设置直接在列表页修改
+    list_editable = ['price']
+    #设置搜索功能
+    search_fields = ['name']
+    # 定制右侧快速筛选，可以组合筛选
+    list_filter = ('id','name')
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

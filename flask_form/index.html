@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>flask之表单验证 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>flask之表单验证</h1>
+  <time datetime=2015-12-01T08:30:42Z class="post-date">Tue, Dec 1, 2015</time>
+  <p>#flask的消息闪现依赖于flash库,用户发送的请求方式存储在request模块中
+#跳转依赖于redirect模块,还可以通过url_for方法来进行方法上的寻址</p>
+
+<pre><code>from flask import Flask,flash,render_template,request,session,redirect,url_for
+</code></pre>
+
+<p>#导入wtf扩展的表单类</p>
+
+<pre><code>from flask_wtf import FlaskForm
+</code></pre>
+
+<p>#导入自定义表单需要用到的字段类型</p>
+
+<pre><code>from wtforms import SubmitField,StringField,PasswordField
+</code></pre>
+
+<p>#新建一个表单类</p>
+
+<pre><code>class RegisterForm(FlaskForm):
+username = StringField('用户名')
+password = PasswordField('密码')
+password1 = PasswordField('确认密码')
+submit = SubmitField('注册')
+#建立对象
+app = Flask(__name__)
+#载入配置文件
+app.config.from_pyfile('config.ini')
+#登陆成功后跳转的页面
+@app.route(&quot;/hello&quot;)
+def hello():
+return ' hello 欢迎 %s ' % session['username']
+
+ 
+#指定请求方式，使用methods属性
+@app.route('/',methods=['GET','POST'])
+def index():
+#判断client发送的请求类型
+#自己请求自己的逻辑中，GET只用来解析模板，而POST用来判断数据逻辑
+if request.method == &quot;POST&quot;:
+#使用form属性来接收表单提交过来的数据
+username = request.form.get(&quot;username&quot;)
+password = request.form.get(&quot;password&quot;)
+password1 = request.form.get(&quot;password1&quot;)
+ 
+#判断数据是否同时存在
+#等同于 if username == '' or password == '' or password1 == ''
+if not all([username,password,password1]):
+#利用闪现消息来提醒用户
+flash(&quot;参数不足&quot;)
+elif password != password1:
+flash(&quot;两次密码不一致&quot;)
+else:
+#模拟登录 将用户名和密码存到session中
+session['username'] = username
+session['password'] = password
+flash(&quot;注册成功&quot;)
+#第一种直接跳转网址
+#return redirect('http://localhost:5000/hello')
+#第二种通过url_for方法跳转
+return redirect(url_for(hello))
+#将定义好的表单类传递给模板，进行方法化设置
+return render_template('day04_wtform.html',form=RegisterForm())
+if __name__ == &quot;__main__&quot;:
+app.run()
+</code></pre>
+
+<p>模板页（day04_wtform.html）：</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+&lt;title&gt;wtfrom&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form method='POST'&gt;
+{#所有通过调用出来的值必须要和后台表单类定义的变量一致#}
+{{ form.username.label}}:{{form.username}}
+{{ form.password.label}}:{{form.password}}
+{{ form.password1.label}}:{{form.password1}}
+{# 将flash消息闪现和后台联系起来 #}
+{# 将消息闪现里面的所有消息遍历，取出需要返回给用户的信息 #}
+{% for message in get_flashed_messages() %}
+{{message}}
+{%endfor%}
+{{form.submit}}
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Selenium功能自动化测试工具 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Selenium功能自动化测试工具</h1>
+  <time datetime=2017-06-21T00:11:25Z class="post-date">Wed, Jun 21, 2017</time>
+  <p>Selenium也是一个用于Web应用程序测试的工具。Selenium测试直接运行在浏览器中，就像真正的用户在操作一样。支持的浏览器包括IE、Mozilla</p>
+
+<p>Firefox、Mozilla Suite等。这个工具的主要功能包括：测试与浏览器的兼容性——测试你的应用程序看是否能够很好得工作在不同浏览器和操作系统</p>
+
+<p>之上。测试系统功能——创建衰退测试检验软件功能和用户需求。支持自动录制动作和自动生成。Net、Java、Perl等不同语言的测试脚本。Selenium</p>
+
+<p>是ThoughtWorks专门为Web应用程序编写的一个验收测试工具。</p>
+
+<p>首先需安装对应浏览器驱动</p>
+
+<pre><code>from selenium import webdriver
+import time
+#建立浏览器对象
+browser = webdriver.Firefox()
+#使用浏览器访问网站
+browser.get('http://www.baidu.com')
+#解码赋值
+html = browser.page_source.encode(&quot;utf-8&quot;).decode()
+#向文本框填充文本
+browser.find_element_by_id('kw').send_keys('https://www.cnblogs.com/')
+time.sleep(1)
+# 模拟点击
+browser.find_element_by_id('su').click()
+time.sleep(5)
+#匹配多个节点
+# elist = browser.find_elements(&quot;css selector&quot;,'h3')
+elist = browser.find_elements_by_class_name(&quot;t&quot;)
+#点击链接
+browser.find_element_by_link_text(elist[0].text).click()
+# #关闭浏览器
+# browser.quit()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

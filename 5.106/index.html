@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FFmpeg 初级使用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>FFmpeg 初级使用</h1>
+  <time datetime=2019-05-15T18:18:49Z class="post-date">Wed, May 15, 2019</time>
+  <p>ffmpeg来处理多种媒体文件，对帧进行操作的时候非常的复杂，下面介绍下使用FFmpeg对视频文件的操作。</p>
+
+<p>1，安装</p>
+
+<p>windows安装ffmpeg：</p>
+
+<p>下载ffmpeg文件解压文件到c盘
+配置环境变量C:\ffmpeg\bin
+<img src="/images/ff.jpg" alt="" />
+修改python文件subprocess.py
+shell=False 改为true
+<img src="/images/ff1.jpg" alt="" />
+pip install ffmpeg-python</p>
+
+<p>centos安装ffmpeg</p>
+
+<p>sudo rpm &ndash;import <a href="http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro">http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro</a>
+sudo rpm -Uvh <a href="http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm">http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm</a>
+sudo yum install ffmpeg ffmpeg-devel -y
+pip3 install ffmpeg-python</p>
+
+<p>2，应用</p>
+
+<p>查看本机摄像头及麦克风设备 ffmpeg -list_devices true -f dshow -i dummy</p>
+
+<p>音视频推流： ffmpeg -f dshow -i video=&ldquo;VMware Virtual USB Video Device&rdquo;:audio=&ldquo;Microphone (High Definition Audio Device)&rdquo; -tune:v zerolatency -f flv &ldquo;rtmp://192.168.99.100:1935/stream/test&rdquo;</p>
+
+<pre><code>    #读取视频信息
+    info = ffmpeg.probe(&quot;./test.mp4&quot;)
+    #截图操作
+    times = [1,10]
+    for time in times:
+        input_file = './test.mp4'
+        output_file = './image-' + str(time) + '.jpg'
+        out, err = (
+            ffmpeg
+                .input(input_file, ss=time)
+                .output(output_file, vframes='1', f='image2')
+                .run(quiet=False, overwrite_output=True)
+        )
+        if out == b'':
+            print('do nothing')
+        # 视频转换
+        os.system('ffmpeg -i a.mp4 -ss 5 -t 10 b.avi ')
+        # 视频截取转换gif
+        os.system('ffmpeg -ss 00:00:10 -t 3  -i test.mp4 test.gif')
+</code></pre>
+
+<p>由于时间问题，今天就介绍到这里</p>
+
+<p>后续有时间随便FFmepg 进行视频推流进行直播搭建。</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

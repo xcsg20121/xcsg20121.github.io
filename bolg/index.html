@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>bokeyuan_python文章爬去入mongodb读取--lowbiprogrammer &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>bokeyuan_python文章爬去入mongodb读取--lowbiprogrammer</h1>
+  <time datetime=2015-11-22T09:02:15Z class="post-date">Sun, Nov 22, 2015</time>
+  <pre><code># -*- coding: utf-8 -*-
+import requests,os
+from lxml import etree
+from pymongo import *
+
+class Boke(object):
+def __init__(self):
+self.url =&quot;https://www.cnblogs.com/cate/python/&quot;
+self.headers={'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.90 Safari/537.36 2345Explorer/9.3.2.17331'}
+def get_data(self,url):
+response = requests.get(url,headers=self.headers)
+return response.content
+def xml_data(self,data):
+html = etree.HTML(data)
+mes = html.xpath(&quot;//div[@class='post_item']&quot;)
+for i in mes:
+dict={}
+info_url = i.xpath(&quot;./div[@class='post_item_body']/h3/a/@href&quot;)[0]
+self.info_data(info_url)
+dict['url'] = info_url
+self.write_dbs(dict)
+
+
+def info_data(self,data):
+path = &quot;f:/woc/&quot;
+if not os.path.exists(path):
+os.makedirs(path)
+mes = self.get_data(data)
+html = etree.HTML(mes)
+list = html.xpath(&quot;//div[@id='topics']/div[@class='post']&quot;)
+# print(list)
+for x in list:
+dictlist = {}
+title = x.xpath(&quot;./h1[@class='postTitle']/a/text()&quot;)[0]
+info = x.xpath(&quot;./div[@class='postBody']//text()&quot;)
+dictlist['title'] = title
+dictlist['info'] = info
+self.write1_dbs(dictlist)
+
+def dbs(self):
+connect = MongoClient('127.0.0.1',27017)
+conn = connect['boke']
+conn1 =conn['zhu']
+conn2 =conn['info']
+return conn1,conn2
+def write_dbs(self,data):
+conn1,conn2 = self.dbs()
+conn1.insert_one(data)
+result=conn1.find()
+for i in result:
+print(i)
+def write1_dbs(self,data):
+conn1, conn2 = self.dbs()
+conn2.insert_one(data)
+result = conn2.find()
+for i in result:
+print(i)
+
+
+def run(self):
+url = self.url
+data = self.get_data(url)
+self.xml_data(data)
+if __name__ == '__main__':
+boke = Boke()
+boke.run()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

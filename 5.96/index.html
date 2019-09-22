@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>VUE 安装&amp;创建一个项目 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>VUE 安装&amp;创建一个项目</h1>
+  <time datetime=2019-04-19T10:25:51Z class="post-date">Fri, Apr 19, 2019</time>
+  <p>1，安装node.js</p>
+
+<p>vue依赖nodejs，所以首先要安装node.js</p>
+
+<p>然后打开cmd，输入命令， node -v。正常出现版本号，说明你已经安装成功了</p>
+
+<p>下载地址：<a href="http://nodejs.cn/download/">http://nodejs.cn/download/</a></p>
+
+<p>2，npm（cnpm）</p>
+
+<p>npm是node的包管理工具</p>
+
+<p>使用node之后你会接触各种各样成千上万的Package（包），就需要一个管理工具能很好的解决它的安装，更新，依赖包安装等等的维护。默认安装完node之后，npm会自动安装上的。还是cmd，输入命令 npm -V 。正常出现版本号，就可以了</p>
+
+<p>由于有些npm有些资源被屏蔽或者是国外资源的原因，经常会导致用npm安装依赖包的时候失败,使用国内镜像cnpm,可以解决这个问题</p>
+
+<p>npm install -g cnpm &ndash;registry=<a href="https://registry.npm.taobao.org">https://registry.npm.taobao.org</a></p>
+
+<p>3，安装 vue.js</p>
+
+<p>vue-cli是一种全局脚手架用于帮助搭建所需的模板框架</p>
+
+<p>cnpm install -g vue-cli</p>
+
+<p>npm强制清除缓存</p>
+
+<p>cnpm cache clean —force</p>
+
+<p>4，打开要创建的项目路径目录，创建项目</p>
+
+<p>// 生成一个基于 webpack 模板的新项目   vue init webpack 项目名 或者 vue init webpack-simple 项目名</p>
+
+<p>注意：vue init webpack-simple的项目默认打包后之后一个html和一个js文件，而vue init webpack项目默认打包完之后，会有很标准的目录</p>
+
+<p>然后CD到项目名</p>
+
+<p>//安装路由</p>
+
+<p>cnpm install vue-router &ndash;save</p>
+
+<p>//安装jquery</p>
+
+<p>cnpm install jquery &ndash;save</p>
+
+<p>// 启动开发服务器 ctrl+c 停止服务</p>
+
+<p>cnpm run dev</p>
+
+<p>这样，vue的项目就搭建成功了</p>
+
+<p>有时起服务的时候会报错，可以补全包 cnpm install</p>
+
+<p>**项目的三个目录：</p>
+
+<p>文件夹1(src)，主开发目录，要开发的单文件组件全部在这个目录下</p>
+
+<p>文件夹2(static)，静态资源目录，所有的css，js文件放在这个文件夹</p>
+
+<p>文件夹3(dist)，项目打包发布文件夹，最后要上线单文件项目文件都在这个文件夹中</p>
+
+<p>还有node_modules目录是node的包目录，config是配置目录，build是项目打包时依赖的目录</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

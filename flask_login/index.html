@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python_flask 注册，登陆，退出思路 ---纯个人观点 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python_flask 注册，登陆，退出思路 ---纯个人观点</h1>
+  <time datetime=2015-12-06T08:07:29Z class="post-date">Sun, Dec 6, 2015</time>
+  <p>1注册逻辑首先查询数据库用户名</p>
+
+<p>并判断用户是否存在，如不存在就插入数据</p>
+
+<p>并返回响应给前端</p>
+
+<p>2前端模板获取注册信息</p>
+
+<p>判断 用户名不能为空及密码不能为空，和密码不一致</p>
+
+<p>拼接注册url 组成get获取对象</p>
+
+<p>响应数据并判断 如该用户名已存在</p>
+
+<p>注册成功并跳转到登陆页面 window.location.href=&ldquo;/login&rdquo;</p>
+
+<p>3首先登陆页面验证逻辑get</p>
+
+<p>读取数据库并判断注册值是否存在</p>
+
+<p>4在前段模板获取注册值并拼接成url 组成get获取对象</p>
+
+<p>响应数据判断 不存在就输出用户名或密码错误</p>
+
+<p>否则登陆成功并跳转到首页 window.location.href=&ldquo;/&rdquo;</p>
+
+<p>保存cookie 为关闭浏览器下次登陆体验和</p>
+
+<p>做欢迎个人信息及退出做准备</p>
+
+<p>5在主页模板页判断如登陆成功 则登陆和注册按钮隐藏并</p>
+
+<p>显示登陆成功的个人信息 和退出按钮</p>
+
+<p>个人信息渲染用字符串拼接（欢迎+获取的cookie）</p>
+
+<p>退出按钮用方法删除cookie 并更新界面（window.location.reload()）</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

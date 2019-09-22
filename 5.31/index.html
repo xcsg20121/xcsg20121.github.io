@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>django 类视图 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>django 类视图</h1>
+  <time datetime=2016-06-18T10:42:15Z class="post-date">Sat, Jun 18, 2016</time>
+  <pre><code>首先views.py导入
+from django.shortcuts import render
+from django.http import HttpResponse,HttpResponseRedirect
+#导入类视图模块
+from django.views import View
+#导入数据库
+from mysite.models import User
+#导入类视图模块模板
+from django.views.generic import TemplateView
+#导入通用类视图
+from django.views.generic import ListView
+
+#定义一个通用类视图
+class MyList(ListView):
+#指定模板名称
+template_name = &quot;myapp/mytem.html&quot;
+#指定变量名称
+# context_object_name = &quot;user_list&quot;
+#读取数据库 使用重写
+def get_queryset(self):
+user_list = User.objects.all()
+return user_list
+#定义一个混合视图
+class MyClassDef(View):
+def get(self,request):
+return render(request,&quot;d2_index.html&quot;)
+
+#定义一个类视图，用来渲染模板文件
+class MyTem(TemplateView):
+template_name = &quot;myapp/mytem.html&quot;
+#定义一个子应用的视图方法
+def myapp_index(request):
+return HttpResponse(&quot;子应用的视图方法&quot;)
+
+
+#定义类视图
+class MyView(View):
+hello = '你好'
+def get(self,request):
+return HttpResponse(self.hello)
+def post(self,request):
+return HttpResponse(&quot;POST方法&quot;)
+def put(self,request):
+return HttpResponse(&quot;put方法&quot;)
+def delete(self,request):
+return HttpResponse(&quot;delete方法&quot;)
+#定义继承类
+class MySon(MyView):
+def get(self,request):
+return HttpResponse(MyView.hello)
+
+然后建立子应用的urls.py路由文件
+
+from django.urls import path,re_path
+from myapp.views import myapp_index,MyView,MySon,MyTem,MyList,MyClassDef
+#导入类视图模块模板
+from django.views.generic import TemplateView
+# 写路由配置列表
+urlpatterns = [
+path(&quot;/myapp_index&quot;,myapp_index),
+#定义一个类视图的路由,必须用as_view()方法来初始化类
+path(&quot;/myview&quot;,MyView.as_view(hello=&quot;你好啊&quot;)),
+path(&quot;/myson&quot;,MySon.as_view()),
+path(&quot;/mytem&quot;,MyTem.as_view()),
+path(&quot;/mytem_one&quot;,TemplateView.as_view(template_name=&quot;myapp/mytem.html&quot;)),
+path(&quot;/mylist&quot;,MyList.as_view()),
+path(&quot;/myclassdef&quot;,MyClassDef.as_view()),
+]
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

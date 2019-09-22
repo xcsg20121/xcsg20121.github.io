@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>GitBook简单的使用 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>GitBook简单的使用</h1>
+  <time datetime=2019-04-29T18:20:53Z class="post-date">Mon, Apr 29, 2019</time>
+  <p>GitBook 是一个基于 Node.js 的命令行工具，支持 Markdown 和 AsciiDoc 两种语法格式，可以输出 HTML、PDF、eBook 等格式的电子书。</p>
+
+<p>使用 GitBook 管理文档，预览、制作电子书；同时通过 Git 管理书籍内容的变更，并将其托管到云端（比如 GitHub、GitLab、码云，或者是自己搭建的 Git 服务器），实现多人协作。</p>
+
+<p>1，安装</p>
+
+<p>GitBook 是基于 Node.js，所以首先需要安装 Node.js(鉴于之前安装过，这里不再介绍了)</p>
+
+<p>npm install -g gitbook-cli</p>
+
+<p>查看是否安装成功
+<img src="/images/book1.jpg" alt="" />
+2，建立项目</p>
+
+<p>进入需要建立项目的文件夹目录下初始化</p>
+
+<p>git book init</p>
+
+<p>会生成以下文件
+<img src="/images/book2.jpg" alt="" /></p>
+
+<p>README.md —— 书籍的介绍写在这个文件里
+SUMMARY.md —— 书籍的目录结构在这里配置
+编辑内容这里不再演示了</p>
+
+<p>3，查看编辑好的效果</p>
+
+<p>gitbook serve</p>
+
+<p><img src="/images/book3.jpg" alt="" /></p>
+
+<p>效果如下</p>
+
+<p>打包 ： gitbook build</p>
+
+<p>由于时间问题，今天就先介绍到这里</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

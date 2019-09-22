@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>列表推导式和字典推导式 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>列表推导式和字典推导式</h1>
+  <time datetime=2016-03-05T19:00:15Z class="post-date">Sat, Mar 5, 2016</time>
+  <p>列表推导式</p>
+
+<pre><code> urllist = [&quot;http://www.zhuangxiule.cn/c{}p{}/&quot;.format(i,x) for i in range(16,26) for x in range(0,25)]
+ print(urllist)
+</code></pre>
+
+<p>字典推导式</p>
+
+<pre><code>cookie = 'sts=0; UM_distinctid=16797c557a946-0f8967c2c5550c-4947311e-100200-16797c557aa5f8; Hm_lvt_9bb494db4665e40147cd57b89d6628e2=1544439553; remember=1; name_ie=%25113%25117%2597%25110%25115%25104%25117%25111%25103%25117%25111; I=i%3D3475276%26u%3D4040051%26n%3Dquanshuoguo%26m%3D0%26t%3D1544658451.1589200%26s%3Df041303d8e24b17642821e0ff5ef3579%26v%3D1.1; Hm_lvt_6ab7a391c8d69b4f62b7c54b2d70919c=1544767110,1544767165,1544767909,1544767975; site_str_flag=3; lc=57091; lc2=57091; wc=57091; wc_n=%25u5F00%25u5C01; bdUid=C83B6815683EEF2C20B73C89AD4A'
+cookie_list = {i.split(&quot;=&quot;)[0]:i.split(&quot;=&quot;)[-1] for i in cookie.split(&quot;; &quot;)}
+print(cookie_list)
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

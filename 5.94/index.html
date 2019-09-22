@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django2.0.4 &#43; websocket 实现实时通信，主动推送，聊天室及客服系统 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django2.0.4 &#43; websocket 实现实时通信，主动推送，聊天室及客服系统</h1>
+  <time datetime=2019-04-08T20:10:05Z class="post-date">Mon, Apr 8, 2019</time>
+  <p>webSocket是一种在单个TCP连接上进行全双工通信的协议。</p>
+
+<p>webSocket使得客户端和服务器之间的数据交换变得更加简单，允许服务端主动向客户端推送数据。在WebSocket API中，浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输</p>
+
+<p>现在，很多网站为了实现推送技术，所用的技术都是轮询。轮询是在特定的的时间间隔（如每1秒），由浏览器对服务器发出HTTP请求，然后由服务器返回最新的数据给客户端的浏览器。这种传统的模式带来很明显的缺点，即浏览器需要不断的向服务器发出请求，然而HTTP请求可能包含较长的头部，其中真正有效的数据可能只是很小的一部分，显然这样会浪费很多的带宽等资源。</p>
+
+<p>基于dwebsocket库来将socket嵌入到django服务中，使其服务兼具http协议和socket协议，能够达到实时前后端通信，后端主动推送等功能。</p>
+
+<p>1，按装依赖库dwebsocket库</p>
+
+<p>pip install dwebsocket</p>
+
+<p>2,定义视图逻辑</p>
+
+<pre><code>from dwebsocket.decorators import accept_websocket
+
+## 定时和立即推送任务
+@accept_websocket
+def test_websocket(request):
+    global message_tui_conunt
+    global message_tui_id
+    if request.is_websocket():
+        while 1:
+            print(&quot;————————&quot;)
+            if message_tui_conunt:
+                time.sleep(1)
+                dit = {'contnet':message_tui_conunt}
+                request.websocket.send(json.dumps(dit))
+            message_tui_conunt = ''
+            if message_tui_id:
+                time.sleep(1)
+                res = Messages.objects.get(id=int(message_tui_id))
+                time_tui = str(res.times)
+                print(time_tui)
+                if time.strftime('%Y-%m-%d %H:%M:%S') == time_tui:
+                    dit = {'contnet':res.content}
+                    request.websocket.send(json.dumps(dit))
+                    message_tui_id = ''
+</code></pre>
+
+<p>3，配置路由</p>
+
+<pre><code>path('test_socket',test_socket),
+path('test_websocket',test_websocket)
+</code></pre>
+
+<p>4，前端发送消息页面</p>
+
+<pre><code>&lt;body&gt;
+    &lt;input id=&quot;chat-message-input&quot; type=&quot;text&quot; size=&quot;100&quot;/&gt;&lt;br/&gt;
+    &lt;input id=&quot;chat-message-submit&quot; type=&quot;button&quot; value=&quot;Send&quot; onclick='sendmessage()'/&gt;
+&lt;/body&gt;
+
+&lt;script&gt;
+//生成socket对象
+   //前端发送消息
+   //var socket = new WebSocket(&quot;ws:127.0.0.1:8000/md_admin/test_socket&quot;);
+   //#主动推送消息
+   var socket = new WebSocket(&quot;ws:127.0.0.1:8000/md_admin/test_websocket&quot;);
+   socket.onopen = function () {
+       console.log('WebSocket open');//成功连接上Websocket
+   };
+   socket.onmessage = function (e) {
+    console.log(e.data)
+       alert($.parseJSON(e.data).contnet);//打印服务端返回的数据
+   };
+   socket.onclose=function(e){
+     console.log(e);
+     socket.close(); //关闭TCP连接
+   };
+   if (socket.readyState == WebSocket.OPEN){
+   socket.onopen();
+   }
+   window.s = socket;
+function sendmessage(){
+    window.s.send(document.getElementById(&quot;chat-message-input&quot;).value);
+}  
+&lt;/script&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

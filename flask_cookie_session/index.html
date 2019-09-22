@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>flask中cookie,session的存储，调用，删除 方法(代码demo) &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>flask中cookie,session的存储，调用，删除 方法(代码demo)</h1>
+  <time datetime=2015-11-25T11:23:05Z class="post-date">Wed, Nov 25, 2015</time>
+  <pre><code># -*- encoding: utf-8 -*-
+# cookie,session的存储，调用，删除
+from flask import Flask,make_response,request,session
+ret = Flask(__name__)
+ret.config.from_pyfile('config.ini')
+@ret.route(&quot;/&quot;)
+def index():
+return &quot;shou ye &quot;
+@ret.route(&quot;/set_cookie&quot;)
+def set_cookie():
+re = make_response(&quot;cookie以保存&quot;)
+re.set_cookie(&quot;apple&quot;,'苹果',max_age=3600)
+return re
+@ret.route(&quot;/get_cookie&quot;)
+def get_cookie():
+re =request.cookies.get(&quot;apple&quot;)
+return re
+@ret.route('/del_cookie')
+def del_cookie():
+re = make_response(&quot;cookie以删除&quot;)
+re.delete_cookie(&quot;apple&quot;)
+return re
+@ret.route(&quot;/set_session&quot;)
+def set_session():
+session['hello'] = '你好'
+return '存储成功'
+@ret.route(&quot;/get_session&quot;)
+def get_session():
+ret = session['hello']
+return ret
+@ret.route('/del_session')
+def del_session():
+session.pop(&quot;hello&quot;)
+return &quot;删除成功&quot;
+if __name__ == &quot;__main__&quot;:
+ret.run()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

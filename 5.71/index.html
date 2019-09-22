@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django&#43;Celery 执行异步任务和定时任务 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django&#43;Celery 执行异步任务和定时任务</h1>
+  <time datetime=2018-01-22T19:35:25Z class="post-date">Mon, Jan 22, 2018</time>
+  <p>celery是一个基于python开发的简单、灵活且可靠的分布式任务队列框架，支持使用任务队列的方式在分布式的机器/进程/线程上执行任务调度。采用典型的生产者-消费者模型，主要由三部分组成:</p>
+
+<ol>
+<li>消息队列broker：broker实际上就是一个MQ队列服务，可以使用redis、rabbitmq等作为broker</li>
+<li>处理任务的消费者workers：broker通知worker队列中有任务，worker去队列中取出任务执行，每一个worker就是一个进程</li>
+<li>存储结果的backend：执行结果存储在backend，默认也会存储在broker使用的MQ队列服务中，也可以单独配置用何种服务做backend</li>
+</ol>
+
+<p>flask,django是同步框架，所有的请求以队列形式完成。这样的话效率极差，用户体验不好，为了解决这个问题引入celery异步方式在后台执行这些任务（这里使用到了redis,3.0以下兼容性更好）</p>
+
+<p>1，安装依赖</p>
+
+<p>pip install celery</p>
+
+<p>pip install celery-with-redis</p>
+
+<p>pip install django-celery</p>
+
+<p>2，settings.py设置</p>
+
+<pre><code>#配置celery
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_IMPORTS = ('mymac.tasks') #需执行异步的子应用
+
+#将djcelery安装到应用中
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'mysg',
+    'lianxi',
+    &quot;rest_framework&quot;,
+    'corsheaders',
+    #异步
+    'djcelery',
+]
+</code></pre>
+
+<p>3,将异步的应用中注册celery.py</p>
+
+<pre><code>import os
+import django
+from celery import Celery
+from django.conf import settings 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mymac.settings')
+django.setup()
+app = Celery('mymac')
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))
+</code></pre>
+
+<p>4，建立异步任务和定时任务的(tasks.py)</p>
+
+<p>注意tasks.py必须建在各app的根目录下，且只能叫tasks.py，不能随意命名
+  异步任务</p>
+
+<pre><code>import time,random
+from celery import task
+#发邮件
+from django.core.mail import send_mail
+from django.http import HttpResponse
+#定义异步写文件方法
+@task
+def file_task():
+        #写文件操作  文件对象
+        file_object = open(&quot;./data.text&quot;,'a+',encoding='utf-8')
+        file_object.write(&quot;hello&quot;)
+        file_object.close()
+        print(&quot;ok&quot;)
+
+#定义异步发邮件的方法
+@task
+def email_():
+        captcha_text = []
+        for i in range(4):
+        #定义验证码字符
+                str = 'qwertyuiopasdfghjklzxcvbnm1234567890'
+                c = random.choice(str)
+                captcha_text.append(c)
+        #返回随机生成的字符串         
+        captcha = &quot;&quot;.join(captcha_text)
+        res = send_mail(&quot;欢迎注册&quot;,'您的验证码是:'+ captcha,['396961930@qq.com'],DEFAULT_FROM_EMAIL)
+        if res:
+                return HttpResponse(&quot;发送成功&quot;)
+        else:
+                return HttpResponse(&quot;发送失败&quot;)
+</code></pre>
+
+<p>views.py中引用使用这个tasks异步处理</p>
+
+<pre><code>from mymac.tasks import email,file_task
+
+#异步发邮件
+def email(request):
+    print(email_.delay())
+    return HttpResponse(&quot;异步发邮件&quot;)
+#异步写入文件
+def failtask(request):
+    print(file_task.delay())
+    return HttpResponse(&quot;success&quot;)
+
+#配好路由触发任务即可
+</code></pre>
+
+<p>定时任务</p>
+
+<pre><code>#导入定时任务库
+from celery.decorators import periodic_task
+from celery.schedules import crontab
+#发短信
+from twilio.rest import Client
+
+#定义20点10分发送
+#@periodic_task(run_every=crontab(minute=10,hour=20))
+#定义10秒发送一次
+@periodic_task(run_every=10)
+def mail():   
+        #定义短信sid
+        account_sid = 'ACbccc4d2127e888e6f6654dc8128c019e'
+        #定义秘钥
+        auth_token = 'a0f31b24c76c65c20c6400dc94537ac6'
+        #定义客户端对象  
+        clinet = Client(account_sid,auth_token)
+        #定义短信内容 1,发给谁 2,发信人 3,内容
+        status = clinet.messages.create(to=&quot;+8616637712137&quot;,from_=&quot;+12016361207&quot;,body=&quot;hello world&quot;)
+        if status:
+                print(&quot;发送成功&quot;)
+
+#注意时区 例如中国 
+#settings.py 设置  语言相关配置
+LANGUAGE_CODE = 'zh-hans'
+TIME_ZONE = 'Asia/Shanghai'
+
+crontab的参数有：
+month_of_year：月份
+day_of_month：日期
+day_of_week：周
+hour：小时
+minute：分钟
+</code></pre>
+
+<p>5，启动任务</p>
+
+<p>启动服务的命令：</p>
+
+<p>celery -A mymac beat -l info 定时任务</p>
+
+<p>celery -A mymac worker -l info 异步任务</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

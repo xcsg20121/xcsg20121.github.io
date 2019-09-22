@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python进程池爬取下载美女图片（xpath）--lowbiprogrammer &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python进程池爬取下载美女图片（xpath）--lowbiprogrammer</h1>
+  <time datetime=2015-11-12T08:33:35Z class="post-date">Thu, Nov 12, 2015</time>
+  <pre><code># -*- coding: utf-8 -*-
+import requests,os
+from lxml import etree
+import multiprocessing
+from retrying import retry
+# 创建地址池
+urllist = [&quot;http://www.zhuangxiule.cn/c{}p{}/&quot;.format(i,x) for i in range(16,26) for x in range(0,25)]
+@retry(stop_max_attempt_number=3)
+def get_data(url):
+response = requests.get(url,timeout=3)
+data = response.content
+html = etree.HTML(data)
+# xpath匹配首页的标题和详情的url
+mes = html.xpath(&quot;//div[@class='main']/dl[@class='list-left public-box']/*&quot;)
+for i in mes:
+if i.xpath(&quot;./a/span/text()&quot;):
+title = i.xpath(&quot;./a/span/text()&quot;)
+poto_url= i.xpath(&quot;./a/@href&quot;)[0] if len(i.xpath(&quot;./a/@href&quot;))&gt;0 else None
+print(title)
+poto=requests.get(poto_url)
+# 请求每个详情页的图片地址
+html = etree.HTML(poto.content)
+mes = html.xpath(&quot;//img/@src&quot;)
+# 创建下载图片的地址路径及写入图片
+path = &quot;f:/img/&quot;
+if not os.path.exists(path):
+os.makedirs(path)
+for photo in mes:
+potomes = requests.get(photo)
+filename = photo.split(&quot;/&quot;)[-1]
+with open(path+filename,&quot;wb&quot;) as f:
+f.write(potomes.content)
+if __name__ == '__main__':
+# 创建进程池
+pool = multiprocessing.Pool(5)
+# 将每个url作用于get_data方法
+pool.map(get_data,urllist)
+pool.close()
+pool.join()
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

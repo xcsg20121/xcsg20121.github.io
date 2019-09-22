@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ECharts图形库 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>ECharts图形库</h1>
+  <time datetime=2015-12-08T23:03:55Z class="post-date">Tue, Dec 8, 2015</time>
+  <p><img src="/images/echarts.png" alt="" />
+ECharts图形库百度的项目,图形的创建也比较简单，直接引用Javascript即可</p>
+
+<p>1,引入</p>
+
+<pre><code>&lt;script src=&quot;{{ url_for(&quot;static&quot;,filename='js/echarts-all-2.2.7.js') }}
+</code></pre>
+
+<p>2定义绘图方法</p>
+
+<pre><code>&lt;script&gt;
+// function show_source(dname,data){
+// //初始化echarts,在data_summary内部绘图
+// var source_chart = echarts.init(document.getElementById('data_summary'));
+// //定义绘图配置
+// var option = {
+// //悬停提示配置
+// tooltip:{
+// //定义鼠标
+// truigger:&quot;item&quot;,
+// //显示数据格式
+// formatter:&quot;{b}:{d}%&quot;
+// },
+// //传递数据,传入来源名称
+// legend:{
+// data:dname
+// },
+// //传递具体数据
+// series:[{
+// //指定绘图类型
+// type:&quot;pie&quot;,
+// //具体数据
+// data:data
+// }]
+// }
+// //将配置文件和绘图对象结合
+// source_chart.setOption(option);
+// }
+// // 发送ajax请求来拿取JSon数据，来拼图
+// $.getJSON(&quot;/yqdp_json&quot;,function(msg){
+// // 使用动态数据传参
+// show_source(msg.name,msg.data);
+// })
+&lt;/script&gt;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

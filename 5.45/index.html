@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>python浅拷贝和深拷贝 &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>python浅拷贝和深拷贝</h1>
+  <time datetime=2017-02-25T11:11:23Z class="post-date">Sat, Feb 25, 2017</time>
+  <p>python中的数据类型分为可变类型（list,dict）和不可变类型（string,tuple,int）</p>
+
+<p>不可变类型不存在深浅拷贝</p>
+
+<p>可变类型的</p>
+
+<p>浅拷贝：不管是多么复杂的数据结构，浅拷贝只会拷贝第一层（拷贝的时引用）</p>
+
+<pre><code>import copy
+list_1 = [1,2,['a','b','c'],3]
+list_2 = copy.copy(list_1)
+list_1[2][1] = 'kk'
+print(list_1,list_2,id(list_1[2]),id(list_2[2]))
+
+结果：
+[1, 2, ['a', 'kk', 'c'], 3] [1, 2, ['a', 'kk', 'c'], 3] 1798791797576 1798791797576
+</code></pre>
+
+<p>深拷贝： 深拷贝会完全复制原变量的所有数据，在内存中生成一套完全一样的内容，我们对这两个变量中的一个进行任意修改都不会影响另一个变量（递归形式的拷贝）</p>
+
+<pre><code>import copy
+list_1 = [1,2,['a','b','c'],3]
+list_2 = copy.deepcopy(list_1)
+list_1[2][1] = 'kk'
+print(list_1,list_2,id(list_1[2]),id(list_2[2]))
+
+结果：
+[1, 2, ['a', 'kk', 'c'], 3] [1, 2, ['a', 'b', 'c'], 3] 1582641879944 1582641878152
+</code></pre>
+
+<p>总结：copy和deepcopy和赋值是等价的</p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

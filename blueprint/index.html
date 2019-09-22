@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>falsk_蓝图（blueprint） &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>falsk_蓝图（blueprint）</h1>
+  <time datetime=2015-11-29T18:02:15Z class="post-date">Sun, Nov 29, 2015</time>
+  
+
+<p>蓝图(blueprint)</p>
+
+<p>随着业务代码的增加，将所有代码都放在单个程序文件中，是非常不合适的。这不仅会让代码阅读变得困难，而且会给后期维护带来麻烦。</p>
+
+<p>什么是蓝图</p>
+
+<p>蓝图：用于实现单个应用的视图、模板、静态文件的集合。</p>
+
+<p>蓝图就是模块化处理的类。</p>
+
+<p>简单来说，蓝图就是一个存储操作路由映射方法的容器，主要用来实现客户端请求和URL相互关联的功能。 在Flask中，使用蓝图可以帮助我们实现模块化应用的功能。</p>
+
+<p>蓝图的运行机制</p>
+
+<p>蓝图是保存了一组将来可以在应用对象上执行的操作。注册路由就是一种操作,当在程序实例上调用route装饰器注册路由时，这个操作将修改对象的url_map路由映射列表。当我们在蓝图对象上调用route装饰器注册路由时，它只是在内部的一个延迟操作记录列表defered_functions中添加了一个项。当执行应用对象的 register_blueprint() 方法时，应用对象从蓝图对象的 defered_functions 列表中取出每一项，即调用应用对象的 add_url_rule() 方法，这将会修改程序实例的路由映射列表。</p>
+
+<p>demo:</p>
+
+<h1 id="encoding-utf-8">-<em>- encoding: utf-8 -</em>-</h1>
+
+<h1 id="使用蓝图需要依赖blueprint库">使用蓝图需要依赖BLUEPRINT库</h1>
+
+<p>from flask import Flask,Blueprint
+#导入自定义蓝图文件</p>
+
+<pre><code>from day06_part import mypart
+app = Flask(__name__)
+app.config.from_pyfile('config.ini')
+</code></pre>
+
+<p>#注册定义好的蓝图文件,给蓝图的url加前缀,若不加前缀则同路由将被重写</p>
+
+<pre><code>app.register_blueprint(mypart,url_prefix='/henan')
+@app.route(&quot;/&quot;)
+def index():
+return &quot;shouye&quot;
+@app.route(&quot;/henan&quot;)
+def henan():
+return &quot;henan&quot;
+if __name__ == &quot;__main__&quot;:
+app.run()
+ 
+ 
+# -*- encoding: utf-8 -*-
+from flask import Flask,Blueprint
+app = Flask(__name__)
+app.config.from_pyfile('config.ini')
+#注册蓝图
+mypart = Blueprint('mypart',__name__)
+@mypart.route(&quot;/&quot;)
+def index():
+return &quot;hello&quot;
+@mypart.route(&quot;/ni&quot;)
+def ni():
+return &quot;ni&quot;
+</code></pre>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>
