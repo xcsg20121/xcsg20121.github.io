@@ -72,10 +72,10 @@ client = Client('myIndex',host='localhost',port='6666')
 client.create_index((TextField('title'), TextField('body')))
 
 #索引文件
-client.add_document('doc2', title = '你好', body = '我在北京学习人工智能',language='chinese')
+client.add_document('doc2', title = '你好中国', body = '祝愿祖国70周年生日快乐',language='chinese')
 
 # 查找搜索
-res = client.search(&quot;人工智能&quot;)
+res = client.search(&quot;生日快乐&quot;)
 print(res.docs[0].title)
 </code></pre>
 
