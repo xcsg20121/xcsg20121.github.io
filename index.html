@@ -58,9 +58,19 @@
     <div class="posts">
 <article class="post">
   <h1 class="post-title">
+    <a href="/5.116/">Python3和高性能全文检索引擎Redisearch进行交互</a>
+  </h1>
+  <time datetime="2019-10-01T17:21:55Z" class="post-date">2019-10-01 17:21:55</time>
+  安装
+pip install redisearch  使用
+from redisearch import Client, TextField # 创建一个客户端与给定索引名称 client = Client('myIndex',host='localhost',port='6666') #创建索引定义和模式 client.create_index((TextField('title'), TextField('body'))) #索引文件 client.add_document('doc2', title = '你好', body = '我在北京学习人工智能',language='chinese') # 查找搜索 res = client.search(&quot;人工智能&quot;) print(res.docs[0].title)  可以看到，基本上和命令行中的操作方式没有太大区别，只是在search时不需要指定语言了，程序可以自主判断。 其实它的官方文档很简单，只是介绍了基本用法，但是你如果阅读了它的源码，发现一些常用操作它也进行了封装，比如
+#删除索引 client.drop_index() #获取当前索引的基本信息 client.info() #删除文档 client.delete_document('doc2')  **详细文档redisearch-python:https://github.com/RediSearch/redisearch-py
+  
+</article><article class="post">
+  <h1 class="post-title">
     <a href="/5.117/">Django &#43; FastDFS (分布式远程服务器存储文件)</a>
   </h1>
-  <time datetime="2019-10-01T15:17:30Z" class="post-date">2019-10-01 15:17:30</time>
+  <time datetime="2019-09-24T15:17:30Z" class="post-date">2019-09-24 15:17:30</time>
   之前随笔过一篇Docker来搭建分布式文件系统FastDfs就跳过了
 https://www.cnblogs.com/xcsg/p/10901461.html
 FastDFS的Python (django客户端) 1.安装依赖
@@ -72,16 +82,6 @@ from django.core.files.storage import Storage from fdfs_client.
   <div class="read-more-link">
     <a href="/5.117/">Read More…</a>
   </div>
-  
-</article><article class="post">
-  <h1 class="post-title">
-    <a href="/5.116/">Python3和高性能全文检索引擎Redisearch进行交互</a>
-  </h1>
-  <time datetime="2019-09-23T17:21:55Z" class="post-date">2019-09-23 17:21:55</time>
-  安装
-pip install redisearch  使用
-from redisearch import Client, TextField # 创建一个客户端与给定索引名称 client = Client('myIndex',host='localhost',port='6666') #创建索引定义和模式 client.create_index((TextField('title'), TextField('body'))) #索引文件 client.add_document('doc2', title = '你好', body = '我在北京学习人工智能',language='chinese') # 查找搜索 res = client.search(&quot;人工智能&quot;) print(res.docs[0].title)  可以看到，基本上和命令行中的操作方式没有太大区别，只是在search时不需要指定语言了，程序可以自主判断。 其实它的官方文档很简单，只是介绍了基本用法，但是你如果阅读了它的源码，发现一些常用操作它也进行了封装，比如
-#删除索引 client.drop_index() #获取当前索引的基本信息 client.info() #删除文档 client.delete_document('doc2')  **详细文档redisearch-python:https://github.com/RediSearch/redisearch-py
   
 </article><article class="post">
   <h1 class="post-title">
