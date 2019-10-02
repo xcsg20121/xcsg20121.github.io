@@ -3,14 +3,24 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/5.115/</loc>
-    <lastmod>2019-09-11T14:25:01+00:00</lastmod>
+    <loc>/5.117/</loc>
+    <lastmod>2019-10-01T15:17:30+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-09-11T14:25:01+00:00</lastmod>
+    <lastmod>2019-10-01T15:17:30+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/5.116/</loc>
+    <lastmod>2019-09-23T17:21:55+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/5.115/</loc>
+    <lastmod>2019-09-11T14:25:01+00:00</lastmod>
   </url>
   
   <url>

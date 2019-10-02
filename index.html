@@ -58,6 +58,33 @@
     <div class="posts">
 <article class="post">
   <h1 class="post-title">
+    <a href="/5.117/">Django &#43; FastDFS (分布式远程服务器存储文件)</a>
+  </h1>
+  <time datetime="2019-10-01T15:17:30Z" class="post-date">2019-10-01 15:17:30</time>
+  之前随笔过一篇Docker来搭建分布式文件系统FastDfs就跳过了
+https://www.cnblogs.com/xcsg/p/10901461.html
+FastDFS的Python (django客户端) 1.安装依赖
+#安装库 pip install py3Fdfs pip install mutagen pip isntall requests  2.配置settings.py
+# 激活重写存储文件引擎方法 DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage' # 图片存阿里云的地址 FDAS_URL = 'http://39.97.117.229:8888/' # 存进阿里云服务器里因为没有后缀(jpg/png)，图片连接要放进 img 标签里才能显示 # &lt;img src=&quot;http://39.106.64.101:8888/group1/M00/00/00/rBHmx10A9JmAVEKNAABf71XWOL06003319&quot; alt=&quot;&quot;&gt;# 配置 Fastdfs 配置文件 FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'client.conf')  3.配置client.conf 文件
+connect_timeout=30 network_timeout=60 tracker_server=39.97.117.229:22122 log_level=info use_connection_pool = false connection_pool_max_idle_time = 3600 load_fdfs_parameters_from_tracker=false use_storage_id = false storage_ids_filename = storage_ids.conf http.tracker_server_port=80  4.封装上传文件 fastdfs.py
+from django.core.files.storage import Storage from fdfs_client.
+  
+  <div class="read-more-link">
+    <a href="/5.117/">Read More…</a>
+  </div>
+  
+</article><article class="post">
+  <h1 class="post-title">
+    <a href="/5.116/">Python3和高性能全文检索引擎Redisearch进行交互</a>
+  </h1>
+  <time datetime="2019-09-23T17:21:55Z" class="post-date">2019-09-23 17:21:55</time>
+  安装
+pip install redisearch  使用
+from redisearch import Client, TextField # 创建一个客户端与给定索引名称 client = Client('myIndex',host='localhost',port='6666') #创建索引定义和模式 client.create_index((TextField('title'), TextField('body'))) #索引文件 client.add_document('doc2', title = '你好', body = '我在北京学习人工智能',language='chinese') # 查找搜索 res = client.search(&quot;人工智能&quot;) print(res.docs[0].title)  可以看到，基本上和命令行中的操作方式没有太大区别，只是在search时不需要指定语言了，程序可以自主判断。 其实它的官方文档很简单，只是介绍了基本用法，但是你如果阅读了它的源码，发现一些常用操作它也进行了封装，比如
+#删除索引 client.drop_index() #获取当前索引的基本信息 client.info() #删除文档 client.delete_document('doc2')  **详细文档redisearch-python:https://github.com/RediSearch/redisearch-py
+  
+</article><article class="post">
+  <h1 class="post-title">
     <a href="/5.115/">Redisearch实现的全文检索功能服务</a>
   </h1>
   <time datetime="2019-09-11T14:25:01Z" class="post-date">2019-09-11 14:25:01</time>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Django &#43; FastDFS (分布式远程服务器存储文件) &middot; Xcsg博客</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  
+</head>
+
+  <body class="theme-base-08 ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/images/111.gif">
+      <a href="/"><h1>Xcsg博客</h1></a>
+      <p class="lead">
+       专业  专注  专长 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li>果蔬的藏码</li>
+        <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://xcsg2012.github.io/">全硕果的个人简历</a></li>
+        
+        
+        <li></li>
+      </ul>
+    </nav>
+    <conter>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author:16637712137</conter>
+    <p>&copy; 2019. All rights reserved. </p>
+    
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Django &#43; FastDFS (分布式远程服务器存储文件)</h1>
+  <time datetime=2019-10-01T15:17:30Z class="post-date">Tue, Oct 1, 2019</time>
+  
+
+<p>之前随笔过一篇Docker来搭建分布式文件系统FastDfs就跳过了</p>
+
+<p><a href="https://www.cnblogs.com/xcsg/p/10901461.html">https://www.cnblogs.com/xcsg/p/10901461.html</a></p>
+
+<h4 id="fastdfs的python-django客户端">FastDFS的Python  (django客户端)</h4>
+
+<p>1.安装依赖</p>
+
+<pre><code>#安装库
+pip install py3Fdfs
+pip install mutagen
+pip isntall requests
+</code></pre>
+
+<p>2.配置settings.py</p>
+
+<pre><code># 激活重写存储文件引擎方法
+DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage'
+# 图片存阿里云的地址
+FDAS_URL = 'http://39.97.117.229:8888/'
+
+# 存进阿里云服务器里因为没有后缀(jpg/png)，图片连接要放进 img 标签里才能显示
+# &lt;img src=&quot;http://39.106.64.101:8888/group1/M00/00/00/rBHmx10A9JmAVEKNAABf71XWOL06003319&quot; alt=&quot;&quot;&gt;# 配置 Fastdfs 配置文件
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'client.conf')
+</code></pre>
+
+<p>3.配置client.conf 文件</p>
+
+<pre><code>connect_timeout=30
+network_timeout=60
+tracker_server=39.97.117.229:22122
+log_level=info
+use_connection_pool = false
+connection_pool_max_idle_time = 3600
+load_fdfs_parameters_from_tracker=false
+use_storage_id = false
+storage_ids_filename = storage_ids.conf
+http.tracker_server_port=80
+</code></pre>
+
+<p>4.封装上传文件 fastdfs.py</p>
+
+<pre><code>from django.core.files.storage import Storage
+from fdfs_client.client import Fdfs_client,get_tracker_conf
+from video_back.settings import FDAS_URL,FDFS_CLIENT_CONF
+
+# 重写存储引擎方法
+
+class FastDfsStroage(Storage):
+
+    def __init__(self, base_url = None, client_conf = None):
+        &quot;&quot;&quot;
+            初始化对象
+            :param base_url:
+            :param client_conf:
+        &quot;&quot;&quot;
+        if base_url is None:
+            base_url = FDAS_URL
+            # 'http://39.106.64.101:8888/'
+        self.base_url = base_url
+
+        if client_conf is None:
+            client_conf = FDFS_CLIENT_CONF
+            # FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'client.conf')
+        self.client_conf = client_conf
+
+
+    def _open(self, name, mode = 'rb'):
+    
+        &quot;&quot;&quot;
+            打开文件
+            :param name:
+            :param mode:
+            :return:
+        &quot;&quot;&quot;
+        pass
+
+    def _save(self,content):
+        &quot;&quot;&quot;
+            保存文件
+            :param name: 传入文件名
+            :param content: 文件内容
+            :return:保存到数据库中的FastDFSDE文件名
+        &quot;&quot;&quot;
+ 
+        client = Fdfs_client(get_tracker_conf(FDFS_CLIENT_CONF))
+        ret = client.upload_by_buffer(content.read())
+        if ret.get(&quot;Status&quot;) != &quot;Upload successed.&quot;:
+            raise Exception(&quot;upload file failed&quot;)
+        file_name = ret.get(&quot;Remote file_id&quot;)
+        #byte转str
+        file_name = str(file_name,encoding = &quot;utf-8&quot;)
+        return file_name
+
+
+    def exists(self, name):
+        &quot;&quot;&quot;
+            检查文件是否重复, FastDFS自动区分重复文件
+            :param name:
+            :return:
+        &quot;&quot;&quot;
+        return False
+
+    def url(self, name):
+        &quot;&quot;&quot;
+            获取name文件的完整url
+            :param name:
+            :return:
+        &quot;&quot;&quot;
+        return self.base_url + name
+</code></pre>
+
+<p>5.上传逻辑views.py</p>
+
+<pre><code>#导入封装类
+from .fastdfs import *
+from django.http import JsonResponse
+def upload(request):
+    img = request.FILES.get('file')
+    img_fast = FastDfsStroage()
+    #存入远程服务器
+    ret = img_fast._save(img)
+    #返回存入图片的url
+    url = img_fast.url(ret)
+    if url:
+        return JsonResponse({'url':url})
+</code></pre>
+
+<p>效果如下：
+<img src="/images/932.jpg" alt="" />
+<img src="/images/933.jpg" alt="" /></p>
+
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>
